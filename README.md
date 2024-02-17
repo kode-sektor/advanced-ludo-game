@@ -41,12 +41,77 @@ Portal
 
 If a token makes a journey round the cellpath, token would enter its portal. Once inside the portal, token cannot be attacked. Token also cannot exit. To make a clearance, token must advance the number of portal cells in front of it plus the cell it occupies. And unlike any token within the cellpath, a token inside its portal can make a clearance with one die value only, regardless of if there is no qualified token to assign second die value to.
 
+Gameplay Variations
+
+- As with most things, you should expect variations in the gameplay you may encounter elsewhere. Sometimes, game rules are not hard and fast and having this in your subconscious may prepare you for any niggling surprises.
+
+1. One house vs One house
+
+- Although the Ludo game has four houses, some ludo games may allow only 1 house vs 1 house.
+
+2. One die roll
+
+- You are probably used to 2 dice roll but do not get surprised if you encounter a ludo setting that caters for only one die. With one die roll per throw, the provision for double-six is usually, for all intents and purposes, eliminated.
+
+3. Token dislodge
+
+- Some Ludo games may have no provision of a token dislodging opponent token.
+
+Terms & Definitions
+
+Camp
+
+: Where the seeds are housed
+
+Camped
+
+: Describes seeds that are in their base
+
+In-play
+
+: Describes seeds that are out of their base. "Active" may be used as substitute
+
+Mode
+
+: Defines the motive of each active seed
+
+Siege
+
+: Scenario when camp is surrounded by opponent tokens
+
+Lair
+
+: The first 5 cells from opponent starting position
+
+Breakout
+
+: Art of seed leaving its camp
+
+Odyssey
+
+: Process of seed making a full cycle round the cell paths, when there is no intent of fleeing from opponent seed or dislodging an opponent seed
+
+Portal
+
+: The last 5 possible cells after a seed has made a complete odyssey
+
+Siege zone
+
+: Last 5 cells behind seed's breakout position
+
+Right of Way
+
+: Defines priority for which token gets to move
+
+
+
+
 
 
 ### Methods
 
 
-Developer: Code-Sector (Ibiyemi Olagoke Kayode)
-Technology: HTML5, CSS3, React
+- Developer: Code-Sector (Ibiyemi Olagoke Kayode)
+- Technology: HTML5, CSS3, React
 Platforms: Browser (desktop, mobile, tablet) 
 Classification: Games» Puzzle» Board
