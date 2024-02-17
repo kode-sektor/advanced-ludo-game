@@ -47,11 +47,11 @@ Gameplay Variations
 
 1. One house vs One house
 
-- Although the Ludo game has four houses, some ludo games may allow only 1 house vs 1 house.
+- Although the Ludo game has four houses, some Ludo games may allow only 1 house vs 1 house.
 
 2. One die roll
 
-- You are probably used to 2 dice roll but do not get surprised if you encounter a ludo setting that caters for only one die. With one die roll per throw, the provision for double-six is usually, for all intents and purposes, eliminated.
+- You are probably used to 2 dice roll but do not get surprised if you encounter a Ludo setting that caters for only one die. With one die roll per throw, the provision for double-six is usually, for all intents and purposes, eliminated.
 
 3. Token dislodge
 
@@ -70,6 +70,10 @@ Camped
 In-play
 
 : Describes seeds that are out of their base. "Active" may be used as substitute
+
+Out-of-play
+
+: Describes seeds that have dislodged opponent token or cleared through portal
 
 Mode
 
@@ -103,6 +107,30 @@ Right of Way
 
 : Defines priority for which token gets to move
 
+Die Value
+
+: 1 die roll
+
+Dice Value
+
+: Total dice roll (and also accounts for the case of double 6)
+
+Vantage Point / Sweet Spot
+
+: Cell right before starting position
+
+Exclave / Outpost
+
+: 5th and 6th cell before starting position.
+
+Portal Bank
+
+: Cell right before portal
+
+Clearance
+
+: Art of seed inside portal proceeding through house and exiting
+
 
 
 
@@ -113,5 +141,5 @@ Right of Way
 
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React
-Platforms: Browser (desktop, mobile, tablet) 
-Classification: Games» Puzzle» Board
+- Platforms: Browser (desktop, mobile, tablet) 
+- Classification: Games» Puzzle» Board
