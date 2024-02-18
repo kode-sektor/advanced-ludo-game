@@ -4,6 +4,8 @@
 
 ## Introduction
 
+<img src="/public/images/ludo-cover.jpg">
+
 ### Purpose
 
 The aim of this project is to create a digital version of the famous and ancient Ludo game, with online multiplayer and computer modes.
@@ -60,75 +62,57 @@ Gameplay Variations
 Terms & Definitions
 
 Camp
-
 : Where the seeds are housed
 
 Camped
-
 : Describes seeds that are in their base
 
 In-play
-
 : Describes seeds that are out of their base. "Active" may be used as substitute
 
 Out-of-play
-
 : Describes seeds that have dislodged opponent token or cleared through portal
 
 Mode
-
 : Defines the motive of each active seed
 
 Siege
-
 : Scenario when camp is surrounded by opponent tokens
 
 Lair
-
 : The first 5 cells from opponent starting position
 
 Breakout
-
 : Art of seed leaving its camp
 
 Odyssey
-
 : Process of seed making a full cycle round the cell paths, when there is no intent of fleeing from opponent seed or dislodging an opponent seed
 
 Portal
-
 : The last 5 possible cells after a seed has made a complete odyssey
 
 Siege zone
-
 : Last 5 cells behind seed's breakout position
 
 Right of Way
-
 : Defines priority for which token gets to move
 
 Die Value
-
 : 1 die roll
 
 Dice Value
-
 : Total dice roll (and also accounts for the case of double 6)
 
 Vantage Point / Sweet Spot
-
 : Cell right before starting position
 
 Exclave / Outpost
-
 : 5th and 6th cell before starting position.
 
 Portal Bank
-
 : Cell right before portal
 
 Clearance
-
 : Art of seed inside portal proceeding through house and exiting
 
 
@@ -137,7 +121,6 @@ Clearance
 
 
 ### Methods
-
 
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React
