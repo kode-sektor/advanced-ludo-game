@@ -1,0 +1,45 @@
+.frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ludo {
+    display: grid;
+    width: 80vw;
+    height: 80vw;
+    grid-template: repeat(15, 1fr);
+}
+.base {
+    display: grid;
+    grid-template: repeat(7, 1fr) / repeat(6, 1fr);
+    grid-row: 1 / -1;
+    grid-column: 1 / span 6;
+}
+.outpost-lane {
+    display: grid;
+    grid-column: 1/-1;
+    grid-row: 1 / span 1;
+    grid-template-columns: repeat(6, 1fr);
+}
+.camp {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 2 / -1;
+    grid-template: repeat(6, 1fr);
+}
+.window {
+    display: grid;
+    grid-column: 4 / span 2;
+    grid-row: 2 / span 2;
+    grid-template: repeat(2, 1fr);
+}
+.exit {
+    display: grid;
+    grid-column: 7 / -1;
+    grid-row: 1 / -1;
+    grid-template: repeat(7, 1fr) / repeat(2, 1fr);
+}
+.lair, .portal {
+    display: grid;
+    grid-row: 1 / -1;
+}

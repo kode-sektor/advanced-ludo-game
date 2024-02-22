@@ -5,7 +5,7 @@ import '/App.css'
 const App = () => {
     return (
         <div className="frame">
-            <div className="container-fluid">
+            <div className="ludo">
                 <section className="base home-one">
                     <section className="outpost-lane">
                         <div className="cell"></div>
