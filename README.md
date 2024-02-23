@@ -1,6 +1,6 @@
 # ADVANCED LUDO GAME
 
-***
+---
 
 ## Introduction
 
@@ -9,7 +9,6 @@
 ### Purpose
 
 The aim of this project is to create a digital version of the famous and ancient Ludo game, with online multiplayer and computer modes.
-
 
 ### Objectives
 
@@ -21,13 +20,13 @@ History of Ludo Game
 
 The Ludo game is an old traditional board game usually played by 2, 3 or 4 players. The origin of the game remains unclear but sources tend to point to either India or Britain. And like other things, it has spread all over the world and has taken up native names like Parcheesi, Chopad, Chatush Pada, Non t'arrabbiare, Fia med knuff, Loto, Jeu des petits chevaux etc. From country to country, expect slight variations in the spellings of the Ludo game, usually with changes to the 'u' and 'o' alphabets in the name or sometimes a change and / or duplicate of these alphabets.
 
-***
+---
 
 GamePlay
 
-The Ludo game involves 2 to 4 players taking turns to roll two dice (cube shape), each die having a value of 1 to 6 on each side. So in other words, a dice throw results in a minimum value of "1-1", with the maximum being "6-6". It is a dice throw that determines a move. The game pieces that the players move are called tokens, and sometimes seeds. You could think of them as pawns associated with the chess game. One difference though is that no token has any special feature. All move the same way. 
+The Ludo game involves 2 to 4 players taking turns to roll two dice (cube shape), each die having a value of 1 to 6 on each side. So in other words, a dice throw results in a minimum value of "1-1", with the maximum being "6-6". It is a dice throw that determines a move. The game pieces that the players move are called tokens, and sometimes seeds. You could think of them as pawns associated with the chess game. One difference though is that no token has any special feature. All move the same way.
 
-The game board is made up of cells and differently coloured bases, otherwise known as camp or house. The different colours are necessary to differentiate the players. The tokens associated with the bases also match the same colour. All tokens start out the game from inside the camp. Only a 6 throw can enable a breakaway from the base. Only a whole '6' on either die or even on both can enact a breakaway. A combination of dice value like '3' and '3', '4' and '2' or '5' and '1' which all equate to '6', though, do not enact a breakaway and the player would wait for a next turn after his opponent rolls the dice, seeking for their own breakaway. The dice values can be applied separately to any token or combined to advance just one token. The start positions are unique to every base and a breakaway for any token must begin from the start position attached to his camp. So, without doubt a '6' die value is central to having an edge in this game. 
+The game board is made up of cells and differently coloured bases, otherwise known as camp or house. The different colours are necessary to differentiate the players. The tokens associated with the bases also match the same colour. All tokens start out the game from inside the camp. Only a 6 throw can enable a breakaway from the base. Only a whole '6' on either die or even on both can enact a breakaway. A combination of dice value like '3' and '3', '4' and '2' or '5' and '1' which all equate to '6', though, do not enact a breakaway and the player would wait for a next turn after his opponent rolls the dice, seeking for their own breakaway. The dice values can be applied separately to any token or combined to advance just one token. The start positions are unique to every base and a breakaway for any token must begin from the start position attached to his camp. So, without doubt a '6' die value is central to having an edge in this game.
 
 In real life and all else equal, there is no proven method of rolling a '6' or in fact, any particular die number and you can guarantee that holds true for this digital Advanced Ludo Game. As seen in the image, the cells form a path and the arrows on the board indicate the direction of travel which is clockwise. Remember a '6' die value enacts a breakaway from the camp. This starts the journey. If all player's tokens are inactive (in-camp), a '6' throw must initiate a breakaway. However, once a token is active (out-of-camp), it no longer remains mandatory that a '6' initiates a breakaway. The player could decide to allot the '6' value to the active token with the sole exception being when all active tokens have successfully made a round trip and enters their respective portals, which at that point a '6' move is no longer possible because a portal contains only 5 cells. More on the portal later.
 
@@ -115,14 +114,19 @@ Portal Bank
 Clearance
 : Art of seed inside portal proceeding through house and exiting
 
-
-
-
-
-
 ### Methods
+
+### For Developers
+
+Note: Wireframes, mockups and rough work that are uploaded as regards this project, many that you will see from here on in, are meant to highlight the guiding thought process in the course of development. While not exactly the fibre of the project, they can intimate you on reasons for particular techniques, aid visualisation, expound on comments or quickly spot patterns.
+
+---
+
+LAYING THE GRID
+
+<img src="/public/images/laying-the-grid.jpg">
 
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React
-- Platforms: Browser (desktop, mobile, tablet) 
+- Platforms: Browser (desktop, mobile, tablet)
 - Classification: Games» Puzzle» Board
