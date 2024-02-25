@@ -118,7 +118,9 @@ Clearance
 
 ### For Developers
 
-Note: Wireframes, mockups and rough work that are uploaded as regards this project, many that you will see from here on in, are meant to highlight the guiding thought process in the course of development. While not exactly the fibre of the project, they can intimate you on reasons for particular techniques, aid visualisation, expound on comments or quickly spot patterns.
+Note: Wireframes, mockups and rough work that are uploaded as regards this project, many that you will see from here on in, are meant to highlight the guiding thought process in the course of development. While not exactly the fibre of the project, they can intimate you on reasons for particular techniques, aid visualisation, expound on comments and quickly spot patterns.
+
+Also take note that the final production as regards the methods, names, styles, coding conventions etc. may differ from these visual aids, albeit -- slightly most times.
 
 ---
 
