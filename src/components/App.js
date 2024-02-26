@@ -4,11 +4,11 @@ import './App.css';
 
 const App = () => {
     return (
-        <div className="frame">
+        <div className="board">
             <div className="ludo">
                 <section className="base home-one">
                     <section className="outpost-lane">
-                        <div className="cell">SHOW ME</div>
+                        <div className="cell"></div>
                         <div className="cell"></div>
                         <div className="cell"></div>
                         <div className="cell"></div>
@@ -165,7 +165,5 @@ const App = () => {
         </div>
     )
 }
-
-console.log(App)
 
 export default App
