@@ -1,13 +1,13 @@
 import React from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 
 import App from './components/App'
 
 const routes = () => {
     return (
-        <Switch>
-            <Route path="/" exact component={App} />
-        </Switch>
+        <Routes>
+            <Route path="/" exact element={<App/>} />
+        </Routes>
     )
 }
 

@@ -16,7 +16,7 @@
     grid-template: repeat(7, 1fr) / repeat(6, 1fr);
     grid-row: 1 / -1;
     grid-column: 1 / span 6;
-    border: thin solid brown'
+    border: thin solid brown;
 }
 .outpost-lane {
     display: grid;

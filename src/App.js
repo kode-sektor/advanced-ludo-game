@@ -3,11 +3,11 @@ import { BrowserRouter } from 'react-router-dom'
 import Routes from './routes'
 
 function App() {
-	  return (
+	return (
 		<BrowserRouter>
-			  <Routes/>
+			<Routes/>
 		</BrowserRouter>
-	  );
+	);
 }
 
 export default App;

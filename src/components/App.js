@@ -1,6 +1,6 @@
-import React, { Component } from "react"
+import React from "react";
 
-import '/App.css'
+import './App.css';
 
 const App = () => {
     return (
@@ -8,7 +8,7 @@ const App = () => {
             <div className="ludo">
                 <section className="base home-one">
                     <section className="outpost-lane">
-                        <div className="cell"></div>
+                        <div className="cell">SHOW ME</div>
                         <div className="cell"></div>
                         <div className="cell"></div>
                         <div className="cell"></div>
@@ -165,5 +165,7 @@ const App = () => {
         </div>
     )
 }
+
+console.log(App)
 
 export default App
