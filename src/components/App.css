@@ -38,12 +38,15 @@
     transform-origin: right bottom;
     background: red;
 }
-/*.outpost-lane {
+.outpost-lane {
     display: grid;
-    grid-column: 1/-1;
+    grid-column: 1/ 6;
     grid-row: 1 / span 1;
     grid-template-columns: repeat(6, 1fr);
-    border: thin solid thistle;
+    border: 3px solid thistle;
+}
+.cell {
+    border: thin solid grey;
 }
 .camp {
     display: grid;
@@ -61,12 +64,12 @@
 }
 .exit {
     display: grid;
-    grid-column: 7 / -1;
+    grid-column: 6 / -1;
     grid-row: 1 / -1;
     grid-template: repeat(7, 1fr) / repeat(2, 1fr);
     border: thin solid tan;
 }
-.lair, .portal {
+/*.lair, .portal {
     display: grid;
     grid-row: 1 / -1;
     border: thin solid aqua;
