@@ -30,7 +30,7 @@
 .base[class*="home"] {
     transform-origin: top right;
 }
-.home-one .camp, .home-one .portal {
+.home-one .camp, .home-one .portal, .home-one .lair .cell:nth-last-child(2) {
     background: var(--gold);
 }
 .home-two {
@@ -38,7 +38,7 @@
     transform: rotate(-90deg); */
     transform: rotate(-270deg) translateY(37px);
 }
-.home-two .camp, .home-two .portal {
+.home-two .camp, .home-two .portal, .home-two .lair .cell:nth-last-child(2) {
     background-color: var(--green);
 }
 .home-three {
@@ -46,7 +46,7 @@
     transform-origin: right bottom; */
     transform: rotate(-180deg) translate(37px, 37px);
 }
-.home-three .camp, .home-three .portal {
+.home-three .camp, .home-three .portal, .home-three .lair .cell:nth-last-child(2) {
     background: var(--red);
 }
 .home-four {
@@ -55,7 +55,7 @@
     /* translate: 102%; */
     transform: rotate(-90deg) translateX(37px);
 }
-.home-four .camp, .home-four .portal {
+.home-four .camp, .home-four .portal, .home-four .lair .cell:nth-last-child(2) {
     background: var(--blue);
 }
 .outpost-lane, .camp {
@@ -68,10 +68,13 @@
 .cell, .window-cell {
     outline: thin solid rgba(0,0,0,.7);
 }
+.portal .cell:last-child {
+    background-color: #fff;
+}
 .camp {
     grid-row: 2 / -1;
     grid-template: repeat(6, 1fr) / repeat(6, 1fr);
-    outline: 2px solid maroon;
+    outline: 1px solid rgba(0, 0, 0, .7);
 }
 .window {
     display: grid;
