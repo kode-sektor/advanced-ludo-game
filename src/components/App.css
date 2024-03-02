@@ -1,3 +1,11 @@
+:root {
+    --blue: #A4DDED;
+    --red: #FA8072;
+    --green: #90EE90;
+    --gold: #f6ed6e;
+
+    --light-red: rgba(255,36,0,.7);
+}
 .board {
     display: flex;
     justify-content: center;
@@ -22,27 +30,33 @@
 .base[class*="home"] {
     transform-origin: top right;
 }
-.home-one {
-    background: gold;
+.home-one .camp, .home-one .portal {
+    background: var(--gold);
 }
 .home-two {
     /* transform-origin: top left;
     transform: rotate(-90deg); */
     transform: rotate(-270deg) translateY(37px);
-    background-color: green;
+}
+.home-two .camp, .home-two .portal {
+    background-color: var(--green);
 }
 .home-three {
     /* transform: translate(87.8%, -114%);
     transform-origin: right bottom; */
     transform: rotate(-180deg) translate(37px, 37px);
-    background: red;
+}
+.home-three .camp, .home-three .portal {
+    background: var(--red);
 }
 .home-four {
     /* transform: rotate(90deg);
     transform-origin: right bottom; */
     /* translate: 102%; */
     transform: rotate(-90deg) translateX(37px);
-    background: blue;
+}
+.home-four .camp, .home-four .portal {
+    background: var(--blue);
 }
 .outpost-lane, .camp {
     display: grid;
@@ -52,7 +66,7 @@
     outline: 1px solid thistle;
 }
 .cell, .window-cell {
-    outline: thin solid grey;
+    outline: thin solid rgba(0,0,0,.7);
 }
 .camp {
     grid-row: 2 / -1;
@@ -64,6 +78,7 @@
     grid-column: 4 / span 2;
     grid-row: 2 / span 2;
     grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+    background-color: white;
     outline: thin solid green;
 }
 .exit {
