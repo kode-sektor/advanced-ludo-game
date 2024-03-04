@@ -17,10 +17,18 @@ const App = () => {
                     </section>
                     <section className="camp">
                         <section className="window">
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
                         </section>
                     </section>
                     <section className="exit">
@@ -56,12 +64,19 @@ const App = () => {
                     </section>
                     <section className="camp">
                         <section className="window">
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                        </section>
-                    </section>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                        </section>                    </section>
                     <section className="exit">
                         <section className="lair">
                             <div className="cell"></div>
@@ -95,12 +110,19 @@ const App = () => {
                     </section>
                     <section className="camp">
                         <section className="window">
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                        </section>
-                    </section>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                        </section>                    </section>
                     <section className="exit">
                         <section className="lair">
                             <div className="cell"></div>
@@ -134,12 +156,19 @@ const App = () => {
                     </section>
                     <section className="camp">
                         <section className="window">
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                            <div className="window-cell"></div>
-                        </section>
-                    </section>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                            <div className="cell">
+                                <div className="seed"></div>
+                            </div>
+                        </section>                    </section>
                     <section className="exit">
                         <section className="lair">
                             <div className="cell"></div>
