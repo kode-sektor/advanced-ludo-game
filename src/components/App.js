@@ -18,16 +18,16 @@ const App = () => {
                     <section className="camp">
                         <section className="window">
                             <div className="cell">
-                                <div className="seed"></div>
+                                <button className="seed"></button>
                             </div>
                             <div className="cell">
-                                <div className="seed"></div>
+                                <button className="seed"></button>
                             </div>
                             <div className="cell">
-                                <div className="seed"></div>
+                                <button className="seed"></button>
                             </div>
                             <div className="cell">
-                                <div className="seed"></div>
+                                <button className="seed"></button>
                             </div>
                         </section>
                     </section>
