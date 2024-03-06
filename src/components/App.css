@@ -23,31 +23,20 @@
     box-sizing: border-box;
 }
 .board {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 99vh;
     height: 99vh;
     margin: auto;
-
     background: inherit;
-    position: relative;
     z-index: 2;
     overflow: hidden;
     box-shadow: 0 .5em 1em rgba(0,0,0,.9);
     /* backdrop-filter: blur(50px);
     -webkit-backdrop-filter: blur(50px); */
 }
-.board:before {
-    content: "";
-    position: absolute;
-    z-index: 1;
-    top: 0; right: 0; bottom: 0; left: 0;
-    background: inherit;
-    box-shadow: inset 0 0 3000px rgba(255,255,255,.5);
-    filter: blur(50px);
-    margin: -20px;
-} 
 .ludo {
     position: relative;
     display: grid;
@@ -57,10 +46,16 @@
     z-index: 3;
 }
 .base {
+    position: relative;
     display: grid;
     grid-template: repeat(7, 1fr) / repeat(8, 1fr);
     grid-row: 9 / -1;
     grid-column: 1 / span 8;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, 0.52);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    z-index: 1;
 }
 .base[class*="home"] {
     transform-origin: top right;
@@ -88,7 +83,7 @@
     /* transform: rotate(90deg);
     transform-origin: right bottom; */
     /* translate: 102%; */
-    transform: rotate(-90deg) translateX(calc(95vh/14.6));
+    transform: rotate(-90deg) translateX(calc(95vh/14.3));
 }
 .home-four .camp, .home-four .portal .cell, .home-four .lair .cell:nth-last-child(2) {
     background: var(--blue);
@@ -101,6 +96,7 @@
 }
 .outpost-lane {
     border-left: 2px solid rgba(0, 0, 0, .6);
+    border-top: var(--cell-border);
 }
 .outpost-lane .cell:first-child {
     position: relative;
@@ -110,7 +106,25 @@
     position: relative;
     border-left-width: 2px;
 }
-.portal {
+.home-one .lair .cell:first-child { 
+    background-image: linear-gradient(to left top, var(--portal-gold) 50%, var(--portal-green) 50%);
+    border-top-color: var(--portal-green);
+    border-right-color: var(--portal-gold);
+}
+.home-two .lair .cell:first-child { 
+    background-image: linear-gradient(to left top, var(--portal-green) 50%, var(--portal-red) 50%);
+    border-top-color: var(--portal-red);
+    border-right-color: var(--portal-green);
+}
+.home-three .lair .cell:first-child { 
+    background-image: linear-gradient(to left top, var(--portal-red) 50%, var(--portal-blue) 50%);
+    border-top-color: var(--portal-blue);
+    border-right-color: var(--portal-red);
+}
+.home-four .lair .cell:first-child { 
+    background-image: linear-gradient(to left top, var(--portal-blue) 50%, var(--portal-gold) 50%);
+    border-top-color: var(--portal-gold);
+    border-right-color: var(--portal-blue);
 }
 .cell {
     border: var(--cell-border);
@@ -130,6 +144,10 @@
 .home-four .portal .cell, .home-four .lair .cell:nth-last-child(2) {
     background: var(--portal-blue);
 }
+.portal .cell:first-child {
+    border: 1px solid transparent;
+    border-bottom-color: var(--cell-border);
+}
 .portal .cell:last-child {
     background-color: #fff;
 }
@@ -139,7 +157,31 @@
     grid-template: repeat(6, 1fr) / repeat(6, 1fr);
     border: var(--cell-border);
 }
-
+.imprint {
+    position: absolute;
+    top: -20px;
+    left: 40px;
+    transform-origin: left ;
+    transform: rotate(90deg);
+    opacity: .7;
+}
+.imprint + .imprint {
+    top: auto;
+    left: auto;
+    bottom: 0;
+    right: 10px;
+    transform: none;
+    transform-origin: center center;
+}
+.imprint span {
+    display: inline-block;
+    letter-spacing: 1px;
+    text-shadow: 1px 0 rgba(240, 240, 240, 0.2);
+    font-size: 3.5em;
+    font-family: Century Gothic;
+    color: white;
+    filter: blur(2px);
+}
 .window {
     display: grid;
     grid-column: 4 / span 2;
@@ -151,13 +193,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-
     flex-wrap: wrap;
     display: flex;
     align-items: center;
     justify-content: center;
     align-content: center;
+    text-align: center;
     flex: 1;
 }
 .exit {
@@ -171,7 +212,6 @@
     position: relative;
     display: grid;
     grid-row: 1 / -1;
-    /* border: thin solid aqua; */
 }
 .lair:before, .lair:after, .portal:before {
     content: url('../../public/images/arrow.png');
@@ -179,7 +219,7 @@
     display: inline-block;
     bottom: 13.8vh;
     left: 40%;
-    z-index: 3;
+    z-index: 1;
     opacity: .7;
 }
 .lair:after {
@@ -190,9 +230,6 @@
 .portal:before {
     bottom: 0.6vh;
 }
-.portal .cell {
-    /* border: var(--cell-border); */
-}
 .window {
     /* overflow: hidden; */
     border: var(--cell-border);
@@ -200,15 +237,13 @@
 .seed {
     position: relative;
     appearance: none;
-    /* top: -2px;
-    left: -1px; */
     width: 94%;
     height: 94%;
     border-radius: 50px;
     padding: 0;
     margin: 0;
     border: none;
-    z-index: 4;
+    z-index: 15;
     cursor: pointer;
 }
 .seed:before {
@@ -221,6 +256,7 @@
     border-radius: 53px;
     background: var(--seed-green);
     border: 1px solid rgba(0, 0, 0, .2);
+    z-index: 15;
 }
 .home-one .seed:before {
     background: var(--seed-gold);
@@ -251,4 +287,11 @@
 .home-four .seed {
     transform: rotate(90deg);
 }
-
+.home {
+    grid-area: 8 / 8 / span 1 / span 1;
+    border: 20px solid;
+    border-top-color: var(--portal-red);
+    border-left-color: var(--portal-green);
+    border-bottom-color: var(--portal-gold);
+    border-right-color: var(--portal-blue);
+}

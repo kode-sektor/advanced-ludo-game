@@ -30,6 +30,12 @@ const App = () => {
                                 <button className="seed"></button>
                             </div>
                         </section>
+                        <section className="imprint">
+                            <span>LUDO</span>
+                        </section>
+                        <section className="imprint">
+                            <span>LUDO</span>
+                        </section>
                     </section>
                     <section className="exit">
                         <section className="lair">
@@ -76,7 +82,14 @@ const App = () => {
                             <div className="cell">
                                 <div className="seed"></div>
                             </div>
-                        </section>                    </section>
+                        </section>
+                        <section className="imprint">
+                            <span>LUDO</span>
+                        </section>
+                        <section className="imprint">
+                            <span>LUDO</span>
+                        </section>
+                    </section>
                     <section className="exit">
                         <section className="lair">
                             <div className="cell"></div>
@@ -122,7 +135,14 @@ const App = () => {
                             <div className="cell">
                                 <div className="seed"></div>
                             </div>
-                        </section>                    </section>
+                        </section>
+                        <section className="imprint">
+                            <span>LUDO</span>
+                        </section>
+                        <section className="imprint">
+                            <span>LUDO</span>
+                        </section>
+                    </section>
                     <section className="exit">
                         <section className="lair">
                             <div className="cell"></div>
@@ -168,7 +188,14 @@ const App = () => {
                             <div className="cell">
                                 <div className="seed"></div>
                             </div>
-                        </section>                    </section>
+                        </section>
+                        <section className="imprint">
+                            <span>LUDO</span>
+                        </section>
+                        <section className="imprint">
+                            <span>LUDO</span>
+                        </section>
+                    </section>
                     <section className="exit">
                         <section className="lair">
                             <div className="cell"></div>
@@ -190,6 +217,7 @@ const App = () => {
                         </section>    
                     </section>
                 </section>
+                <section className="home"></section>
             </div>
         </div>
     )
