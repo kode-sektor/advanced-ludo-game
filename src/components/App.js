@@ -219,6 +219,14 @@ const App = () => {
                 </section>
                 <section className="home"></section>
             </div>
+            <div className="dice">
+                <div className="side"></div>
+                <div className="side"></div>
+                <div className="side"></div>
+                <div className="side"></div>
+                <div className="side"></div>
+                <div className="side"></div>
+            </div>
         </div>
     )
 }
