@@ -19,16 +19,16 @@ const App = () => {
 						<section className="camp">
 							<section className="window">
 								<div className="cell">
-									<button className="seed"></button>
+									<button className="seed" id="seed-i"></button>
 								</div>
 								<div className="cell">
-									<button className="seed"></button>
+									<button className="seed" id="seed-ii"></button>
 								</div>
 								<div className="cell">
-									<button className="seed"></button>
+									<button className="seed" id="seed-iii"></button>
 								</div>
 								<div className="cell">
-									<button className="seed"></button>
+									<button className="seed" id="seed-iv"></button>
 								</div>
 							</section>
 							<section className="imprint">
@@ -71,16 +71,16 @@ const App = () => {
 						<section className="camp">
 							<section className="window">
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-v"></div>
 								</div>
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-vi"></div>
 								</div>
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-vii"></div>
 								</div>
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-viii"></div>
 								</div>
 							</section>
 							<section className="imprint">
@@ -123,16 +123,16 @@ const App = () => {
 						<section className="camp">
 							<section className="window">
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-ix"></div>
 								</div>
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-x"></div>
 								</div>
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-xi"></div>
 								</div>
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-xii"></div>
 								</div>
 							</section>
 							<section className="imprint">
@@ -175,16 +175,16 @@ const App = () => {
 						<section className="camp">
 							<section className="window">
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-xiii"></div>
 								</div>
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-xiv"></div>
 								</div>
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-xv"></div>
 								</div>
 								<div className="cell">
-									<div className="seed"></div>
+									<div className="seed" id="seed-xvi"></div>
 								</div>
 							</section>
 							<section className="imprint">
@@ -218,6 +218,14 @@ const App = () => {
 					<section className="home"></section>
 				</div>
 			</section>
+			<div className="dice">
+				<div className="side"></div>
+				<div className="side"></div>
+				<div className="side"></div>
+				<div className="side"></div>
+				<div className="side"></div>
+				<div className="side"></div>
+			</div>
 		</div>
 	);
 };
