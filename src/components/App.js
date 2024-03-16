@@ -19,7 +19,7 @@ const App = () => {
 						<section className="camp">
 							<section className="window">
 								<div className="cell">
-									<button className="seed" id="seed-i"></button>
+									<button className="seed opening-move" id="seed-i"></button>
 								</div>
 								<div className="cell">
 									<button className="seed" id="seed-ii"></button>

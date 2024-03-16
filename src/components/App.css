@@ -28,6 +28,61 @@
 *:after {
 	box-sizing: border-box;
 }
+
+/* ANIMATIONS */
+
+@keyframes rolling {
+	50% {
+		transform: rotateX(455deg) rotateY(455deg);
+	}
+}
+
+#seed-i.opening-move {
+	animation: opener-i 1s forwards 0s 0 ease-in-out ;
+}
+#seed-ii.opening-move {
+	animation: opener-ii 1s forwards 0s 0 ease-in-out;
+}
+#seed-iii.opening-move {
+	animation: opener-iii 1s forwards 0s 0 ease-in-out;
+}
+#seed-iv.opening-move {
+	animation: opener-iv 1s forwards 0s 0 ease-in-out;
+}
+
+@keyframes opener-i {
+	from {
+		transform: translate(19.8vh, 0);
+	}
+	to {
+		transform: translate (0, 19.9vh);
+	}
+}
+@keyframes opener-ii {
+	from {
+		transform: translateY(-19.8vh);
+	} 
+	to {
+		transform: translateX(13.2vh)
+	}
+}
+@keyframes opener-iii {
+	from {
+		transform: translateY(-13.2vh);
+	} 
+	to {
+		transform: translateX(19.8vh)
+	}
+}
+@keyframes opener-iv {
+	from {
+		transform: translateY(-13.2vh);
+	} 
+	to {
+		transform: translateX(13.2vh)
+	}
+}
+
 .board {
 	position: relative;
 	display: flex;
@@ -343,12 +398,6 @@
 	height: 100px;
 	transform-style: preserve-3d;
 	transition: 1s ease;
-}
-
-@keyframes rolling {
-	50% {
-		transform: rotateX(455deg) rotateY(455deg);
-	}
 }
 
 [class*="side-"] {
