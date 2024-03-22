@@ -5,7 +5,15 @@ import "./App.css";
 export default class App extends Component {
 
 	state = {
+		coordinates: { x: 0, y: 0}
+	}
 
+	move({ x, y}, e) {
+		let id = (e.currentTarget.id).substring(substring.lastIndexOf("-"));
+		this.setState({
+			...this.state.coordinates,
+			coordinates: x, y
+		});
 	}
 
 	render() {
@@ -26,25 +34,29 @@ export default class App extends Component {
 								<section className="window">
 									<div className="cell">
 										<button
-											onClick={(e) => { this.move() }}
-											className="seed opening-move" id="seed-i">
+											style={{transform: `translate(${x}px, ${y}px)`}}
+											onClick={(e) => { this.move({ x: "19.8", y: "19.8"}, e) }}
+											className="seed" id="seed-i">
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											onClick={(e) => { this.move() }}
+											style={{transform: `translate(${x}px, ${y}px)`}}
+											onClick={(e) => { this.move({ x: "19.8", y: "13.2"}, e) }}
 											className="seed" id="seed-ii">
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											onClick={(e) => { this.move() }}
+											style={{transform: `translate(${x}px, ${y}px)`}}
+											onClick={(e) => { this.move({ x: "13.2", y: "19.8"}, e) }}
 											className="seed" id="seed-iii">
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											onClick={(e) => { this.move() }}
+											style={{transform: `translate(${x}px, ${y}px)`}}
+											onClick={(e) => { this.move({ x: "13.2", y: "13.2"}, e) }}
 											className="seed" id="seed-iv">
 										</button>
 									</div>
