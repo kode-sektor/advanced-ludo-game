@@ -6,14 +6,19 @@ export default class App extends Component {
 
 	state = {
 		activeId: "",
-		coordinates: { x: 0, y: 0}
+		coordinates: { x: "0", y: "0"}
+		// coordinates: { x: "19.8vh", y: "19.8vh"}
 	}
 
-	move({ x, y}, e) {
-		let id = (e.currentTarget.id).substring(substring.lastIndexOf("-"));
+	move({ x, y }, e) {
+		console.log(x, y);
+		// let id = (e.currentTarget.id).substring(e.currentTarget.lastIndexOf("-"));
 		this.setState({
-			...this.state.coordinates,
-			coordinates: x, y
+			...this.state,
+			coordinates: {
+				x, y
+			},
+			activeId: e.target.id
 		});
 	}
 
@@ -35,29 +40,27 @@ export default class App extends Component {
 								<section className="window">
 									<div className="cell">
 										<button
-											style={{transform: `translate(${x}px, ${y}px)`}}
-											onClick={(e) => { this.move({ x: "19.8", y: "19.8"}, e) }}
-											className="seed" id="seed-i">
+											style={{ transform: `translate(${this.state.coordinates.x}, ${this.state.coordinates.y})` }}
+											onClick={(e) => { 
+												this.move({x: "19.8vh", y: "19.8vh"}, e) }
+											}
+											className="seed" id="seedOne">
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											style={{transform: `translate(${x}px, ${y}px)`}}
-											onClick={(e) => { this.move({ x: "19.8", y: "13.2"}, e) }}
+											// onClick={(e) => { this.move({ coordinatesx: "19.8", coordinates.y: "13.2"}, e) }}
 											className="seed" id="seed-ii">
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											style={{transform: `translate(${x}px, ${y}px)`}}
-											onClick={(e) => { this.move({ x: "13.2", y: "19.8"}, e) }}
 											className="seed" id="seed-iii">
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											style={{transform: `translate(${x}px, ${y}px)`}}
-											onClick={(e) => { this.move({ x: "13.2", y: "13.2"}, e) }}
+											// onClick={(e) => { this.move({ coordinatesx: "13.2", coordinates.y: "13.2"}, e) }}
 											className="seed" id="seed-iv">
 										</button>
 									</div>
