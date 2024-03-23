@@ -5,6 +5,7 @@ import "./App.css";
 export default class App extends Component {
 
 	state = {
+		activeId: "",
 		coordinates: { x: 0, y: 0}
 	}
 
