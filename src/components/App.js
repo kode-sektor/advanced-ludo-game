@@ -12,14 +12,28 @@ export default class App extends Component {
 
 	move({ x, y }, e) {
 		console.log(x, y);
+		const id = (e.currentTarget.id);
 		// let id = (e.currentTarget.id).substring(e.currentTarget.lastIndexOf("-"));
-		this.setState({
-			...this.state,
-			coordinates: {
-				x, y
-			},
-			activeId: e.target.id
-		});
+
+		const initMove = (counter, displacement, dir) => {
+			dir = (displacement === "object") ? "diagonal" : dir;
+			if (counter < 2) {
+				setTimeout(() => {
+					this.setState({
+						...this.state,
+						coordinates: {
+							...this.state.coordinates,
+							x: dir === "diagonal" ? displacement.x : dir==="vert" ? displacement : this.state.coordinates.x,
+							y: dir === "diagonal" ? displacement.y : dir==="horiz" ? displacement : this.state.coordinates.y
+						},
+						activeId: counter===0 ? id : this.state.activeId
+					});
+					counter++;
+					initMove(counter, x, "vert");
+				}, 2300)
+			}
+		}
+		initMove(0 , y, "horiz");
 	}
 
 	render() {
