@@ -1,39 +1,76 @@
 import React, { Component } from "react";
 
 import "./App.css";
+import { players } from "./data/players.js";
 
 export default class App extends Component {
 
 	state = {
+		players : players,
 		activeId: "",
-		coordinates: { x: "0", y: "0"}
+		inMotion: false,
+		coordinates: { x: 0, y: 0}
 		// coordinates: { x: "19.8vh", y: "19.8vh"}
 	}
 
+	direction = () => {
+
+	}
+
+	updatePosition = (id, diceVal) => {
+		// Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
+		// New dice value will add to previous seed position for each seed while taking care of error that may
+		// arise from addition with null
+		this.setState({
+			...this.state,
+			players: {
+				...this.state.players,
+				[`${id}`]: {
+					cell: this.state.players[`${id}`].cell === null ? diceVal : this.state.players[`${id}`].cell + diceVal
+				}
+			}
+		});
+	}
+
+	randomDice = () => {
+		const diceValues = [];
+		for (let dicethrow = 0; dicethrow < 2; dicethrow++) {
+			diceValues.push(Math.round(Math.random() * 15));	// Large number for testing purpose
+		}
+		return diceValues;
+	};
+
 	move({ x, y }, e) {
-		console.log(x, y);
 		const id = (e.currentTarget.id);
-		// let id = (e.currentTarget.id).substring(e.currentTarget.lastIndexOf("-"));
+
+		let dieVal = this.randomDice();	// get dice Value
+		dieVal = dieVal[0];	// for testing purpose, get 1 die Value
+		console.log(dieVal);
+		this.updatePosition(id, dieVal);	// Update cell position
 
 		const initMove = (counter, displacement, dir) => {
-			dir = (displacement === "object") ? "diagonal" : dir;
+			// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
+			dir = (displacement==="object") ? "diagonal" : dir;	
+			console.log(dir);
+
 			if (counter < 2) {
 				setTimeout(() => {
 					this.setState({
 						...this.state,
 						coordinates: {
 							...this.state.coordinates,
-							x: dir === "diagonal" ? displacement.x : dir==="vert" ? displacement : this.state.coordinates.x,
-							y: dir === "diagonal" ? displacement.y : dir==="horiz" ? displacement : this.state.coordinates.y
+							x: dir === "diagonal" ? this.state.coordinates.x + displacement.x : dir === "horiz" ? this.state.coordinates.x + displacement : this.state.coordinates.x,
+							y: dir === "diagonal" ? this.state.coordinates.y + displacement.y : dir === "vert" ? this.state.coordinates.y + displacement : this.state.coordinates.y
 						},
-						activeId: counter===0 ? id : this.state.activeId
+						activeId: counter === 0 ? id : this.state.activeId,	// select seed to move
+						inMotion: counter === 1 ? false : true    // higher z-index when seed is in motion
 					});
 					counter++;
-					initMove(counter, x, "vert");
-				}, 2300)
+					initMove(counter, x, "horiz");
+				}, counter === 0 ? 10 : 500);	// avoid setTimeout's first delay, then match transition's duration in css
 			}
 		}
-		initMove(0 , y, "horiz");
+		initMove(0 , y, "vert");
 	}
 
 	render() {
@@ -54,11 +91,11 @@ export default class App extends Component {
 								<section className="window">
 									<div className="cell">
 										<button
-											style={{ transform: `translate(${this.state.coordinates.x}, ${this.state.coordinates.y})` }}
+											style={{ transform: this.state.activeId === "seedOne" && `translate(${this.state.coordinates.x}vh, ${this.state.coordinates.y}vh)` }}
 											onClick={(e) => { 
-												this.move({x: "19.8vh", y: "19.8vh"}, e) }
+												this.move({x: 19.8, y: 19.8}, e) }
 											}
-											className="seed" id="seedOne">
+											className={this.state.inMotion ? "moving seed" : "seed"} id="seedOne">
 										</button>
 									</div>
 									<div className="cell">

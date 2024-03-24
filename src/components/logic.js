@@ -1,7 +1,7 @@
 
 const randomDice = () => {
 	const diceValues = [];
-	for (dicethrow = 0; dicethrow < 2; dicethrow++) {
+	for (let dicethrow = 0; dicethrow < 2; dicethrow++) {
 		diceValues.push(Math.round(Math.random() * 5));
 	}
 };

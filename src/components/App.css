@@ -337,6 +337,7 @@
 	border: none;
 	z-index: 15;
 	cursor: pointer;
+	transition: transform .5s ease-in;
 }
 .seed:before {
 	content: "";
@@ -363,6 +364,9 @@
 		rgba(255, 255, 255, 0) 100%
 	);
 	transform: rotate(-18deg);
+}
+.moving.seed {
+	z-index: 23;
 }
 .home-one .seed:before {
 	background: var(--seed-gold);

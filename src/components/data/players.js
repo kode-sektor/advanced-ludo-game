@@ -1,4 +1,4 @@
-export const Players = {
+export const players = {
 	player: {
 		childBase: ["baseOne", "baseTwo"]
 	},
@@ -18,51 +18,51 @@ export const Players = {
 		seeds: ["seedThirteen", "seedFourteen", "seedFifteen", "seedSixteen"]
 	},
 	seedOne: {
-		cell: ""
+		cell: null
 	},
 	seedTwo: {
-		cell: ""
+		cell: null
 	},
 	seedThree: {
-		cell: ""
+		cell: null
 	},
 	seedFour: {
-		cell: ""
+		cell: null
 	},
 	seedFive: {
-		cell: ""
+		cell: null
 	},
 	seedSix: {
-		cell: ""
+		cell: null
 	},
 	seedSeven: {
-		cell: ""
+		cell: null
 	},
 	seedEight: {
-		cell: ""
+		cell: null
 	},
 	seedNine: {
-		cell: ""
+		cell: null
 	},
 	seedTen: {
-		cell: ""
+		cell: null
 	},
 	seedEleven: {
-		cell: ""
+		cell: null
 	},
 	seedTwelve: {
-		cell: ""
+		cell: null
 	},
 	seedThirteen: {
-		cell: ""
+		cell: null
 	},
 	seedFourteen: {
-		cell: ""
+		cell: null
 	},
 	seedFifteen: {
-		cell: ""
+		cell: null
 	},
 	seedSixteen: {
-		cell: ""
+		cell: null
 	}
 }
