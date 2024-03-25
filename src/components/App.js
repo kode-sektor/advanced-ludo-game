@@ -13,8 +13,37 @@ export default class App extends Component {
 		// coordinates: { x: "19.8vh", y: "19.8vh"}
 	}
 
-	direction = () => {
+	turningPoints = [4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49];
 
+	direction = (cell, dieVal, id) => {
+		let start = cell;
+		let end = cell + dieVal;
+
+		let x = "";
+		let y = "";
+
+		if (this.state.players[`${id}`].cell <= 4 ||
+			((this.state.players[`${id}`].cell >= 17) && this.state.players[`${id}`].cell <= 23) ||
+			(this.state.players[`${id}`].cell >= 10 && this.state.players[`${id}`].cell <= 12)) {
+			x = this.state.players[`${id}`].coordinates.x;
+			y = -y;	// die value move
+		}
+		else if ((this.state.players[`${id}`].cell > 5 && this.state.players[`${id}`].cell <= 10) ||
+			this.state.players[`${id}`].cell > 38 && this.state.players[`${id}`].cell <= 43) {
+			x = -x;
+			y = this.state.players[`${id}`].coordinates.y;
+
+		} else if ((this.state.players[`${id}`].cell >= 12 && this.state.players[`${id}`].cell <= 17) ||
+			(this.state.players[`${id}`].cell > 23 && this.state.players[`${id}`].cell <= 25) ||
+			(this.state.players[`${id}`].cell > 30 && this.state.players[`${id}`].cell <= 36)) {
+			x = x;
+			y = this.state.players[`${id}`].coordinates.y;
+		} else if ((this.state.players[`${id}`].cell > 25 && this.state.players[`${id}`].cell <= 30) ||
+			(this.state.players[`${id}`].cell > 36 && this.state.players[`${id}`].cell <= 38) ||
+			(this.state.players[`${id}`].cell > 43 && this.state.players[`${id}`].cell <= 49)) {
+			x = this.state.players[`${id}`].coordinates.x;
+			y = y;
+		}
 	}
 
 	updatePosition = (id, diceVal) => {
@@ -29,7 +58,7 @@ export default class App extends Component {
 					cell: this.state.players[`${id}`].cell === null ? diceVal : this.state.players[`${id}`].cell + diceVal
 				}
 			}
-		});
+		})
 	}
 
 	randomDice = () => {
@@ -38,7 +67,7 @@ export default class App extends Component {
 			diceValues.push(Math.round(Math.random() * 15));	// Large number for testing purpose
 		}
 		return diceValues;
-	};
+	}
 
 	move({ x, y }, e) {
 		const id = (e.currentTarget.id);
