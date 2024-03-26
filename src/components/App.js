@@ -14,13 +14,35 @@ export default class App extends Component {
 	}
 
 	turningPoints = [4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49];
+	diagonals = [4, 17, 30, 43];
 
 	direction = (cell, dieVal, id) => {
-		let start = cell;
-		let end = cell + dieVal;
+		let startCell = cell;
+		let finalCell = cell + dieVal;
 
 		let x = "";
 		let y = "";
+
+		filterCellRange = () => {
+			let config = { startCell: 0, finalCell: 15 };
+
+			const filteredCellRange = this.turningPoints.filter((item) => {
+				return item > config.startCell && item < config.finalCell;
+			});
+			// console.log(filteredCellRange);	// [4, 10, 12]
+		}
+
+		const cellPaths = [];
+		for (let i = 0; i < filteredCellRange.length; i++) {
+			if (i === 0) {
+				cellPaths.push(filteredCellRange[i]);	// 
+			} else if (i === filteredCellRange.length - 1) {	// 4
+				cellPaths.push(finalCell - filteredCellRange[i]);	// 10 - 4, 12 - 10
+			} else {
+				filteredCellRange[i] - filteredCellRange[i - 1];	// 15 - 12
+			}
+		}
+		console.log(cellPaths); 	// [4, 6, 2, 3]
 
 		if (this.state.players[`${id}`].cell <= 4 ||
 			((this.state.players[`${id}`].cell >= 17) && this.state.players[`${id}`].cell <= 23) ||
