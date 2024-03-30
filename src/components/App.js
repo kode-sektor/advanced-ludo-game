@@ -9,7 +9,6 @@ export default class App extends Component {
 		players : players,
 		activeId: "",
 		inMotion: false,
-		coordinates: { x: 0, y: 0}
 		// coordinates: { x: "19.8vh", y: "19.8vh"}
 	}
 
@@ -99,6 +98,7 @@ export default class App extends Component {
 			players: {
 				...this.state.players,
 				[`${id}`]: {
+					...this.state.players[`${id}`],
 					cell: this.state.players[`${id}`].cell === null ? diceVal : this.state.players[`${id}`].cell + diceVal
 				}
 			}
@@ -157,27 +157,35 @@ export default class App extends Component {
 			displacement *= displacement;
 
 			this.updatePosition(id, cellPath);	// Update cell position
+			
 			if (this.northward.includes(cellPath)) {
-				x = this.state.coordinates.x;
+				x = this.state.players[id].coordinates.x;
 				y = -displacement;
 			} else if (this.southward.includes(cellPath)) {
-				x = this.state.coordinates.x;
+				x = this.state.players[id].coordinates.x;
 				y = displacement;
 			} else if (this.eastward.includes(cellPath)) {
 				x = displacement;
-				y = this.state.coordinates.y;
+				y = this.state.players[id].coordinates.y;
 			} else if (this.westward.includes(cellPath)) {
 				x = -displacement;
-				y = this.state.coordinates.y;
+				y = this.state.players[id].coordinates.y;
 			}
 
 			setTimeout(() => {
 				this.setState({
 					...this.state,
-					coordinates: {
-						...this.state.coordinates,
-						x: x,
-						y: y
+					players: {
+						...this.state.players,
+						[`${id}`]: {
+							...this.state.players[`${id}`],
+							coordinates: [
+								{
+									x: x,
+									y: y
+								}
+							]
+						}
 					},
 					activeId: counter === 0 ? id : this.state.activeId,	// select seed to move
 					inMotion: counter === 1 ? false : true    // higher z-index when seed is in motion
