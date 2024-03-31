@@ -20,7 +20,7 @@ export const players = {
 	seedOne: {
 		breakout: [{ x: 3, y: 3}],
 		coordinates: [{ x: 0, y: 0}],
-		cell: null
+		cell: 0
 	},
 	seedTwo: {
 		breakout: [{ x: 3, y: 3}],

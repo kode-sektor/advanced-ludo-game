@@ -31,12 +31,12 @@ export default class App extends Component {
 		...[...Array(36 - 30)].map((_, i) => 30 + i)
 	];
 	westward = [
-		...[...Array(10 - 5)].map((_, i) => 5 + i),
+		...[...Array(10 - 4)].map((_, i) => 4 + i),
 		...[...Array(25 - 23)].map((_, i) => 23 + i),
 		...[...Array(36 - 30)].map((_, i) => 30 + i)
 	];
 
-	calcDirection = (id, cell, dieVal, cellPaths) => {
+	fragmentMove = (id, cell, dieVal, cellPaths) => {
 		let startCell = cell;
 		let finalCell = cell + dieVal;
 		let filteredCellRange = [];
@@ -89,7 +89,7 @@ export default class App extends Component {
 		// }
 	}
 
-	updatePosition = (id, diceVal) => {
+	updatePosition = (id, diceVal, coordinates, cellPath) => {
 		// Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
 		// New dice value will add to previous seed position for each seed while taking care of error that may
 		// arise from addition with null
@@ -99,9 +99,12 @@ export default class App extends Component {
 				...this.state.players,
 				[`${id}`]: {
 					...this.state.players[`${id}`],
+					coordinates: [{ x: coordinates.x, y: coordinates.y }],
 					cell: this.state.players[`${id}`].cell === null ? diceVal : this.state.players[`${id}`].cell + diceVal
 				}
-			}
+			},
+			activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
+			inMotion: cellPath === 1 ? false : true    // higher z-index when seed is in motion
 		})
 	}
 
@@ -115,9 +118,9 @@ export default class App extends Component {
 
 	move(e) {
 		console.log(e)
-		const id = (e.currentTarget.id);
 		const cellPaths = [];
-		this.calcDirection(id, 0, 15, cellPaths);
+		const id = (e.currentTarget.id);
+		this.fragmentMove(id, 0, 15, cellPaths);
 
 		// let dieVal = this.randomDice(15, id);	// get dice Value
 		// dieVal = dieVal[0];	// for testing purpose, get 1 die Value
@@ -148,56 +151,65 @@ export default class App extends Component {
 		// }
 		// initMove(0 , y, "vert");
 		
-		const initMove = (counter, displacement, dir="") => {
-			// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
-			let x = "";
-			let y = "";
-			console.log('displacement', displacement);
+		const initMove = () => {
+			let cellPath = 0;
 
-			displacement *= displacement;
+			setInterval(() => {
+				if (cellPath < cellPaths.length) {
+					// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
+					let x = "";
+					let y = "";
 
-			this.updatePosition(id, cellPath);	// Update cell position
-			
-			if (this.northward.includes(cellPath)) {
-				x = this.state.players[id].coordinates.x;
-				y = -displacement;
-			} else if (this.southward.includes(cellPath)) {
-				x = this.state.players[id].coordinates.x;
-				y = displacement;
-			} else if (this.eastward.includes(cellPath)) {
-				x = displacement;
-				y = this.state.players[id].coordinates.y;
-			} else if (this.westward.includes(cellPath)) {
-				x = -displacement;
-				y = this.state.players[id].coordinates.y;
-			}
+					// displacement *= displacement;
+					console.log(cellPaths[cellPath])
+					if (this.northward.includes(this.state.players[`${id}`].cell)) {
+						x = this.state.players[`${id}`].coordinates[0].x;
+						y = this.state.players[`${id}`].coordinates[0].y - cellPaths[cellPath];
+						// alert("a");
+					} else if (this.southward.includes(this.state.players[`${id}`].cell)) {
+						x = this.state.players[`${id}`].coordinates[0].x;
+						y = this.state.players[`${id}`].coordinates[0].y + cellPaths[cellPath];
+						// alert("b");
+					} else if (this.eastward.includes(this.state.players[`${id}`].cell)) {
+						x = this.state.players[`${id}`].coordinates[0].x + cellPaths[cellPath];
+						y = this.state.players[`${id}`].coordinates[0].y;
+						// alert("c");
+					} else if (this.westward.includes(this.state.players[`${id}`].cell)) {
+						x = this.state.players[`${id}`].coordinates[0].x - cellPaths[cellPath];
+						y = this.state.players[`${id}`].coordinates[0].y;
+						// alert("d");
+					} else {
+						// alert("e");
+					}
 
-			setTimeout(() => {
-				this.setState({
-					...this.state,
-					players: {
-						...this.state.players,
-						[`${id}`]: {
-							...this.state.players[`${id}`],
-							coordinates: [
-								{
-									x: x,
-									y: y
-								}
-							]
-						}
-					},
-					activeId: counter === 0 ? id : this.state.activeId,	// select seed to move
-					inMotion: counter === 1 ? false : true    // higher z-index when seed is in motion
-				});
-				counter++;
-			}, counter === 10000);	// avoid setTimeout's first delay, then match transition's duration in css
+					console.log("x, y: ", x, y);
+
+					this.updatePosition(id, cellPaths[cellPath], {x, y}, cellPath);	// Update cell position
+
+					// this.setState({
+					// 	...this.state,
+					// 	players: {
+					// 		...this.state.players,
+					// 		[`${id}`]: {
+					// 			...this.state.players[`${id}`],
+					// 			coordinates: [
+					// 				{
+					// 					x: x,
+					// 					y: y
+					// 				}
+					// 			]
+					// 		}
+					// 	},
+					// 	activeId: counter === 0 ? id : this.state.activeId,	// select seed to move
+					// 	inMotion: counter === 1 ? false : true    // higher z-index when seed is in motion
+					// });
+				} else {
+					return;
+				}
+				cellPath++;
+			}, cellPath === 0 ? 2000 : 2000);	// avoid setTimeout's first delay, then match transition's duration in css
 		}
-		let cellPath = 0;
-		while (cellPath < cellPaths.length) {
-			initMove(0, cellPaths[cellPath]);
-			cellPath++;
-		};
+		initMove();
 	}
 
 	render() {
@@ -205,7 +217,7 @@ export default class App extends Component {
 			<div className="board-game">
 				<section className="board">
 					<div className="ludo">
-						<section className="base home-one">
+						<section className="base home-one" style={{ zIndex: -1}}>
 							<section className="outpost-lane">
 								<div className="cell" title="11"></div>
 								<div className="cell" title="10"></div>
@@ -218,7 +230,11 @@ export default class App extends Component {
 								<section className="window">
 									<div className="cell">
 										<button
-											style={{ transform: this.state.activeId === "seedOne" && `translate(${this.state.coordinates.x}vh, ${this.state.coordinates.y}vh)` }}
+											style={{
+												transform: this.state.activeId === "seedOne" &&
+													`translate(${this.state.players.seedOne.coordinates[0].x * 6.6}vh, 
+														${this.state.players.seedOne.coordinates[0].y * 6.6}vh)`
+											}}
 											onClick={(e) => { 
 												this.move(e) }
 											}
@@ -271,7 +287,7 @@ export default class App extends Component {
 								</section>
 							</section>
 						</section>
-						<section className="base home-two">
+						<section className="base home-two"  style={{ zIndex: "-1"}}>
 							<section className="outpost-lane">
 								<div className="cell" title="24"></div>
 								<div className="cell" title="23"></div>
