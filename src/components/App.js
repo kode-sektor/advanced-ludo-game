@@ -31,14 +31,14 @@ export default class App extends Component {
 		...[...Array(36 - 30)].map((_, i) => 30 + i)
 	];
 	westward = [
-		...[...Array(10 - 4)].map((_, i) => 4 + i),
+		...[...Array(10 - 5)].map((_, i) => 5 + i),
 		...[...Array(25 - 23)].map((_, i) => 23 + i),
 		...[...Array(36 - 30)].map((_, i) => 30 + i)
 	];
 
 	fragmentMove = (id, cell, dieVal, cellPaths) => {
-		let startCell = cell;
-		let finalCell = cell + dieVal;
+		let startCell = cell;	// 0
+		let finalCell = cell + dieVal;	// 15 
 		let filteredCellRange = [];
 
 		// let x = "";
@@ -117,7 +117,6 @@ export default class App extends Component {
 	}
 
 	move(e) {
-		console.log(e)
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
 		this.fragmentMove(id, 0, 15, cellPaths);
@@ -153,6 +152,7 @@ export default class App extends Component {
 		
 		const initMove = () => {
 			let cellPath = 0;
+			let fragmentedMove = 0;
 
 			setInterval(() => {
 				if (cellPath < cellPaths.length) {
@@ -161,30 +161,81 @@ export default class App extends Component {
 					let y = "";
 
 					// displacement *= displacement;
-					console.log(cellPaths[cellPath])
-					if (this.northward.includes(this.state.players[`${id}`].cell)) {
+					fragmentedMove = cellPaths[cellPath];
+					console.log("cell : ", this.state.players[`${id}`].cell + fragmentedMove)
+					if (this.northward.includes(this.state.players[`${id}`].cell + fragmentedMove)) {
 						x = this.state.players[`${id}`].coordinates[0].x;
 						y = this.state.players[`${id}`].coordinates[0].y - cellPaths[cellPath];
-						// alert("a");
-					} else if (this.southward.includes(this.state.players[`${id}`].cell)) {
+						alert("a");
+					} else if (this.southward.includes(this.state.players[`${id}`].cell + fragmentedMove)) {
 						x = this.state.players[`${id}`].coordinates[0].x;
 						y = this.state.players[`${id}`].coordinates[0].y + cellPaths[cellPath];
-						// alert("b");
-					} else if (this.eastward.includes(this.state.players[`${id}`].cell)) {
+						alert("b");
+					} else if (this.eastward.includes(this.state.players[`${id}`].cell + fragmentedMove)) {
 						x = this.state.players[`${id}`].coordinates[0].x + cellPaths[cellPath];
 						y = this.state.players[`${id}`].coordinates[0].y;
-						// alert("c");
-					} else if (this.westward.includes(this.state.players[`${id}`].cell)) {
+						alert("c");
+					} else if (this.westward.includes(this.state.players[`${id}`].cell + fragmentedMove)) {
 						x = this.state.players[`${id}`].coordinates[0].x - cellPaths[cellPath];
 						y = this.state.players[`${id}`].coordinates[0].y;
-						// alert("d");
+						alert("d");
 					} else {
-						// alert("e");
+						// When approaching diagonals, both x and y will advance 1 cell each
+						// This advancement requires 1 to be subtracted from the next fragmented move 
+						// values. 
+						
+						// For example, a total dice value of 15 from 6 - 0 position is broken
+						// into [4, 6, 2, 3] where each value indicates a change in direction on either
+						// x or y axis, just after 4 is a diagonal which would move both x & y by -1
+						// respectively. So that means the fragmented moves array should transform 
+						// into something like [4, [1,1], 5, 2, 3]. The next move after the diagonal
+						// should become shorn of 1.
+						
+						// If it is on the fly while looping, a check will be made for these diagonals
+						// which are 4, 17, 30 and 43 and the cell paths array 
+						console.log(cellPaths[cellPath + 1]);
+						console.log(this.state.players[`${id}`].cell + fragmentedMove);
+						if (cellPaths[cellPath + 1] > 1) {	// Next fragmented move must exist to set diagonal
+							cellPaths[cellPath + 1] = cellPaths[cellPath + 1] - 1	// Subtract 1 from next 
+							if (this.state.players[`${id}`].cell + fragmentedMove === 4) {
+								cellPaths.splice(cellPath, 0, [-1, -1]);	// [4, 6, 2, 3] to [4, [1,1], 5, 2, 3]
+								x = this.state.players[`${id}`].coordinates[0].x - 1;
+								y = this.state.players[`${id}`].coordinates[0].y - 1;
+								alert("e");
+							} else if (this.state.players[`${id}`].cell + fragmentedMove === 17) {
+								cellPaths.splice(cellPath, 0, [1, -1]);
+								x = this.state.players[`${id}`].coordinates[0].x + 1;
+								y = this.state.players[`${id}`].coordinates[0].y - 1;
+								alert("f");
+							} else if (this.state.players[`${id}`].cell + fragmentedMove === 30) {
+								cellPaths.splice(cellPath, 0, [1, 1]);
+								x = this.state.players[`${id}`].coordinates[0].x + 1;
+								y = this.state.players[`${id}`].coordinates[0].y + 1;
+								alert("g");
+							} else if (this.state.players[`${id}`].cell + fragmentedMove === 43) {
+								cellPaths.splice(cellPath, 0, [-1, 1]);
+								x = this.state.players[`${id}`].coordinates[0].x - 1;
+								y = this.state.players[`${id}`].coordinates[0].y + 1;
+								alert("h");
+							}
+							alert("h h")
+						} else {
+							// If next turn after diagonal is 1
+							// Make double confirmation it is the last fragmented move
+							if ((cellPath + 1) === (cellPaths.length - 1)) {	// [4, 1] to [4, [1, 1]]
+								cellPaths.splice(cellPaths.length - 1, 0);	// Instead of keeping a 0 move, completely remove it from loop
+								alert("i");
+							}
+							alert("j");
+						}
+						fragmentedMove = 1;	
+						alert("k");
 					}
 
 					console.log("x, y: ", x, y);
 
-					this.updatePosition(id, cellPaths[cellPath], {x, y}, cellPath);	// Update cell position
+					this.updatePosition(id, fragmentedMove, {x, y}, cellPath);	// Update cell position
+					console.log("cellPaths : ", cellPaths);
 
 					// this.setState({
 					// 	...this.state,
@@ -207,7 +258,7 @@ export default class App extends Component {
 					return;
 				}
 				cellPath++;
-			}, cellPath === 0 ? 2000 : 2000);	// avoid setTimeout's first delay, then match transition's duration in css
+			}, cellPath === 0 ? 1000 : 1000);	// avoid setTimeout's first delay, then match transition's duration in css
 		}
 		initMove();
 	}
@@ -217,7 +268,7 @@ export default class App extends Component {
 			<div className="board-game">
 				<section className="board">
 					<div className="ludo">
-						<section className="base home-one" style={{ zIndex: -1}}>
+						<section className="base home-one">
 							<section className="outpost-lane">
 								<div className="cell" title="11"></div>
 								<div className="cell" title="10"></div>
@@ -287,7 +338,7 @@ export default class App extends Component {
 								</section>
 							</section>
 						</section>
-						<section className="base home-two"  style={{ zIndex: "-1"}}>
+						<section className="base home-two">
 							<section className="outpost-lane">
 								<div className="cell" title="24"></div>
 								<div className="cell" title="23"></div>

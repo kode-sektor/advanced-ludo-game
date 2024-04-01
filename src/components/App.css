@@ -26,6 +26,8 @@
 *,
 *:before,
 *:after {
+	margin: 0;
+	padding: 0;
 	box-sizing: border-box;
 }
 
@@ -92,7 +94,6 @@
 	height: 99vh;
 	margin: auto;
 	background: inherit;
-	z-index: 2;
 	overflow: hidden;
 	box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.9);
 	/* backdrop-filter: blur(50px);
@@ -105,7 +106,6 @@
 	grid-template: repeat(15, 1fr) / repeat(15, 1fr);
 	height: inherit;
 	width: inherit;
-	z-index: 3;
 }
 .base {
 	position: relative;
@@ -113,8 +113,6 @@
 	grid-template: repeat(7, 1fr) / repeat(8, 1fr);
 	grid-row: 9 / -1;
 	grid-column: 1 / span 8;
-	backdrop-filter: blur(4px);
-	-webkit-backdrop-filter: blur(4px);
 	background: rgba(255, 255, 255, 0.52);
 	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
@@ -334,9 +332,9 @@
 	padding: 0;
 	margin: 0;
 	border: none;
-	z-index: 15;
 	cursor: pointer;
 	transition: transform .5s ease-in;
+	z-index: 1;
 }
 .seed:before {
 	content: "";
