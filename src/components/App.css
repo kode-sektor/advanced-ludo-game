@@ -332,7 +332,7 @@
 	margin: 0;
 	border: none;
 	cursor: pointer;
-	transition: transform .5s ease-in;
+	transition: transform .5s ease;
 	z-index: 1;
 }
 .seed:before {

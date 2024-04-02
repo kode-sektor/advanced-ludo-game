@@ -9,11 +9,12 @@ export default class App extends Component {
 		players : players,
 		activeId: "",
 		inMotion: false,
+		transitionDuration: 0,
 	}
 
 	turningPoints = [0, 4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49];
 	diagonals = [4, 17, 30, 43];
-	cellSpeed = 0.16 	// 8 seconds alloted for a complete trip across cellpath (of 50 cells)
+	cellSpeed = 0.2 	// 10 seconds alloted for a complete trip across cellpath (of 50 cells)
 
 	northward = [
 		...[...Array(4)].map((_, i) => 0 + i),
@@ -44,8 +45,7 @@ export default class App extends Component {
 		((filterCellRange) => {
 			filteredCellRange = this.turningPoints.filter((item) => {
 				return item > startCell && item < finalCell;
-			});
-			// console.log(filteredCellRange);	// [4, 10, 12]
+			}); // [4, 10, 12]
 		})()
 
 		for (let i = 0; i <= filteredCellRange.length; i++) {
@@ -61,7 +61,7 @@ export default class App extends Component {
 		return cellPaths;	// [0, 4, 6, 2, 3]
 	}
 
-	updatePosition = (id, diceVal, coordinates, cellPath) => {
+	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
 		// Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
 		// New dice value will add to previous seed position for each seed while taking care of error that may
 		// arise from addition with null
@@ -76,7 +76,8 @@ export default class App extends Component {
 				}
 			},
 			activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
-			inMotion: cellPath === 1 ? false : true    // higher z-index when seed is in motion
+			inMotion: cellPath === 1 ? false : true,    // higher z-index when seed is in motion
+			transitionDuration : duration 
 		})
 	}
 
@@ -91,19 +92,119 @@ export default class App extends Component {
 	move(e) {
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
-		this.fragmentMove(id, 0, 15, cellPaths);
+		// Only fragment total moves when not breakingaway
+		this.state.players[`${id}`].cell !== null && this.fragmentMove(id, 0, 15, cellPaths);
+
+		let cellPath = 0;
+		let timer = 0;
+		let fragmentedMove = 0;
 
 		const initMove = (breakout) => {
-			let cellPath = 0;
-			let fragmentedMove = 0;
 
-			const segmentedMoves = setInterval(() => {
-				// Breakout loop has to be looped over by 1 length less than array length because
-				// the method in the loop works with both the current and next loop
-				// However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
-				const popCellPaths = (breakout === null) ? 0 : 1;
-				if (cellPath < cellPaths.length - popCellPaths) {
-					// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
+			// const segmentedMoves = setInterval(() => {
+			// 	console.log(timer)
+			// 	// Breakout loop has to be looped over by 1 length less than array length because
+			// 	// the method in the loop works with both the current and next loop
+			// 	// However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
+			// 	const popCellPaths = (breakout === null) ? 0 : 1;
+			// 	if (cellPath < cellPaths.length - popCellPaths) {
+			// 		// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
+			// 		let x = "";
+			// 		let y = "";
+
+			// 		if (breakout === null) {	// Tackle breakout move on '6' roll
+			// 			if (cellPath === 0) {	// First move seed on y-axis
+			// 				x = 0;
+			// 				y = this.state.players[`${id}`].breakout[0].y;
+			// 				timer = y * this.cellSpeed;
+			// 			} else {	// then move on x-axis to 6-0 position
+			// 				x = this.state.players[`${id}`].breakout[0].x;
+			// 				y = this.state.players[`${id}`].breakout[0].y;
+			// 				timer = x * this.cellSpeed;
+			// 			}
+			// 			console.log(timer)
+			// 		} else {
+			// 			fragmentedMove = cellPaths[cellPath + 1];
+			// 			// console.log("fragmentedMove :", fragmentedMove);
+			// 			// console.log("cell : ", this.state.players[`${id}`].cell)
+			// 			if (this.northward.includes(this.state.players[`${id}`].cell)) {
+			// 				x = this.state.players[`${id}`].coordinates[0].x;
+			// 				y = this.state.players[`${id}`].coordinates[0].y - fragmentedMove;
+			// 			} else if (this.southward.includes(this.state.players[`${id}`].cell)) {
+			// 				x = this.state.players[`${id}`].coordinates[0].x;
+			// 				y = this.state.players[`${id}`].coordinates[0].y + fragmentedMove;
+			// 			} else if (this.eastward.includes(this.state.players[`${id}`].cell)) {
+			// 				x = this.state.players[`${id}`].coordinates[0].x + fragmentedMove;
+			// 				y = this.state.players[`${id}`].coordinates[0].y;
+			// 			} else if (this.westward.includes(this.state.players[`${id}`].cell)) {
+			// 				x = this.state.players[`${id}`].coordinates[0].x - fragmentedMove;
+			// 				y = this.state.players[`${id}`].coordinates[0].y;
+			// 			} else {
+			// 				// When approaching diagonals, both x and y will advance 1 cell each
+			// 				// This advancement requires 1 to be subtracted from the next fragmented move 
+			// 				// values. 
+							
+			// 				// For example, a total dice value of 15 from 6 - 0 position is broken
+			// 				// into [4, 6, 2, 3] where each value indicates a change in direction on either
+			// 				// x or y axis, just after 4 is a diagonal which would move both x & y by -1
+			// 				// respectively. So that means the fragmented moves array should transform 
+			// 				// into something like [4, [1,1], 5, 2, 3]. The next move after the diagonal
+			// 				// should become shorn of 1.
+							
+			// 				// If it is on the fly while looping, a check will be made for these diagonals
+			// 				// which are 4, 17, 30 and 43 and the cell paths array 
+			// 				// console.log("this.state.players[`${id}`].cell + fragmentedMove :", this.state.players[`${id}`].cell + fragmentedMove);
+			// 				if (cellPaths[cellPath + 1] > 1) {	// Next fragmented move must exist to set diagonal
+			// 					cellPaths[cellPath + 1] = cellPaths[cellPath + 1] - 1	// Subtract 1 from next 
+			// 					if (this.state.players[`${id}`].cell === 4) {
+			// 						cellPaths.splice(cellPath + 1, 0, [-1, -1]);	// [4, 6, 2, 3] to [4, [1,1], 5, 2, 3]
+			// 						x = this.state.players[`${id}`].coordinates[0].x - 1;
+			// 						y = this.state.players[`${id}`].coordinates[0].y - 1;
+			// 					} else if (this.state.players[`${id}`].cell === 17) {
+			// 						cellPaths.splice(cellPath + 1, 0, [1, -1]);
+			// 						x = this.state.players[`${id}`].coordinates[0].x + 1;
+			// 						y = this.state.players[`${id}`].coordinates[0].y - 1;
+			// 					} else if (this.state.players[`${id}`].cell === 30) {
+			// 						cellPaths.splice(cellPath + 1, 0, [1, 1]);
+			// 						x = this.state.players[`${id}`].coordinates[0].x + 1;
+			// 						y = this.state.players[`${id}`].coordinates[0].y + 1;
+			// 					} else if (this.state.players[`${id}`].cell === 43) {
+			// 						cellPaths.splice(cellPath + 1, 0, [-1, 1]);
+			// 						x = this.state.players[`${id}`].coordinates[0].x - 1;
+			// 						y = this.state.players[`${id}`].coordinates[0].y + 1;
+			// 					}
+			// 				} else {
+			// 					// If next turn after diagonal is 1
+			// 					// Make double confirmation it is the last fragmented move
+			// 					if ((cellPath + 1) === (cellPaths.length - 1)) {	// [4, 1] to [4, [1, 1]]
+			// 						cellPaths.splice(cellPaths.length - 1, 0);	// Instead of keeping a 0 move, completely remove it from loop
+			// 					}
+			// 				}
+			// 				fragmentedMove = 1;	// Add 1 cell distance if on diagonal
+			// 			}
+			// 			timer = fragmentedMove * this.cellSpeed
+			// 		}
+			// 		this.updatePosition(id, fragmentedMove, { x, y }, cellPath);	// Update cell position
+			// 		// console.log("cellPaths : ", JSON.stringify(cellPaths));
+			// 	} else {
+			// 		clearInterval(segmentedMoves);
+			// 	}
+			// 	cellPath++;
+			// 	console.log("timer :", timer)
+			// 	timer = 500;
+			// }, 500);	// avoid setTimeout's first delay, then match transition's duration in css
+
+			
+			// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
+
+
+			// Breakout loop has to be looped over by 1 length less than array length because
+			// the method in the loop works with both the current and next loop
+			// However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
+			const popCellPaths = (breakout === null) ? 0 : 1;
+			let combinedPaths = (breakout === null) ? 2 : (cellPaths.length - 1)	
+			if (cellPath < combinedPaths) {
+				setTimeout(() => {
 					let x = "";
 					let y = "";
 
@@ -111,9 +212,11 @@ export default class App extends Component {
 						if (cellPath === 0) {	// First move seed on y-axis
 							x = 0;
 							y = this.state.players[`${id}`].breakout[0].y;
+							timer = y * this.cellSpeed;
 						} else {	// then move on x-axis to 6-0 position
 							x = this.state.players[`${id}`].breakout[0].x;
 							y = this.state.players[`${id}`].breakout[0].y;
+							timer = x * this.cellSpeed;
 						}
 					} else {
 						fragmentedMove = cellPaths[cellPath + 1];
@@ -174,14 +277,14 @@ export default class App extends Component {
 							}
 							fragmentedMove = 1;	// Add 1 cell distance if on diagonal
 						}
+						timer = fragmentedMove * this.cellSpeed
 					}
-					this.updatePosition(id, fragmentedMove, {x, y}, cellPath);	// Update cell position
+					this.updatePosition(id, fragmentedMove, { x, y }, cellPath, timer);	// Update cell position
 					// console.log("cellPaths : ", JSON.stringify(cellPaths));
-				} else {
-					clearInterval(segmentedMoves);
-				}
-				cellPath++;
-			}, fragmentedMove === this.cellSpeed);	// avoid setTimeout's first delay, then match transition's duration in css
+					cellPath++;
+					initMove(this.state.players[`${id}`].cell);
+				}, timer * 1000)
+			}
 		}
 		initMove(this.state.players[`${id}`].cell);
 	}
@@ -207,7 +310,8 @@ export default class App extends Component {
 											style={{
 												transform: this.state.activeId === "seedOne" &&
 													`translate(${this.state.players.seedOne.coordinates[0].x * 6.6}vh, 
-														${this.state.players.seedOne.coordinates[0].y * 6.6}vh)`
+														${this.state.players.seedOne.coordinates[0].y * 6.6}vh)`,
+												transitionDuration: this.state.transitionDuration + "s"
 											}}
 											onClick={(e) => { 
 												this.move(e) }
