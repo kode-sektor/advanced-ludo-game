@@ -308,7 +308,6 @@
 	display: inline-block;
 	bottom: 13.8vh;
 	left: 40%;
-	z-index: 1;
 	opacity: 0.7;
 }
 .lair:after {

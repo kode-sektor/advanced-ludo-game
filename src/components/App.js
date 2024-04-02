@@ -13,6 +13,7 @@ export default class App extends Component {
 
 	turningPoints = [0, 4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49];
 	diagonals = [4, 17, 30, 43];
+	cellSpeed = 0.16 	// 8 seconds alloted for a complete trip across cellpath (of 50 cells)
 
 	northward = [
 		...[...Array(4)].map((_, i) => 0 + i),
@@ -180,7 +181,7 @@ export default class App extends Component {
 					clearInterval(segmentedMoves);
 				}
 				cellPath++;
-			},  500);	// avoid setTimeout's first delay, then match transition's duration in css
+			}, fragmentedMove === this.cellSpeed);	// avoid setTimeout's first delay, then match transition's duration in css
 		}
 		initMove(this.state.players[`${id}`].cell);
 	}
