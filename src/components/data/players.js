@@ -20,20 +20,20 @@ export const players = {
 	seedOne: {
 		breakout: [{ x: 3, y: 3}],
 		coordinates: [{ x: 0, y: 0}],
-		cell: 0
+		cell: null
 	},
 	seedTwo: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 2, y: 3}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
 	seedThree: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 3, y: 2}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
 	seedFour: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 2, y: 2}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
@@ -43,17 +43,17 @@ export const players = {
 		cell: null
 	},
 	seedSix: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 2, y: 3}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
 	seedSeven: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 3, y: 2}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
 	seedEight: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 2, y: 2}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
@@ -63,17 +63,17 @@ export const players = {
 		cell: null
 	},
 	seedTen: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 2, y: 3}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
 	seedEleven: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 3, y: 2}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
 	seedTwelve: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 2, y: 2}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
@@ -83,17 +83,17 @@ export const players = {
 		cell: null
 	},
 	seedFourteen: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 2, y: 3}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
 	seedFifteen: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 3, y: 2}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	},
 	seedSixteen: {
-		breakout: [{ x: 3, y: 3}],
+		breakout: [{ x: 2, y: 2}],
 		coordinates: [{ x: 0, y: 0}],
 		cell: null
 	}

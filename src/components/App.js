@@ -9,10 +9,9 @@ export default class App extends Component {
 		players : players,
 		activeId: "",
 		inMotion: false,
-		// coordinates: { x: "19.8vh", y: "19.8vh"}
 	}
 
-	turningPoints = [4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49];
+	turningPoints = [0, 4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49];
 	diagonals = [4, 17, 30, 43];
 
 	northward = [
@@ -41,52 +40,24 @@ export default class App extends Component {
 		let finalCell = cell + dieVal;	// 15 
 		let filteredCellRange = [];
 
-		// let x = "";
-		// let y = "";
-
-		const filterCellRange = () => {
+		((filterCellRange) => {
 			filteredCellRange = this.turningPoints.filter((item) => {
 				return item > startCell && item < finalCell;
 			});
-			console.log(filteredCellRange);	// [4, 10, 12]
-		}
-
-		filterCellRange();
+			// console.log(filteredCellRange);	// [4, 10, 12]
+		})()
 
 		for (let i = 0; i <= filteredCellRange.length; i++) {
 			if (i === 0) {
 				cellPaths.push(filteredCellRange[i]);	// 
 			} else if (i === filteredCellRange.length) {	// 4
 				cellPaths.push(finalCell - filteredCellRange[i - 1]);	// 15 - 12
+				cellPaths.unshift(startCell);	// 0
 			} else {
 				cellPaths.push(filteredCellRange[i] - filteredCellRange[i - 1]);	// 10 - 4, 12 - 10
 			}
 		}
-		console.log(cellPaths); 	// [4, 6, 2, 3]
-		return cellPaths;
-
-		// if (this.state.players[`${id}`].cell <= 4 ||
-		// 	((this.state.players[`${id}`].cell >= 17) && this.state.players[`${id}`].cell <= 23) ||
-		// 	(this.state.players[`${id}`].cell >= 10 && this.state.players[`${id}`].cell <= 12)) {
-		// 	x = this.state.players[`${id}`].coordinates.x;
-		// 	y = -y;	// die value move
-		// }
-		// else if ((this.state.players[`${id}`].cell > 5 && this.state.players[`${id}`].cell <= 10) ||
-		// 	this.state.players[`${id}`].cell > 38 && this.state.players[`${id}`].cell <= 43) {
-		// 	x = -x;
-		// 	y = this.state.players[`${id}`].coordinates.y;
-
-		// } else if ((this.state.players[`${id}`].cell >= 12 && this.state.players[`${id}`].cell <= 17) ||
-		// 	(this.state.players[`${id}`].cell > 23 && this.state.players[`${id}`].cell <= 25) ||
-		// 	(this.state.players[`${id}`].cell > 30 && this.state.players[`${id}`].cell <= 36)) {
-		// 	x = x;
-		// 	y = this.state.players[`${id}`].coordinates.y;
-		// } else if ((this.state.players[`${id}`].cell > 25 && this.state.players[`${id}`].cell <= 30) ||
-		// 	(this.state.players[`${id}`].cell > 36 && this.state.players[`${id}`].cell <= 38) ||
-		// 	(this.state.players[`${id}`].cell > 43 && this.state.players[`${id}`].cell <= 49)) {
-		// 	x = this.state.players[`${id}`].coordinates.x;
-		// 	y = y;
-		// }
+		return cellPaths;	// [0, 4, 6, 2, 3]
 	}
 
 	updatePosition = (id, diceVal, coordinates, cellPath) => {
@@ -121,146 +92,97 @@ export default class App extends Component {
 		const id = (e.currentTarget.id);
 		this.fragmentMove(id, 0, 15, cellPaths);
 
-		// let dieVal = this.randomDice(15, id);	// get dice Value
-		// dieVal = dieVal[0];	// for testing purpose, get 1 die Value
-		// console.log(dieVal);
-		// this.updatePosition(id, dieVal);	// Update cell position
-
-		// const initMove = (counter, displacement, dir) => {
-		// 	// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
-		// 	dir = (displacement==="object") ? "diagonal" : dir;	
-		// 	console.log(dir);
-
-		// 	if (counter < 2) {
-		// 		setTimeout(() => {
-		// 			this.setState({
-		// 				...this.state,
-		// 				coordinates: {
-		// 					...this.state.coordinates,
-		// 					x: dir === "diagonal" ? this.state.coordinates.x + displacement.x : dir === "horiz" ? this.state.coordinates.x + displacement : this.state.coordinates.x,
-		// 					y: dir === "diagonal" ? this.state.coordinates.y + displacement.y : dir === "vert" ? this.state.coordinates.y + displacement : this.state.coordinates.y
-		// 				},
-		// 				activeId: counter === 0 ? id : this.state.activeId,	// select seed to move
-		// 				inMotion: counter === 1 ? false : true    // higher z-index when seed is in motion
-		// 			});
-		// 			counter++;
-		// 			initMove(counter, x, "horiz");
-		// 		}, counter === 0 ? 10 : 500);	// avoid setTimeout's first delay, then match transition's duration in css
-		// 	}
-		// }
-		// initMove(0 , y, "vert");
-		
-		const initMove = () => {
+		const initMove = (breakout) => {
 			let cellPath = 0;
 			let fragmentedMove = 0;
 
-			setInterval(() => {
-				if (cellPath < cellPaths.length) {
+			const segmentedMoves = setInterval(() => {
+				// Breakout loop has to be looped over by 1 length less than array length because
+				// the method in the loop works with both the current and next loop
+				// However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
+				const popCellPaths = (breakout === null) ? 0 : 1;
+				if (cellPath < cellPaths.length - popCellPaths) {
 					// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
 					let x = "";
 					let y = "";
 
-					// displacement *= displacement;
-					fragmentedMove = cellPaths[cellPath];
-					console.log("cell : ", this.state.players[`${id}`].cell + fragmentedMove)
-					if (this.northward.includes(this.state.players[`${id}`].cell + fragmentedMove)) {
-						x = this.state.players[`${id}`].coordinates[0].x;
-						y = this.state.players[`${id}`].coordinates[0].y - cellPaths[cellPath];
-						alert("a");
-					} else if (this.southward.includes(this.state.players[`${id}`].cell + fragmentedMove)) {
-						x = this.state.players[`${id}`].coordinates[0].x;
-						y = this.state.players[`${id}`].coordinates[0].y + cellPaths[cellPath];
-						alert("b");
-					} else if (this.eastward.includes(this.state.players[`${id}`].cell + fragmentedMove)) {
-						x = this.state.players[`${id}`].coordinates[0].x + cellPaths[cellPath];
-						y = this.state.players[`${id}`].coordinates[0].y;
-						alert("c");
-					} else if (this.westward.includes(this.state.players[`${id}`].cell + fragmentedMove)) {
-						x = this.state.players[`${id}`].coordinates[0].x - cellPaths[cellPath];
-						y = this.state.players[`${id}`].coordinates[0].y;
-						alert("d");
-					} else {
-						// When approaching diagonals, both x and y will advance 1 cell each
-						// This advancement requires 1 to be subtracted from the next fragmented move 
-						// values. 
-						
-						// For example, a total dice value of 15 from 6 - 0 position is broken
-						// into [4, 6, 2, 3] where each value indicates a change in direction on either
-						// x or y axis, just after 4 is a diagonal which would move both x & y by -1
-						// respectively. So that means the fragmented moves array should transform 
-						// into something like [4, [1,1], 5, 2, 3]. The next move after the diagonal
-						// should become shorn of 1.
-						
-						// If it is on the fly while looping, a check will be made for these diagonals
-						// which are 4, 17, 30 and 43 and the cell paths array 
-						console.log(cellPaths[cellPath + 1]);
-						console.log(this.state.players[`${id}`].cell + fragmentedMove);
-						if (cellPaths[cellPath + 1] > 1) {	// Next fragmented move must exist to set diagonal
-							cellPaths[cellPath + 1] = cellPaths[cellPath + 1] - 1	// Subtract 1 from next 
-							if (this.state.players[`${id}`].cell + fragmentedMove === 4) {
-								cellPaths.splice(cellPath, 0, [-1, -1]);	// [4, 6, 2, 3] to [4, [1,1], 5, 2, 3]
-								x = this.state.players[`${id}`].coordinates[0].x - 1;
-								y = this.state.players[`${id}`].coordinates[0].y - 1;
-								alert("e");
-							} else if (this.state.players[`${id}`].cell + fragmentedMove === 17) {
-								cellPaths.splice(cellPath, 0, [1, -1]);
-								x = this.state.players[`${id}`].coordinates[0].x + 1;
-								y = this.state.players[`${id}`].coordinates[0].y - 1;
-								alert("f");
-							} else if (this.state.players[`${id}`].cell + fragmentedMove === 30) {
-								cellPaths.splice(cellPath, 0, [1, 1]);
-								x = this.state.players[`${id}`].coordinates[0].x + 1;
-								y = this.state.players[`${id}`].coordinates[0].y + 1;
-								alert("g");
-							} else if (this.state.players[`${id}`].cell + fragmentedMove === 43) {
-								cellPaths.splice(cellPath, 0, [-1, 1]);
-								x = this.state.players[`${id}`].coordinates[0].x - 1;
-								y = this.state.players[`${id}`].coordinates[0].y + 1;
-								alert("h");
-							}
-							alert("h h")
-						} else {
-							// If next turn after diagonal is 1
-							// Make double confirmation it is the last fragmented move
-							if ((cellPath + 1) === (cellPaths.length - 1)) {	// [4, 1] to [4, [1, 1]]
-								cellPaths.splice(cellPaths.length - 1, 0);	// Instead of keeping a 0 move, completely remove it from loop
-								alert("i");
-							}
-							alert("j");
+					if (breakout === null) {	// Tackle breakout move on '6' roll
+						if (cellPath === 0) {	// First move seed on y-axis
+							x = 0;
+							y = this.state.players[`${id}`].breakout[0].y;
+						} else {	// then move on x-axis to 6-0 position
+							x = this.state.players[`${id}`].breakout[0].x;
+							y = this.state.players[`${id}`].breakout[0].y;
 						}
-						fragmentedMove = 1;	
-						alert("k");
+					} else {
+						fragmentedMove = cellPaths[cellPath + 1];
+						// console.log("fragmentedMove :", fragmentedMove);
+						// console.log("cell : ", this.state.players[`${id}`].cell)
+						if (this.northward.includes(this.state.players[`${id}`].cell)) {
+							x = this.state.players[`${id}`].coordinates[0].x;
+							y = this.state.players[`${id}`].coordinates[0].y - fragmentedMove;
+						} else if (this.southward.includes(this.state.players[`${id}`].cell)) {
+							x = this.state.players[`${id}`].coordinates[0].x;
+							y = this.state.players[`${id}`].coordinates[0].y + fragmentedMove;
+						} else if (this.eastward.includes(this.state.players[`${id}`].cell)) {
+							x = this.state.players[`${id}`].coordinates[0].x + fragmentedMove;
+							y = this.state.players[`${id}`].coordinates[0].y;
+						} else if (this.westward.includes(this.state.players[`${id}`].cell)) {
+							x = this.state.players[`${id}`].coordinates[0].x - fragmentedMove;
+							y = this.state.players[`${id}`].coordinates[0].y;
+						} else {
+							// When approaching diagonals, both x and y will advance 1 cell each
+							// This advancement requires 1 to be subtracted from the next fragmented move 
+							// values. 
+							
+							// For example, a total dice value of 15 from 6 - 0 position is broken
+							// into [4, 6, 2, 3] where each value indicates a change in direction on either
+							// x or y axis, just after 4 is a diagonal which would move both x & y by -1
+							// respectively. So that means the fragmented moves array should transform 
+							// into something like [4, [1,1], 5, 2, 3]. The next move after the diagonal
+							// should become shorn of 1.
+							
+							// If it is on the fly while looping, a check will be made for these diagonals
+							// which are 4, 17, 30 and 43 and the cell paths array 
+							// console.log("this.state.players[`${id}`].cell + fragmentedMove :", this.state.players[`${id}`].cell + fragmentedMove);
+							if (cellPaths[cellPath + 1] > 1) {	// Next fragmented move must exist to set diagonal
+								cellPaths[cellPath + 1] = cellPaths[cellPath + 1] - 1	// Subtract 1 from next 
+								if (this.state.players[`${id}`].cell === 4) {
+									cellPaths.splice(cellPath + 1, 0, [-1, -1]);	// [4, 6, 2, 3] to [4, [1,1], 5, 2, 3]
+									x = this.state.players[`${id}`].coordinates[0].x - 1;
+									y = this.state.players[`${id}`].coordinates[0].y - 1;
+								} else if (this.state.players[`${id}`].cell === 17) {
+									cellPaths.splice(cellPath + 1, 0, [1, -1]);
+									x = this.state.players[`${id}`].coordinates[0].x + 1;
+									y = this.state.players[`${id}`].coordinates[0].y - 1;
+								} else if (this.state.players[`${id}`].cell === 30) {
+									cellPaths.splice(cellPath + 1, 0, [1, 1]);
+									x = this.state.players[`${id}`].coordinates[0].x + 1;
+									y = this.state.players[`${id}`].coordinates[0].y + 1;
+								} else if (this.state.players[`${id}`].cell === 43) {
+									cellPaths.splice(cellPath + 1, 0, [-1, 1]);
+									x = this.state.players[`${id}`].coordinates[0].x - 1;
+									y = this.state.players[`${id}`].coordinates[0].y + 1;
+								}
+							} else {
+								// If next turn after diagonal is 1
+								// Make double confirmation it is the last fragmented move
+								if ((cellPath + 1) === (cellPaths.length - 1)) {	// [4, 1] to [4, [1, 1]]
+									cellPaths.splice(cellPaths.length - 1, 0);	// Instead of keeping a 0 move, completely remove it from loop
+								}
+							}
+							fragmentedMove = 1;	// Add 1 cell distance if on diagonal
+						}
 					}
-
-					console.log("x, y: ", x, y);
-
 					this.updatePosition(id, fragmentedMove, {x, y}, cellPath);	// Update cell position
-					console.log("cellPaths : ", cellPaths);
-
-					// this.setState({
-					// 	...this.state,
-					// 	players: {
-					// 		...this.state.players,
-					// 		[`${id}`]: {
-					// 			...this.state.players[`${id}`],
-					// 			coordinates: [
-					// 				{
-					// 					x: x,
-					// 					y: y
-					// 				}
-					// 			]
-					// 		}
-					// 	},
-					// 	activeId: counter === 0 ? id : this.state.activeId,	// select seed to move
-					// 	inMotion: counter === 1 ? false : true    // higher z-index when seed is in motion
-					// });
+					// console.log("cellPaths : ", JSON.stringify(cellPaths));
 				} else {
-					return;
+					clearInterval(segmentedMoves);
 				}
 				cellPath++;
-			}, cellPath === 0 ? 1000 : 1000);	// avoid setTimeout's first delay, then match transition's duration in css
+			},  500);	// avoid setTimeout's first delay, then match transition's duration in css
 		}
-		initMove();
+		initMove(this.state.players[`${id}`].cell);
 	}
 
 	render() {
