@@ -12,34 +12,37 @@ export default class App extends Component {
 		transitionDuration: 0,
 	}
 
-	turningPoints = [0, 4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49];
+	turningPoints = [0, 4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49, 50];
 	diagonals = [4, 17, 30, 43];
 	cellSpeed = 0.2 	// 10 seconds alloted for a complete trip across cellpath (of 50 cells)
 
 	northward = [
 		...[...Array(4)].map((_, i) => 0 + i),
 		...[...Array(12 - 10)].map((_, i) => 10 + i),
-		...[...Array(23 - 18)].map((_, i) => 18 + i)
+		...[...Array(23 - 18)].map((_, i) => 18 + i),
+		...[...Array(55 - 50)].map((_, i) => 50 + i)
 	];	// (11) [0, 1, 2, 3, 10, 11, 18, 19, 20, 21, 22]
 	southward = [
 		...[...Array(30 - 25)].map((_, i) => 25 + i),
 		...[...Array(38 - 36)].map((_, i) => 36 + i),
-		...[...Array(50 - 45)].map((_, i) => 45 + i)
+		...[...Array(49 - 44)].map((_, i) => 44 + i)
 	];	// (12) [25, 26, 27, 28, 29, 36, 37, 45, 46,...]
 	eastward = [
 		...[...Array(17 - 12)].map((_, i) => 12 + i),
 		...[...Array(25 - 23)].map((_, i) => 23 + i),
-		...[...Array(36 - 30)].map((_, i) => 30 + i)
+		...[...Array(36 - 31)].map((_, i) => 31 + i)
 	];
 	westward = [
 		...[...Array(10 - 5)].map((_, i) => 5 + i),
-		...[...Array(25 - 23)].map((_, i) => 23 + i),
-		...[...Array(36 - 30)].map((_, i) => 30 + i)
+		...[...Array(43 - 38)].map((_, i) => 38 + i),
+		...[...Array(50 - 49)].map((_, i) => 49 + i)
 	];
 
-	fragmentMove = (id, cell, dieVal, cellPaths) => {
-		let startCell = cell;	// 0
-		let finalCell = cell + dieVal;	// 15 
+	fragmentMove = (id, startCell, finalCell, cellPaths) => {
+		// let startCell = cell;	// 0
+		// let finalCell = cell + dieVal;	// 15 
+		// console.log("startCell: ", startCell);	console.log ("finalCell: ", finalCell)
+		finalCell > 56 && (finalCell = 56);
 		let filteredCellRange = [];
 
 		((filterCellRange) => {
@@ -47,17 +50,22 @@ export default class App extends Component {
 				return item > startCell && item < finalCell;
 			}); // [4, 10, 12]
 		})()
+		console.log(filteredCellRange);
 
 		for (let i = 0; i <= filteredCellRange.length; i++) {
 			if (i === 0) {
-				cellPaths.push(filteredCellRange[i]);	// 
-			} else if (i === filteredCellRange.length) {	// 4
-				cellPaths.push(finalCell - filteredCellRange[i - 1]);	// 15 - 12
 				cellPaths.unshift(startCell);	// 0
+				cellPaths.push(filteredCellRange[i] - startCell);	// 4 - 0
+			} else if (i === filteredCellRange.length) {	
+				cellPaths.push(finalCell - filteredCellRange[i - 1]);	// 15 - 12
 			} else {
-				cellPaths.push(filteredCellRange[i] - filteredCellRange[i - 1]);	// 10 - 4, 12 - 10
+				// console.log(filteredCellRange[i])
+				// console.log(filteredCellRange[i - 1])
+				// console.log(filteredCellRange[i] - filteredCellRange[i - 1])
+				cellPaths.push(filteredCellRange[i] - filteredCellRange[i - 1]);	// 4 - 0, 10 - 4, 12 - 10
 			}
 		}
+		// console.log(cellPaths);
 		return cellPaths;	// [0, 4, 6, 2, 3]
 	}
 
@@ -76,7 +84,7 @@ export default class App extends Component {
 				}
 			},
 			activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
-			inMotion: cellPath === 1 ? false : true,    // higher z-index when seed is in motion
+			inMotion: true,    // higher z-index when seed is in motion
 			transitionDuration : duration 
 		})
 	}
@@ -93,7 +101,9 @@ export default class App extends Component {
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
 		// Only fragment total moves when not breakingaway
-		this.state.players[`${id}`].cell !== null && this.fragmentMove(id, 0, 15, cellPaths);
+		this.state.players[`${id}`].cell !== null && (
+			this.fragmentMove(id, this.state.players[`${id}`].cell, this.state.players[`${id}`].cell + 15, cellPaths)
+		);
 
 		let cellPath = 0;
 		let timer = 0;
@@ -279,10 +289,24 @@ export default class App extends Component {
 						}
 						timer = fragmentedMove * this.cellSpeed
 					}
+					timer = timer.toFixed(2);
 					this.updatePosition(id, fragmentedMove, { x, y }, cellPath, timer);	// Update cell position
-					// console.log("cellPaths : ", JSON.stringify(cellPaths));
+					console.log("cellPaths : ", JSON.stringify(cellPaths));
 					cellPath++;
 					initMove(this.state.players[`${id}`].cell);
+				}, timer * 1000)
+			} else {
+				// Why put this in setTimeout() and not just setState() ordinarily?
+				// The reason is because this else case will fire the setState() right away because
+				// the 'if' of this else also sets state in a setTimeout(). In other words, you are 
+				// setting state right away after just setting a state thus at risk of losing any
+				// logic that runs on the last loop. 
+				// For this reason, a setTimeout() must be set in this else case too.
+				setTimeout(() => {
+					this.setState({
+						...this.state,
+						inMotion : false
+					})
 				}, timer * 1000)
 			}
 		}
@@ -316,7 +340,8 @@ export default class App extends Component {
 											onClick={(e) => { 
 												this.move(e) }
 											}
-											className={this.state.inMotion ? "moving seed" : "seed"} id="seedOne">
+											className={this.state.inMotion ? "moving seed" : "seed"} id="seedOne"
+											disabled = {this.state.activeId === "seedOne" && this.state.inMotion}>
 										</button>
 									</div>
 									<div className="cell">

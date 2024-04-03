@@ -364,6 +364,9 @@
 .moving.seed {
 	z-index: 23;
 }
+.seed:disabled {
+	scale: 1.2;
+}
 .home-one .seed:before {
 	background: var(--seed-gold);
 }
