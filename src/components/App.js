@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import "./App.css";
-import { players } from "./data/players.js";
+import { players } from "../data/players.js";
 
 export default class App extends Component {
 
@@ -21,7 +21,7 @@ export default class App extends Component {
 		...[...Array(12 - 10)].map((_, i) => 10 + i),
 		...[...Array(23 - 18)].map((_, i) => 18 + i),
 		...[...Array(55 - 50)].map((_, i) => 50 + i)
-	];	// (11) [0, 1, 2, 3, 10, 11, 18, 19, 20, 21, 22]
+	];	// (16) [0, 1, 2, 3, 10, 11, 18, 19, 20, 21, 22...]
 	southward = [
 		...[...Array(30 - 25)].map((_, i) => 25 + i),
 		...[...Array(38 - 36)].map((_, i) => 36 + i),
@@ -50,7 +50,7 @@ export default class App extends Component {
 				return item > startCell && item < finalCell;
 			}); // [4, 10, 12]
 		})()
-		console.log(filteredCellRange);
+		// console.log(filteredCellRange);
 
 		for (let i = 0; i <= filteredCellRange.length; i++) {
 			if (i === 0) {
@@ -65,7 +65,6 @@ export default class App extends Component {
 				cellPaths.push(filteredCellRange[i] - filteredCellRange[i - 1]);	// 4 - 0, 10 - 4, 12 - 10
 			}
 		}
-		// console.log(cellPaths);
 		return cellPaths;	// [0, 4, 6, 2, 3]
 	}
 
