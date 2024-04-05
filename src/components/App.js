@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import "./App.css";
 import { players } from "../data/players.js";
+import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../data/constants.js"
 
 export default class App extends Component {
 
@@ -290,7 +291,7 @@ export default class App extends Component {
 					}
 					timer = timer.toFixed(2);
 					this.updatePosition(id, fragmentedMove, { x, y }, cellPath, timer);	// Update cell position
-					console.log("cellPaths : ", JSON.stringify(cellPaths));
+					// console.log("cellPaths : ", JSON.stringify(cellPaths));
 					cellPath++;
 					initMove(this.state.players[`${id}`].cell);
 				}, timer * 1000)

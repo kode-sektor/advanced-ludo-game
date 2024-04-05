@@ -128,6 +128,10 @@ LAYING THE GRID
 
 <img src="/public/images/laying-the-grid.jpg">
 
+CELLPATH MOVEMENT SKETCH
+
+<img src="/public/images/determining-token-direction.jpg">
+
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React
 - Platforms: Browser (desktop, mobile, tablet)
