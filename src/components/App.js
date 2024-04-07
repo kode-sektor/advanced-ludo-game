@@ -13,32 +13,6 @@ export default class App extends Component {
 		transitionDuration: 0,
 	}
 
-	turningPoints = [0, 4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49, 50];
-	diagonals = [4, 17, 30, 43];
-	cellSpeed = 0.2 	// 10 seconds alloted for a complete trip across cellpath (of 50 cells)
-
-	northward = [
-		...[...Array(4)].map((_, i) => 0 + i),
-		...[...Array(12 - 10)].map((_, i) => 10 + i),
-		...[...Array(23 - 18)].map((_, i) => 18 + i),
-		...[...Array(55 - 50)].map((_, i) => 50 + i)
-	];	// (16) [0, 1, 2, 3, 10, 11, 18, 19, 20, 21, 22...]
-	southward = [
-		...[...Array(30 - 25)].map((_, i) => 25 + i),
-		...[...Array(38 - 36)].map((_, i) => 36 + i),
-		...[...Array(49 - 44)].map((_, i) => 44 + i)
-	];	// (12) [25, 26, 27, 28, 29, 36, 37, 45, 46,...]
-	eastward = [
-		...[...Array(17 - 12)].map((_, i) => 12 + i),
-		...[...Array(25 - 23)].map((_, i) => 23 + i),
-		...[...Array(36 - 31)].map((_, i) => 31 + i)
-	];
-	westward = [
-		...[...Array(10 - 5)].map((_, i) => 5 + i),
-		...[...Array(43 - 38)].map((_, i) => 38 + i),
-		...[...Array(50 - 49)].map((_, i) => 49 + i)
-	];
-
 	fragmentMove = (id, startCell, finalCell, cellPaths) => {
 		// let startCell = cell;	// 0
 		// let finalCell = cell + dieVal;	// 15 
@@ -47,7 +21,7 @@ export default class App extends Component {
 		let filteredCellRange = [];
 
 		((filterCellRange) => {
-			filteredCellRange = this.turningPoints.filter((item) => {
+			filteredCellRange = TURNING_POINTS.filter((item) => {
 				return item > startCell && item < finalCell;
 			}); // [4, 10, 12]
 		})()
@@ -105,108 +79,12 @@ export default class App extends Component {
 			this.fragmentMove(id, this.state.players[`${id}`].cell, this.state.players[`${id}`].cell + 15, cellPaths)
 		);
 
-		let cellPath = 0;
+		let cellPath = 0;	// counter for modified setTimeout loop
 		let timer = 0;
 		let fragmentedMove = 0;
 
 		const initMove = (breakout) => {
-
-			// const segmentedMoves = setInterval(() => {
-			// 	console.log(timer)
-			// 	// Breakout loop has to be looped over by 1 length less than array length because
-			// 	// the method in the loop works with both the current and next loop
-			// 	// However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
-			// 	const popCellPaths = (breakout === null) ? 0 : 1;
-			// 	if (cellPath < cellPaths.length - popCellPaths) {
-			// 		// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
-			// 		let x = "";
-			// 		let y = "";
-
-			// 		if (breakout === null) {	// Tackle breakout move on '6' roll
-			// 			if (cellPath === 0) {	// First move seed on y-axis
-			// 				x = 0;
-			// 				y = this.state.players[`${id}`].breakout[0].y;
-			// 				timer = y * this.cellSpeed;
-			// 			} else {	// then move on x-axis to 6-0 position
-			// 				x = this.state.players[`${id}`].breakout[0].x;
-			// 				y = this.state.players[`${id}`].breakout[0].y;
-			// 				timer = x * this.cellSpeed;
-			// 			}
-			// 			console.log(timer)
-			// 		} else {
-			// 			fragmentedMove = cellPaths[cellPath + 1];
-			// 			// console.log("fragmentedMove :", fragmentedMove);
-			// 			// console.log("cell : ", this.state.players[`${id}`].cell)
-			// 			if (this.northward.includes(this.state.players[`${id}`].cell)) {
-			// 				x = this.state.players[`${id}`].coordinates[0].x;
-			// 				y = this.state.players[`${id}`].coordinates[0].y - fragmentedMove;
-			// 			} else if (this.southward.includes(this.state.players[`${id}`].cell)) {
-			// 				x = this.state.players[`${id}`].coordinates[0].x;
-			// 				y = this.state.players[`${id}`].coordinates[0].y + fragmentedMove;
-			// 			} else if (this.eastward.includes(this.state.players[`${id}`].cell)) {
-			// 				x = this.state.players[`${id}`].coordinates[0].x + fragmentedMove;
-			// 				y = this.state.players[`${id}`].coordinates[0].y;
-			// 			} else if (this.westward.includes(this.state.players[`${id}`].cell)) {
-			// 				x = this.state.players[`${id}`].coordinates[0].x - fragmentedMove;
-			// 				y = this.state.players[`${id}`].coordinates[0].y;
-			// 			} else {
-			// 				// When approaching diagonals, both x and y will advance 1 cell each
-			// 				// This advancement requires 1 to be subtracted from the next fragmented move 
-			// 				// values. 
-							
-			// 				// For example, a total dice value of 15 from 6 - 0 position is broken
-			// 				// into [4, 6, 2, 3] where each value indicates a change in direction on either
-			// 				// x or y axis, just after 4 is a diagonal which would move both x & y by -1
-			// 				// respectively. So that means the fragmented moves array should transform 
-			// 				// into something like [4, [1,1], 5, 2, 3]. The next move after the diagonal
-			// 				// should become shorn of 1.
-							
-			// 				// If it is on the fly while looping, a check will be made for these diagonals
-			// 				// which are 4, 17, 30 and 43 and the cell paths array 
-			// 				// console.log("this.state.players[`${id}`].cell + fragmentedMove :", this.state.players[`${id}`].cell + fragmentedMove);
-			// 				if (cellPaths[cellPath + 1] > 1) {	// Next fragmented move must exist to set diagonal
-			// 					cellPaths[cellPath + 1] = cellPaths[cellPath + 1] - 1	// Subtract 1 from next 
-			// 					if (this.state.players[`${id}`].cell === 4) {
-			// 						cellPaths.splice(cellPath + 1, 0, [-1, -1]);	// [4, 6, 2, 3] to [4, [1,1], 5, 2, 3]
-			// 						x = this.state.players[`${id}`].coordinates[0].x - 1;
-			// 						y = this.state.players[`${id}`].coordinates[0].y - 1;
-			// 					} else if (this.state.players[`${id}`].cell === 17) {
-			// 						cellPaths.splice(cellPath + 1, 0, [1, -1]);
-			// 						x = this.state.players[`${id}`].coordinates[0].x + 1;
-			// 						y = this.state.players[`${id}`].coordinates[0].y - 1;
-			// 					} else if (this.state.players[`${id}`].cell === 30) {
-			// 						cellPaths.splice(cellPath + 1, 0, [1, 1]);
-			// 						x = this.state.players[`${id}`].coordinates[0].x + 1;
-			// 						y = this.state.players[`${id}`].coordinates[0].y + 1;
-			// 					} else if (this.state.players[`${id}`].cell === 43) {
-			// 						cellPaths.splice(cellPath + 1, 0, [-1, 1]);
-			// 						x = this.state.players[`${id}`].coordinates[0].x - 1;
-			// 						y = this.state.players[`${id}`].coordinates[0].y + 1;
-			// 					}
-			// 				} else {
-			// 					// If next turn after diagonal is 1
-			// 					// Make double confirmation it is the last fragmented move
-			// 					if ((cellPath + 1) === (cellPaths.length - 1)) {	// [4, 1] to [4, [1, 1]]
-			// 						cellPaths.splice(cellPaths.length - 1, 0);	// Instead of keeping a 0 move, completely remove it from loop
-			// 					}
-			// 				}
-			// 				fragmentedMove = 1;	// Add 1 cell distance if on diagonal
-			// 			}
-			// 			timer = fragmentedMove * this.cellSpeed
-			// 		}
-			// 		this.updatePosition(id, fragmentedMove, { x, y }, cellPath);	// Update cell position
-			// 		// console.log("cellPaths : ", JSON.stringify(cellPaths));
-			// 	} else {
-			// 		clearInterval(segmentedMoves);
-			// 	}
-			// 	cellPath++;
-			// 	console.log("timer :", timer)
-			// 	timer = 500;
-			// }, 500);	// avoid setTimeout's first delay, then match transition's duration in css
-
-			
 			// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
-
 
 			// Breakout loop has to be looped over by 1 length less than array length because
 			// the method in the loop works with both the current and next loop
@@ -222,26 +100,27 @@ export default class App extends Component {
 						if (cellPath === 0) {	// First move seed on y-axis
 							x = 0;
 							y = this.state.players[`${id}`].breakout[0].y;
-							timer = y * this.cellSpeed;
+							timer = y * CELL_SPEED;
 						} else {	// then move on x-axis to 6-0 position
 							x = this.state.players[`${id}`].breakout[0].x;
 							y = this.state.players[`${id}`].breakout[0].y;
-							timer = x * this.cellSpeed;
+							timer = x * CELL_SPEED;
 						}
+						console.log(timer);
 					} else {
 						fragmentedMove = cellPaths[cellPath + 1];
 						// console.log("fragmentedMove :", fragmentedMove);
 						// console.log("cell : ", this.state.players[`${id}`].cell)
-						if (this.northward.includes(this.state.players[`${id}`].cell)) {
+						if (CARDINAL_POINTS.north.includes(this.state.players[`${id}`].cell)) {
 							x = this.state.players[`${id}`].coordinates[0].x;
 							y = this.state.players[`${id}`].coordinates[0].y - fragmentedMove;
-						} else if (this.southward.includes(this.state.players[`${id}`].cell)) {
+						} else if (CARDINAL_POINTS.south.includes(this.state.players[`${id}`].cell)) {
 							x = this.state.players[`${id}`].coordinates[0].x;
 							y = this.state.players[`${id}`].coordinates[0].y + fragmentedMove;
-						} else if (this.eastward.includes(this.state.players[`${id}`].cell)) {
+						} else if (CARDINAL_POINTS.east.includes(this.state.players[`${id}`].cell)) {
 							x = this.state.players[`${id}`].coordinates[0].x + fragmentedMove;
 							y = this.state.players[`${id}`].coordinates[0].y;
-						} else if (this.westward.includes(this.state.players[`${id}`].cell)) {
+						} else if (CARDINAL_POINTS.west.includes(this.state.players[`${id}`].cell)) {
 							x = this.state.players[`${id}`].coordinates[0].x - fragmentedMove;
 							y = this.state.players[`${id}`].coordinates[0].y;
 						} else {
@@ -287,7 +166,7 @@ export default class App extends Component {
 							}
 							fragmentedMove = 1;	// Add 1 cell distance if on diagonal
 						}
-						timer = fragmentedMove * this.cellSpeed
+						timer = fragmentedMove * CELL_SPEED
 					}
 					timer = timer.toFixed(2);
 					this.updatePosition(id, fragmentedMove, { x, y }, cellPath, timer);	// Update cell position
@@ -337,28 +216,45 @@ export default class App extends Component {
 														${this.state.players.seedOne.coordinates[0].y * 6.6}vh)`,
 												transitionDuration: this.state.transitionDuration + "s"
 											}}
-											onClick={(e) => { 
-												this.move(e) }
-											}
+											onClick={(e) => {this.move(e) }}
 											className={this.state.inMotion ? "moving seed" : "seed"} id="seedOne"
 											disabled = {this.state.activeId === "seedOne" && this.state.inMotion}>
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											// onClick={(e) => { this.move({ coordinatesx: "19.8", coordinates.y: "13.2"}, e) }}
-											className="seed" id="seed-ii">
+											style={{
+												transform: this.state.activeId === "seedTwo" &&
+													`translate(${this.state.players.seedTwo.coordinates[0].x * 6.6}vh, 
+														${this.state.players.seedTwo.coordinates[0].y * 6.6}vh)`,
+												transitionDuration: this.state.transitionDuration + "s"
+											}}
+											onClick={(e) => { this.move(e)}}
+											className={this.state.inMotion ? "moving seed" : "seed"} id="seedTwo">
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											className="seed" id="seed-iii">
+											style={{
+												transform: this.state.activeId === "seedThree" &&
+													`translate(${this.state.players.seedThree.coordinates[0].x * 6.6}vh, 
+														${this.state.players.seedThree.coordinates[0].y * 6.6}vh)`,
+												transitionDuration: this.state.transitionDuration + "s"
+											}}
+											onClick={(e) => { this.move(e) }}
+											className={this.state.inMotion ? "moving seed" : "seed"} id="seedThree">
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											// onClick={(e) => { this.move({ coordinatesx: "13.2", coordinates.y: "13.2"}, e) }}
-											className="seed" id="seed-iv">
+											style={{
+												transform: this.state.activeId === "seedFour" &&
+													`translate(${this.state.players.seedFour.coordinates[0].x * 6.6}vh, 
+														${this.state.players.seedFour.coordinates[0].y * 6.6}vh)`,
+												transitionDuration: this.state.transitionDuration + "s"
+											}}
+											onClick={(e) => { this.move(e) }}
+											className={this.state.inMotion ? "moving seed" : "seed"} id="seedFour">
 										</button>
 									</div>
 								</section>
@@ -403,19 +299,19 @@ export default class App extends Component {
 								<section className="window">
 									<div className="cell">
 										<button
-											onClick={(e) => { this.move() }}
+											onClick={(e) => { this.move()}}
 											className="seed" id="seed-v">
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											onClick={(e) => { this.move() }}
+											onClick={(e) => { this.move()}}
 											className="seed" id="seed-vi">
 										</button>
 									</div>
 									<div className="cell">
 										<button
-											onClick={(e) => { this.move() }}
+											onClick={(e) => { this.move()}}
 											className="seed" id="seed-vii">
 										</button>
 									</div>
