@@ -210,9 +210,9 @@ export default class App extends Component {
 								<section className="window">
 									<div className="cell">
 										<button
+											disabled={this.state.inMotion}
 											style={{
-												transform: this.state.activeId === "seedOne" &&
-													`translate(${this.state.players.seedOne.coordinates[0].x * 6.6}vh, 
+												transform: `translate(${this.state.players.seedOne.coordinates[0].x * 6.6}vh, 
 														${this.state.players.seedOne.coordinates[0].y * 6.6}vh)`,
 												transitionDuration: this.state.transitionDuration + "s"
 											}}
@@ -223,9 +223,9 @@ export default class App extends Component {
 									</div>
 									<div className="cell">
 										<button
+											disabled={this.state.inMotion}
 											style={{
-												transform: this.state.activeId === "seedTwo" &&
-													`translate(${this.state.players.seedTwo.coordinates[0].x * 6.6}vh, 
+												transform: `translate(${this.state.players.seedTwo.coordinates[0].x * 6.6}vh, 
 														${this.state.players.seedTwo.coordinates[0].y * 6.6}vh)`,
 												transitionDuration: this.state.transitionDuration + "s"
 											}}
@@ -235,9 +235,9 @@ export default class App extends Component {
 									</div>
 									<div className="cell">
 										<button
+											disabled={this.state.inMotion}
 											style={{
-												transform: this.state.activeId === "seedThree" &&
-													`translate(${this.state.players.seedThree.coordinates[0].x * 6.6}vh, 
+												transform: `translate(${this.state.players.seedThree.coordinates[0].x * 6.6}vh, 
 														${this.state.players.seedThree.coordinates[0].y * 6.6}vh)`,
 												transitionDuration: this.state.transitionDuration + "s"
 											}}
@@ -247,9 +247,9 @@ export default class App extends Component {
 									</div>
 									<div className="cell">
 										<button
+											disabled={this.state.inMotion}
 											style={{
-												transform: this.state.activeId === "seedFour" &&
-													`translate(${this.state.players.seedFour.coordinates[0].x * 6.6}vh, 
+												transform: `translate(${this.state.players.seedFour.coordinates[0].x * 6.6}vh, 
 														${this.state.players.seedFour.coordinates[0].y * 6.6}vh)`,
 												transitionDuration: this.state.transitionDuration + "s"
 											}}
