@@ -63,20 +63,22 @@ export default class App extends Component {
 		})
 	}
 
-	randomDice = () => {
-		const diceValues = [];
+	randomDice = (diceValues) => {
 		for (let dicethrow = 0; dicethrow < 2; dicethrow++) {
-			diceValues.push(Math.round(Math.random() * 15));	// Large number for testing purpose
+			diceValues.push(Math.floor(Math.random() * 6) + 1);	// Large number for testing purpose
 		}
 		return diceValues;
 	}
 
 	move(e) {
+		const diceValues = [];
+		this.randomDice(diceValues);
+		const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
 		// Only fragment total moves when not breakingaway
 		this.state.players[`${id}`].cell !== null && (
-			this.fragmentMove(id, this.state.players[`${id}`].cell, this.state.players[`${id}`].cell + 15, cellPaths)
+			this.fragmentMove(id, this.state.players[`${id}`].cell, this.state.players[`${id}`].cell + totalDiceValues, cellPaths)
 		);
 
 		let cellPath = 0;	// counter for modified setTimeout loop
