@@ -6,6 +6,11 @@ import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../data/
 
 export default class App extends Component {
 
+	constructor(props) {
+        super(props);
+        this.diceValues= [];
+    }
+
 	state = {
 		players : players,
 		activeId: "",
@@ -65,18 +70,24 @@ export default class App extends Component {
 
 	randomDice = (diceValues) => {
 		for (let dicethrow = 0; dicethrow < 2; dicethrow++) {
-			diceValues.push(Math.floor(Math.random() * 6) + 1);	// Large number for testing purpose
+			diceValues.push(Math.floor(Math.random() * 6) + 1);	// Between 1 and 6
+			// Check for double-six 
+			if (dicethrow === 1) {
+				if (diceValues.slice(-2)[0] === 6 && diceValues.slice(-2)[1] === 6) {
+					this.randomDice(diceValues)
+				}
+			}
 		}
 		return diceValues;
 	}
 
 	move(e) {
-		const diceValues = [];
-		this.randomDice(diceValues);
-		const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
+		// const diceValues = [];
+		this.randomDice(this.diceValues);
+		const totalDiceValues = this.diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
-		// Only fragment total moves when not breakingaway
+		// Only fragment total moves when not breaking away
 		this.state.players[`${id}`].cell !== null && (
 			this.fragmentMove(id, this.state.players[`${id}`].cell, this.state.players[`${id}`].cell + totalDiceValues, cellPaths)
 		);
