@@ -6,8 +6,8 @@ import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../data/
 
 export default class App extends Component {
 
-	constructor(props) {
-        super(props);
+	constructor() {
+        super();
         this.diceValues= [];
     }
 
@@ -83,7 +83,10 @@ export default class App extends Component {
 
 	move(e) {
 		// const diceValues = [];
+		console.log(this.diceValues)
+		this.diceValues = [];
 		this.randomDice(this.diceValues);
+		console.log(this.diceValues)
 		const totalDiceValues = this.diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
@@ -230,8 +233,8 @@ export default class App extends Component {
 												transitionDuration: this.state.transitionDuration + "s"
 											}}
 											onClick={(e) => {this.move(e) }}
-											className={this.state.inMotion ? "moving seed" : "seed"} id="seedOne"
-											disabled = {this.state.activeId === "seedOne" && this.state.inMotion}>
+											className={this.state.inMotion ? "moving seed" : "seed"}
+											id="seedOne">
 										</button>
 									</div>
 									<div className="cell">
@@ -243,7 +246,8 @@ export default class App extends Component {
 												transitionDuration: this.state.transitionDuration + "s"
 											}}
 											onClick={(e) => { this.move(e)}}
-											className={this.state.inMotion ? "moving seed" : "seed"} id="seedTwo">
+											className={this.state.inMotion ? "moving seed" : "seed"}
+											id="seedTwo">
 										</button>
 									</div>
 									<div className="cell">
@@ -255,7 +259,8 @@ export default class App extends Component {
 												transitionDuration: this.state.transitionDuration + "s"
 											}}
 											onClick={(e) => { this.move(e) }}
-											className={this.state.inMotion ? "moving seed" : "seed"} id="seedThree">
+											className={this.state.inMotion ? "moving seed" : "seed"}
+											id="seedThree">
 										</button>
 									</div>
 									<div className="cell">
@@ -267,7 +272,8 @@ export default class App extends Component {
 												transitionDuration: this.state.transitionDuration + "s"
 											}}
 											onClick={(e) => { this.move(e) }}
-											className={this.state.inMotion ? "moving seed" : "seed"} id="seedFour">
+											className={this.state.inMotion ? "moving seed" : "seed"}
+											id="seedFour">
 										</button>
 									</div>
 								</section>
@@ -495,12 +501,12 @@ export default class App extends Component {
 					</div>
 				</section>
 				<div className="dice">
-					<div className="side"></div>
-					<div className="side"></div>
-					<div className="side"></div>
-					<div className="side"></div>
-					<div className="side"></div>
-					<div className="side"></div>
+					<div className="side-one"></div>
+					<div className="side-two"></div>
+					<div className="side-three"></div>
+					<div className="side-four"></div>
+					<div className="side-five"></div>
+					<div className="side-six"></div>
 				</div>
 			</div>
 		);
