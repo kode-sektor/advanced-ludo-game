@@ -500,7 +500,7 @@ export default class App extends Component {
 						<section className="home"></section>
 					</div>
 				</section>
-				<div className="dice">
+				<div className="die">
 					<div className="side-one"></div>
 					<div className="side-two"></div>
 					<div className="side-three">
@@ -508,11 +508,19 @@ export default class App extends Component {
 					</div>
 					<div className="side-four">
 						<div className="die-inner"></div>
+						<div className="die-inner"></div>
 					</div>
 					<div className="side-five">
 						<div className="die-inner"></div>
+						<div className="die-inner"></div>
+						<div className="die-inner"></div>
 					</div>
-					<div className="side-six"></div>
+					<div className="side-six">
+						<div className="die-inner"></div>
+						<div className="die-inner"></div>
+						<div className="die-inner"></div>
+						<div className="die-inner"></div>
+					</div>
 				</div>
 			</div>
 		);
