@@ -498,30 +498,47 @@ export default class App extends Component {
 							</section>
 						</section>
 						<section className="home"></section>
+							<section className="dice-container">
+								<div id="die-one" className="die">
+									<div className="side-one"></div>
+									<div className="side-two"></div>
+									<div className="side-three">
+										<div className="die-inner"></div>
+									</div>
+									<div className="side-four">
+										<div className="die-inner"></div>
+									</div>
+									<div className="side-five">
+										<div className="die-inner"></div>
+										<div className="die-inner"></div>
+									</div>
+									<div className="side-six">
+										<div className="die-inner"></div>
+										<div className="die-inner"></div>
+									</div>
+								</div>								
+								<div id="die-two" className="die">
+									<div className="side-one"></div>
+									<div className="side-two"></div>
+									<div className="side-three">
+										<div className="die-inner"></div>
+									</div>
+									<div className="side-four">
+										<div className="die-inner"></div>
+									</div>
+									<div className="side-five">
+										<div className="die-inner"></div>
+										<div className="die-inner"></div>
+									</div>
+									<div className="side-six">
+										<div className="die-inner"></div>
+										<div className="die-inner"></div>
+									</div>
+								</div>								
+							</section>
+
 					</div>
 				</section>
-				<div className="die">
-					<div className="side-one"></div>
-					<div className="side-two"></div>
-					<div className="side-three">
-						<div className="die-inner"></div>
-					</div>
-					<div className="side-four">
-						<div className="die-inner"></div>
-						<div className="die-inner"></div>
-					</div>
-					<div className="side-five">
-						<div className="die-inner"></div>
-						<div className="die-inner"></div>
-						<div className="die-inner"></div>
-					</div>
-					<div className="side-six">
-						<div className="die-inner"></div>
-						<div className="die-inner"></div>
-						<div className="die-inner"></div>
-						<div className="die-inner"></div>
-					</div>
-				</div>
 			</div>
 		);
 	}
