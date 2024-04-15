@@ -8,7 +8,6 @@ export default class App extends Component {
 
 	constructor() {
         super();
-        this.diceValues= [];
     }
 
 	state = {
@@ -82,12 +81,9 @@ export default class App extends Component {
 	}
 
 	move(e) {
-		// const diceValues = [];
-		console.log(this.diceValues)
-		this.diceValues = [];
-		this.randomDice(this.diceValues);
-		console.log(this.diceValues)
-		const totalDiceValues = this.diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
+		const diceValues = [];
+		this.randomDice(diceValues);
+		const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
 		// Only fragment total moves when not breaking away
@@ -211,8 +207,18 @@ export default class App extends Component {
 	render() {
 		return (
 			<div className="board-game">
+				<section className="dice-widget">
+					<section className="roll-series">
+						{/* Double-six multiple rolls */}
+					</section>
+					<section className="roll-button-container">
+						<div className="roll-button">
+							<button className="roll" role="button">Roll</button>
+						</div>
+					</section>
+				</section>
 				<section className="board">
-					<div className="ludo">
+					<section className="ludo">
 						<section className="base home-one">
 							<section className="outpost-lane">
 								<div className="cell" title="11"></div>
@@ -498,47 +504,47 @@ export default class App extends Component {
 							</section>
 						</section>
 						<section className="home"></section>
-							<section className="dice-container">
-								<div id="die-one" className="die">
-									<div className="side-one"></div>
-									<div className="side-two"></div>
-									<div className="side-three">
-										<div className="die-inner"></div>
-									</div>
-									<div className="side-four">
-										<div className="die-inner"></div>
-									</div>
-									<div className="side-five">
-										<div className="die-inner"></div>
-										<div className="die-inner"></div>
-									</div>
-									<div className="side-six">
-										<div className="die-inner"></div>
-										<div className="die-inner"></div>
-									</div>
-								</div>								
-								<div id="die-two" className="die">
-									<div className="side-one"></div>
-									<div className="side-two"></div>
-									<div className="side-three">
-										<div className="die-inner"></div>
-									</div>
-									<div className="side-four">
-										<div className="die-inner"></div>
-									</div>
-									<div className="side-five">
-										<div className="die-inner"></div>
-										<div className="die-inner"></div>
-									</div>
-									<div className="side-six">
-										<div className="die-inner"></div>
-										<div className="die-inner"></div>
-									</div>
-								</div>								
-							</section>
-
-					</div>
+						<section className="dice-container">
+							<div id="die-one" className="die">
+								<div className="side-one"></div>
+								<div className="side-two"></div>
+								<div className="side-three">
+									<div className="die-inner"></div>
+								</div>
+								<div className="side-four">
+									<div className="die-inner"></div>
+								</div>
+								<div className="side-five">
+									<div className="die-inner"></div>
+									<div className="die-inner"></div>
+								</div>
+								<div className="side-six">
+									<div className="die-inner"></div>
+									<div className="die-inner"></div>
+								</div>
+							</div>								
+							<div id="die-two" className="die">
+								<div className="side-one"></div>
+								<div className="side-two"></div>
+								<div className="side-three">
+									<div className="die-inner"></div>
+								</div>
+								<div className="side-four">
+									<div className="die-inner"></div>
+								</div>
+								<div className="side-five">
+									<div className="die-inner"></div>
+									<div className="die-inner"></div>
+								</div>
+								<div className="side-six">
+									<div className="die-inner"></div>
+									<div className="die-inner"></div>
+								</div>
+							</div>								
+						</section>
+					</section>
 				</section>
+				<aside className="stats"></aside>
 			</div>
 		);
 	}

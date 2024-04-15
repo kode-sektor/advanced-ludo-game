@@ -4,6 +4,8 @@
 	--green: #90ee90;
 	--gold: #f6ed6e;
 	--white: #fff;
+	
+	--black: #111;
 
 	--seed-blue: #192fa7;
 	--seed-red: #f83227;
@@ -31,61 +33,117 @@
 	padding: 0;
 	box-sizing: border-box;
 }
+body {
+	font-family: "Manrope", sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+}
+button {
+	font-family: manrope;
+    -webkit-font-smoothing: antialiased;
+	cursor: pointer;
+}
 
 /* ANIMATIONS */
 
 @keyframes rolling {
 	50% {
-		transform: rotateX(455deg) rotateY(455deg);
+		transform: rotateX(425deg) rotateY(455deg);
 	}
 }
 
-/* #seed-i.opening-move {
-	animation: opener-i 1s forwards 0s 0 ease-in-out ;
-}
-#seed-ii.opening-move {
-	animation: opener-ii 1s forwards 0s 0 ease-in-out;
-}
-#seed-iii.opening-move {
-	animation: opener-iii 1s forwards 0s 0 ease-in-out;
-}
-#seed-iv.opening-move {
-	animation: opener-iv 1s forwards 0s 0 ease-in-out;
-} */
+@keyframes glow-button {
+	0% {
+		background-position: 0 0;
+	}
 
-/* @keyframes opener-i {
-	from {
-		transform: translate(19.8vh, 0);
+	50% {
+		background-position: 350% 10;
 	}
-	to {
-		transform: translate (0, 19.9vh);
-	}
-}
-@keyframes opener-ii {
-	from {
-		transform: translateY(-19.8vh);
-	} 
-	to {
-		transform: translateX(13.2vh)
+	100% {
+		background-position: 0 0;
 	}
 }
-@keyframes opener-iii {
-	from {
-		transform: translateY(-13.2vh);
-	} 
-	to {
-		transform: translateX(19.8vh)
-	}
-}
-@keyframes opener-iv {
-	from {
-		transform: translateY(-13.2vh);
-	} 
-	to {
-		transform: translateX(13.2vh)
-	}
-} */
 
+
+.board-game {
+	display: flex;
+}
+.dice-widget, .stats {
+	flex: 1;
+	border: thin solid crimson;
+}
+.dice-widget {
+	display: flex;
+	flex-direction: column;
+}
+.roll-series {
+	height: 80%;
+}
+.roll-button-container {
+	height: 20%;
+	border: 2px solid indigo;
+}
+.roll-button {
+	display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 1em 0;
+    margin: 2em;
+    flex: 0 0 200px;
+    border-radius: 7px;
+	transition: all 300ms;
+	border: thin solid lightcoral;
+}
+.roll {
+    position: relative;
+    padding: 0.7em 5em;
+    color: var(--white);
+    background: var(--black);
+    border-radius: 8px;
+	font-size: 17px;
+	font-weight: bold;
+	white-space: pre;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+    border: none;
+    outline: none;
+    touch-action: manipulation; 
+	transition: 1s ease;
+}
+.roll:hover, .roll:focus {
+	opacity: .8;
+}
+.roll:before {
+    position: absolute;
+    content: "";
+    top: -1px;
+    left: 1px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    -webkit-filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glow-roll 20s linear infinite;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 10px;
+    background: linear-gradient(40deg, #6f0a0a, #e46b08, #f6f206, 
+				#237104, #06f0c9, #072eee, #6c11cd, 
+				#f103be, #fb0808);
+}
+.roll:after {
+    z-index: -1;
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #222;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
 .board {
 	position: relative;
 	display: flex;
