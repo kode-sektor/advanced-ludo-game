@@ -15,6 +15,16 @@ export default class App extends Component {
 		activeId: "",
 		inMotion: false,
 		transitionDuration: 0,
+		dice: {
+			first: {
+				value: 1,
+				position: 0
+			},
+			second: {
+				value: 1,
+				position: 0
+			}
+		}
 	}
 
 	fragmentMove = (id, startCell, finalCell, cellPaths) => {
@@ -80,7 +90,7 @@ export default class App extends Component {
 		return diceValues;
 	}
 
-	move(e) {
+	move = (e) => {
 		const diceValues = [];
 		this.randomDice(diceValues);
 		const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
@@ -204,6 +214,36 @@ export default class App extends Component {
 		initMove(this.state.players[`${id}`].cell);
 	}
 
+	getRandomWithinRange = (min, max, int=false) => {
+		const results = [];
+		if (int) {
+			min = Math.ceil(min);
+			max = Math.floor(max);
+		}
+		for (let i = 0; i < 2; i++) {
+			results.push(
+				int ? Math.floor(Math.random() * (max - min + 1)) + min : 
+				Math.round(((Math.random() * (max - min)) + min) * 100) / 100
+			)
+		}
+		return results;	// [int, int]
+	}
+	
+	roll = (e) => {
+		let rollDurations = this.getRandomWithinRange(1.5, 3);	// e.g. [3, 1.8]
+		const cycleSteps = this.getRandomWithinRange(1, 3, true);	// [2, 3]
+
+		let step = 0;
+		setTimeout(() => {
+			let pcntStepRollDurations = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
+			let stepRollDurations = pcntStepRollDurations * rollDurations;	// e.g. 50% of 3 [1.5, 1.9]
+			rollDurations = rollDurations - stepRollDurations;	// e.g. 3 - 1.5
+
+			let transformVals = this.getRandomWithinRange(-400, 400);	// e.g. [309, -112]
+			step++;
+		}, cycleSteps);	// 1, 2 or 3
+	}
+
 	render() {
 		return (
 			<div className="board-game">
@@ -212,7 +252,7 @@ export default class App extends Component {
 						{/* Double-six multiple rolls */}
 					</section>
 					<section className="roll-button-container">
-						<div className="roll-button">
+						<div id="roll-button" className="roll-button" onClick={(e) => this.roll(e)}>
 							<button className="roll" role="button">Roll</button>
 						</div>
 					</section>
@@ -503,6 +543,7 @@ export default class App extends Component {
 								</section>
 							</section>
 						</section>
+						{/* The centre cellbox of the Ludo */}
 						<section className="home"></section>
 						<section className="dice-container">
 							<div id="die-one" className="die">
