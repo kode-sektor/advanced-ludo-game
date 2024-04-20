@@ -230,21 +230,28 @@ export default class App extends Component {
 	}
 	
 	roll = (order) => {
-		let rollDuration = this.getRandomWithinRange(1.5, 3);	// 3
+		let rollDuration = 6 // this.getRandomWithinRange(1.5, 3);	// 3
 		const cycleStep = this.getRandomWithinRange(1, 3, true);	// 3
 		const diceVals = this.randomDice();
 
 		const randomRoll = (step) => {
+			console.log("Cycle Step: ", cycleStep);
+			console.log("Roll Duration: ", rollDuration);
+
 			if (step < cycleStep) {
 				setTimeout(() => {
 					let pcntStepRollDuration = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
+					console.log("pcntStepRollDuration : ", pcntStepRollDuration);
 					let stepRollDuration = pcntStepRollDuration * rollDuration;	// e.g. 50% of 3 = 1.5
+					console.log("stepRollDuration : ", stepRollDuration)
 					rollDuration = rollDuration - stepRollDuration;	// e.g. 3 - 1.5
+					console.log("rollDuration : ", rollDuration)
 
 					let transformVals = []
 					for (let i = 0; i < 2; i++) {
 						transformVals.push(this.getRandomWithinRange(-400, 400));	// e.g. [309, -112]
 					}
+					console.log(transformVals[0], transformVals[1] )
 					this.setState({
 						...this.state,
 						dice: {
@@ -261,7 +268,7 @@ export default class App extends Component {
 					})
 					step++;
 					randomRoll(step)
-				}, rollDuration);	// 1, 2 or 3
+				}, step === 0 ? 0 : rollDuration * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
 			}
 		}
 		randomRoll(0);
@@ -578,7 +585,7 @@ export default class App extends Component {
 								style={{
 										transform: `rotateX(${this.state.dice.first.position.x}deg)
 											rotateY(${this.state.dice.first.position.y}deg)`,
-										transitionDuration: this.state.dice.first.rollDuration
+										transitionDuration: this.state.dice.first.rollDuration + "s"
 								}}>
 								<div className="side-one"></div>
 								<div className="side-two"></div>
@@ -597,7 +604,12 @@ export default class App extends Component {
 									<div className="die-inner"></div>
 								</div>
 							</div>								
-							<div id="die-two" className="die">
+							<div id="die-two" className="die"
+								style={{
+									transform: `rotateX(${this.state.dice.second.position.x}deg)
+										rotateY(${this.state.dice.second.position.y}deg)`,
+									transitionDuration: this.state.dice.second.rollDuration + "s"
+								}}>
 								<div className="side-one"></div>
 								<div className="side-two"></div>
 								<div className="side-three">

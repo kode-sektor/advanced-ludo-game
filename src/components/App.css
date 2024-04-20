@@ -451,9 +451,9 @@ button {
 }
 
 /* DICE */
-#die-two .side-three {
+/* #die-two .side-three {
 	transform: rotateY(0deg) translateZ(50px);
-}
+} */
 .dice-container {
 	position: relative;
 	grid-template: repeat(7, 1fr) / repeat(8, 1fr);
