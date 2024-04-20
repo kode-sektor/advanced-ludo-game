@@ -490,22 +490,22 @@ button {
 	background-color: var(--dice-grey-3);
 }
 .side-one {
-	transform: translateZ(50px);
+	transform: translateZ(23px);
 }
 .side-two {
-	transform: rotateX(90deg) translateZ(50px);
+	transform: rotateX(90deg) translateZ(23px);
 }
 .side-three {
-	transform: rotateY(-90deg) translateZ(50px);
+	transform: rotateY(-90deg) translateZ(23px);
 }
 .side-four {
-	transform: rotateY(90deg) translateZ(50px);
+	transform: rotateY(90deg) translateZ(23px);
 }
 .side-five {
-	transform: rotateX(-90deg) translateZ(50px);
+	transform: rotateX(-90deg) translateZ(23px);
 }
 .side-six {
-	transform: rotateX(180deg) translateZ(50px);
+	transform: rotateX(180deg) translateZ(23px);
 }
 
 .side-one:before {
