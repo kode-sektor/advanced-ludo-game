@@ -18,11 +18,13 @@ export default class App extends Component {
 		dice: {
 			first: {
 				value: 1,
-				position: 0
+				position: {x : 0, y: 0},
+				rollDuration: 0
 			},
 			second: {
 				value: 1,
-				position: 0
+				position: {x : 0, y: 0},
+				rollDuration: 0
 			}
 		}
 	}
@@ -77,7 +79,7 @@ export default class App extends Component {
 		})
 	}
 
-	randomDice = (diceValues) => {
+	randomDice = (diceValues=[]) => {
 		for (let dicethrow = 0; dicethrow < 2; dicethrow++) {
 			diceValues.push(Math.floor(Math.random() * 6) + 1);	// Between 1 and 6
 			// Check for double-six 
@@ -215,33 +217,59 @@ export default class App extends Component {
 	}
 
 	getRandomWithinRange = (min, max, int=false) => {
-		const results = [];
+		let result = 0;
 		if (int) {
 			min = Math.ceil(min);
 			max = Math.floor(max);
 		}
-		for (let i = 0; i < 2; i++) {
-			results.push(
-				int ? Math.floor(Math.random() * (max - min + 1)) + min : 
-				Math.round(((Math.random() * (max - min)) + min) * 100) / 100
-			)
-		}
-		return results;	// [int, int]
+		result = int ?
+			Math.floor(Math.random() * (max - min + 1)) + min :
+			Math.round(((Math.random() * (max - min)) + min) * 100) / 100;
+		
+		return result;	//
 	}
 	
-	roll = (e) => {
-		let rollDurations = this.getRandomWithinRange(1.5, 3);	// e.g. [3, 1.8]
-		const cycleSteps = this.getRandomWithinRange(1, 3, true);	// [2, 3]
+	roll = (order) => {
+		let rollDuration = this.getRandomWithinRange(1.5, 3);	// 3
+		const cycleStep = this.getRandomWithinRange(1, 3, true);	// 3
+		const diceVals = this.randomDice();
 
-		let step = 0;
-		setTimeout(() => {
-			let pcntStepRollDurations = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
-			let stepRollDurations = pcntStepRollDurations * rollDurations;	// e.g. 50% of 3 [1.5, 1.9]
-			rollDurations = rollDurations - stepRollDurations;	// e.g. 3 - 1.5
+		const randomRoll = (step) => {
+			if (step < cycleStep) {
+				setTimeout(() => {
+					let pcntStepRollDuration = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
+					let stepRollDuration = pcntStepRollDuration * rollDuration;	// e.g. 50% of 3 = 1.5
+					rollDuration = rollDuration - stepRollDuration;	// e.g. 3 - 1.5
 
-			let transformVals = this.getRandomWithinRange(-400, 400);	// e.g. [309, -112]
-			step++;
-		}, cycleSteps);	// 1, 2 or 3
+					let transformVals = []
+					for (let i = 0; i < 2; i++) {
+						transformVals.push(this.getRandomWithinRange(-400, 400));	// e.g. [309, -112]
+					}
+					this.setState({
+						...this.state,
+						dice: {
+							...this.state.dice,
+							[`${order}`]: {
+								value: "" ,
+								position: {
+									x: transformVals[0],
+									y: transformVals[1]
+								},
+								rollDuration: rollDuration
+							}
+						}
+					})
+					step++;
+					randomRoll(step)
+				}, rollDuration);	// 1, 2 or 3
+			}
+		}
+		randomRoll(0);
+	}
+
+	rollDice = () => {
+		this.roll("first");
+		// this.roll("second");
 	}
 
 	render() {
@@ -252,7 +280,7 @@ export default class App extends Component {
 						{/* Double-six multiple rolls */}
 					</section>
 					<section className="roll-button-container">
-						<div id="roll-button" className="roll-button" onClick={(e) => this.roll(e)}>
+						<div id="roll-button" className="roll-button" onClick={(e) => this.rollDice()}>
 							<button className="roll" role="button">Roll</button>
 						</div>
 					</section>
@@ -546,7 +574,12 @@ export default class App extends Component {
 						{/* The centre cellbox of the Ludo */}
 						<section className="home"></section>
 						<section className="dice-container">
-							<div id="die-one" className="die">
+							<div id="die-one" className="die"
+								style={{
+										transform: `rotateX(${this.state.dice.first.position.x}deg)
+											rotateY(${this.state.dice.first.position.y}deg)`,
+										transitionDuration: this.state.dice.first.rollDuration
+								}}>
 								<div className="side-one"></div>
 								<div className="side-two"></div>
 								<div className="side-three">
