@@ -231,32 +231,34 @@ export default class App extends Component {
 
 	getDiceCycle = () => {
 		const cycleSteps = [];
-		cycleSteps[0] = this.getRandomWithinRange(1, 3, true);
-		cycleSteps[1] = this.getRandomWithinRange(1, 3, true);
+		cycleSteps[0] = this.getRandomWithinRange(1, 3, true);	// 3
+		cycleSteps[1] = this.getRandomWithinRange(1, 3, true);	// 3
 
 		return cycleSteps;	// [1, 3]
 	}
 
 	getDiceTimeout = (cycleSteps) => {
-		const diceTimeout = [];
+		let timeoutSegment = 0;
 		// for (let timeout = 0; i < cycleSteps[0]; timeout++) {
 		// 	let randomTimeout = this.getRandomWithinRange(1.5, 3);
 		// 	let pcntStepRollDuration = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
 		// }
 		console.log(cycleSteps)
-		let randomTimeout = this.getRandomWithinRange(1.5, 3);
-		// console.log("cycleSteps[0]: ", cycleSteps)
-		console.log("randomTimeout : ", randomTimeout);
-		([...Array(cycleSteps[0])].map((_, i) => 0 + i)).reduce(
-			(acc, currVal) => {
-				let pcntStepRollDuration = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
+		let randomTimeout = 3;  // this.getRandomWithinRange(1.5, 3);
+		// console.log("randomTimeout : ", randomTimeout);
+		const diceTimeout = ([...Array(cycleSteps[0])].map((_, i) => 0 + i)).map(
+			(value, index) => {
+				let pcntStepRollDuration = 0.5 // (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
 				console.log("pcntStepRollDuration : ", pcntStepRollDuration);
-				return (
-					diceTimeout.push(pcntStepRollDuration * randomTimeout)
-				)
-			}, randomTimeout
+				console.log("randomTimeout : ", randomTimeout);
+				console.log("timeoutSegment : ", timeoutSegment);
+				console.log("randomTimeout - timeoutSegment", (randomTimeout - timeoutSegment))
+
+				timeoutSegment += pcntStepRollDuration * (randomTimeout - timeoutSegment);
+				return timeoutSegment;
+			}
 		)
-		return diceTimeout
+		return diceTimeout;
 	}
 
 	getDiceDuration = () => {
@@ -268,11 +270,11 @@ export default class App extends Component {
 	}
 	
 	roll = (order) => {
-		let cycleSteps = [];	// [3, 3]
+		let cycleSteps = [];	
 		let diceTimeout = [];
 		
-		cycleSteps = this.getDiceCycle();
-		console.log("cycleSteps : ", cycleSteps)
+		cycleSteps = this.getDiceCycle();	// [3, 3]
+		cycleSteps = [2];
 		diceTimeout = this.getDiceTimeout(cycleSteps);
 
 		console.log(diceTimeout);
