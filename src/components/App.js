@@ -222,56 +222,108 @@ export default class App extends Component {
 			min = Math.ceil(min);
 			max = Math.floor(max);
 		}
-		result = int ?
+		result = int ?	// Random integer otherwise float
 			Math.floor(Math.random() * (max - min + 1)) + min :
 			Math.round(((Math.random() * (max - min)) + min) * 100) / 100;
 		
 		return result;	//
 	}
+
+	getDiceCycle = () => {
+		const cycleSteps = [];
+		cycleSteps[0] = this.getRandomWithinRange(1, 3, true);
+		cycleSteps[1] = this.getRandomWithinRange(1, 3, true);
+
+		return cycleSteps;	// [1, 3]
+	}
+
+	getDiceTimeout = (cycleSteps) => {
+		const diceTimeout = [];
+		// for (let timeout = 0; i < cycleSteps[0]; timeout++) {
+		// 	let randomTimeout = this.getRandomWithinRange(1.5, 3);
+		// 	let pcntStepRollDuration = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
+		// }
+		console.log(cycleSteps)
+		let randomTimeout = this.getRandomWithinRange(1.5, 3);
+		// console.log("cycleSteps[0]: ", cycleSteps)
+		console.log("randomTimeout : ", randomTimeout);
+		([...Array(cycleSteps[0])].map((_, i) => 0 + i)).reduce(
+			(acc, currVal) => {
+				let pcntStepRollDuration = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
+				console.log("pcntStepRollDuration : ", pcntStepRollDuration);
+				return (
+					diceTimeout.push(pcntStepRollDuration * randomTimeout)
+				)
+			}, randomTimeout
+		)
+		return diceTimeout
+	}
+
+	getDiceDuration = () => {
+
+	}
+
+	selectDie = () => {
+
+	}
 	
 	roll = (order) => {
-		let rollDuration = 6 // this.getRandomWithinRange(1.5, 3);	// 3
-		const cycleStep = this.getRandomWithinRange(1, 3, true);	// 3
-		const diceVals = this.randomDice();
+		let cycleSteps = [];	// [3, 3]
+		let diceTimeout = [];
+		
+		cycleSteps = this.getDiceCycle();
+		console.log("cycleSteps : ", cycleSteps)
+		diceTimeout = this.getDiceTimeout(cycleSteps);
 
-		const randomRoll = (step) => {
-			console.log("Cycle Step: ", cycleStep);
-			console.log("Roll Duration: ", rollDuration);
+		console.log(diceTimeout);
 
-			if (step < cycleStep) {
-				setTimeout(() => {
-					let pcntStepRollDuration = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
-					console.log("pcntStepRollDuration : ", pcntStepRollDuration);
-					let stepRollDuration = pcntStepRollDuration * rollDuration;	// e.g. 50% of 3 = 1.5
-					console.log("stepRollDuration : ", stepRollDuration)
-					rollDuration = rollDuration - stepRollDuration;	// e.g. 3 - 1.5
-					console.log("rollDuration : ", rollDuration)
 
-					let transformVals = []
-					for (let i = 0; i < 2; i++) {
-						transformVals.push(this.getRandomWithinRange(-400, 400));	// e.g. [309, -112]
-					}
-					console.log(transformVals[0], transformVals[1] )
-					this.setState({
-						...this.state,
-						dice: {
-							...this.state.dice,
-							[`${order}`]: {
-								value: "" ,
-								position: {
-									x: transformVals[0],
-									y: transformVals[1]
-								},
-								rollDuration: rollDuration
-							}
-						}
-					})
-					step++;
-					randomRoll(step)
-				}, step === 0 ? 0 : rollDuration * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
-			}
-		}
-		randomRoll(0);
+		// =============================================
+
+		// let rollDuration = 3 // this.getRandomWithinRange(1.5, 3);	// 3
+		// const cycleStep = 3  // this.getRandomWithinRange(1, 3, true);	// 3
+		// const diceVals = this.randomDice();
+
+		// const randomRoll = (step) => {
+		// 	console.log("Cycle Step: ", cycleStep);
+		// 	console.log("Roll Duration: ", rollDuration);
+
+		// 	if (step < cycleStep) {
+		// 		setTimeout(() => {
+		// 			let pcntStepRollDuration = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
+		// 			console.log("pcntStepRollDuration : ", pcntStepRollDuration);
+		// 			let stepRollDuration = pcntStepRollDuration * rollDuration;	// e.g. 50% of 3 = 1.5
+		// 			console.log("stepRollDuration : ", stepRollDuration)
+		// 			rollDuration = rollDuration - stepRollDuration;	// e.g. 3 - 1.5
+		// 			console.log("rollDuration : ", rollDuration)
+
+		// 			let transformVals = []
+		// 			for (let i = 0; i < 2; i++) {
+		// 				transformVals.push(this.getRandomWithinRange(-400, 400));	// e.g. [309, -112]
+		// 			}
+		// 			console.log(transformVals[0], transformVals[1] )
+		// 			this.setState({
+		// 				...this.state,
+		// 				dice: {
+		// 					...this.state.dice,
+		// 					[`${order}`]: {
+		// 						value: "" ,
+		// 						position: {
+		// 							x: transformVals[0],
+		// 							y: transformVals[1]
+		// 						},
+		// 						// rollDuration: rollDuration
+		// 						rollDuration: 0.2
+		// 					}
+		// 				}
+		// 			})
+		// 			step++;
+		// 			randomRoll(step)
+		// 		// }, step === 0 ? 0 : rollDuration * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
+		// 		}, 200);	// 1, 2 or 3 (Condition to avoid delay on first run)
+		// 	}
+		// }
+		// randomRoll(0);
 	}
 
 	rollDice = () => {
