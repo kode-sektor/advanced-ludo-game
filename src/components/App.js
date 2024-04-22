@@ -254,8 +254,26 @@ export default class App extends Component {
 				console.log("timeoutSegment : ", timeoutSegment);
 				console.log("randomTimeout - timeoutSegment", (randomTimeout - timeoutSegment))
 
-				timeoutSegment += pcntStepRollDuration * (randomTimeout - timeoutSegment);
-				return timeoutSegment;
+				/*
+					WHAT WE WANT TO ACHIEVE
+					- Imagine a 3-sequence roll of a die having a 3-second duration
+					- Assume a flat random figure of 0.5, 0.5 and 0.5
+						0.5 of (3 - 0) = 1.5s for 1st sequence
+						0.5 of (3 - 1.5) = 0.75s for 2nd sequence
+						0.5 of (3 - 1.5 - 0.75) = 0.375s for 3rd sequence
+						
+					- But remember total sequence must equal 3 seconds, and 1.5s + 0.75s + 0.375s = 2.625s
+					- Hence the last sequence must be the total minus the 1st and 2nd sequence (3s - (1.5s + 0.75s)) = 0.75s
+				*/
+
+				// The problem with this is that it increments the 
+				// timeoutSegment += pcntStepRollDuration * (randomTimeout - timeoutSegment);
+				// return timeoutSegment;
+				// Do the following instead:
+
+				value = pcntStepRollDuration * (randomTimeout - timeoutSegment);
+				timeoutSegment += value;
+				return value;
 			}
 		)
 		return diceTimeout;
@@ -274,7 +292,7 @@ export default class App extends Component {
 		let diceTimeout = [];
 		
 		cycleSteps = this.getDiceCycle();	// [3, 3]
-		cycleSteps = [2];
+		cycleSteps = [3];
 		diceTimeout = this.getDiceTimeout(cycleSteps);
 
 		console.log(diceTimeout);
