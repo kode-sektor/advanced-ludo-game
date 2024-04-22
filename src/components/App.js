@@ -239,16 +239,12 @@ export default class App extends Component {
 
 	getDiceTimeout = (cycleSteps) => {
 		let timeoutSegment = 0;
-		// for (let timeout = 0; i < cycleSteps[0]; timeout++) {
-		// 	let randomTimeout = this.getRandomWithinRange(1.5, 3);
-		// 	let pcntStepRollDuration = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
-		// }
-		console.log(cycleSteps)
-		let randomTimeout = 3;  // this.getRandomWithinRange(1.5, 3);
+		let randomTimeout = this.getRandomWithinRange(1.5, 3);
 		// console.log("randomTimeout : ", randomTimeout);
-		const diceTimeout = ([...Array(cycleSteps[0])].map((_, i) => 0 + i)).map(
+		
+		const diceTimeout = ([...Array(cycleSteps)].map((_, i) => 0 + i)).map(
 			(value, index) => {
-				let pcntStepRollDuration = 0.5 // (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
+				let pcntStepRollDuration = this.getRandomWithinRange(16.7 / 100, 80 / 100);	// Between 16.7% and 80%
 				console.log("pcntStepRollDuration : ", pcntStepRollDuration);
 				console.log("randomTimeout : ", randomTimeout);
 				console.log("timeoutSegment : ", timeoutSegment);
@@ -273,11 +269,11 @@ export default class App extends Component {
 
 				// Take care of last loop to ensure 3rd sequence matches total specified duration (e.g. 3 seconds)
 				// By making pcntStepRollDuration = 1, this ensures the remaining sequence helps complete the 3-s duration
-				pcntStepRollDuration = index === Array(cycleSteps[0]).length - 1 ? 1 : pcntStepRollDuration;
+				pcntStepRollDuration = index === Array(cycleSteps).length - 1 ? 1 : pcntStepRollDuration;
 
 				value = pcntStepRollDuration * (randomTimeout - timeoutSegment);
 				timeoutSegment += value;
-				return value;
+				return Math.round(value * 100) / 100;
 			}
 		)
 		return diceTimeout;
@@ -296,8 +292,9 @@ export default class App extends Component {
 		let diceTimeout = [];
 		
 		cycleSteps = this.getDiceCycle();	// [3, 3]
-		cycleSteps = [3];
-		diceTimeout = this.getDiceTimeout(cycleSteps);
+		console.log(cycleSteps)
+		diceTimeout[0] = this.getDiceTimeout(cycleSteps[0]);
+		diceTimeout[1] = this.getDiceTimeout(cycleSteps[1]);
 
 		console.log(diceTimeout);
 
