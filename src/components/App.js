@@ -271,6 +271,10 @@ export default class App extends Component {
 				// return timeoutSegment;
 				// Do the following instead:
 
+				// Take care of last loop to ensure 3rd sequence matches total specified duration (e.g. 3 seconds)
+				// By making pcntStepRollDuration = 1, this ensures the remaining sequence helps complete the 3-s duration
+				pcntStepRollDuration = index === Array(cycleSteps[0]).length - 1 ? 1 : pcntStepRollDuration;
+
 				value = pcntStepRollDuration * (randomTimeout - timeoutSegment);
 				timeoutSegment += value;
 				return value;
