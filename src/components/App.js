@@ -279,7 +279,45 @@ export default class App extends Component {
 		return diceTimeout;
 	}
 
-	getDiceDuration = () => {
+	/*
+		diceTimeout = [
+			[1.08, 1.63]
+	    	[1.3, 0.91]
+		]
+	*/
+	computeDiceData = (diceTimeout) => {
+		const dieData = [];
+		const timeout = [];
+		const duration = [];
+		const die = [];
+
+		let dieRollOneSum = 0;
+		let dieRollTwoSum = 0;
+
+		const maxDiceCycle = (diceTimeout[0].length > diceTimeout[1].length) ? diceTimeout[0].length : diceTimeout[1].length;
+		console.log(maxDiceCycle);
+
+		for (let dieCycle = 0; i < maxDiceCycle; dieCycle++) {
+			dieRollOneSum += diceTimeout[0][dieCycle];
+
+			if (dieCycle === 0) {
+				timeout.push(
+					diceTimeout[0][dieCycle] < diceTimeout[1][0] ? diceTimeout[0][dieCycle] : diceTimeout[1][dieCycle]
+				)
+				duration.push(
+					[diceTimeout[0][0]]
+					[diceTimeout[1][0]]
+				);
+				die.push(
+					[1, 2]
+				);
+			} else {
+				dieRollTwoSum += diceTimeout[1][dieCycle - 1]
+				if (diceTimeout[0][dieCycle]) {	// Check if next element exists in diceTimeout's first array 
+
+				}
+			}
+		}
 
 	}
 
@@ -298,6 +336,7 @@ export default class App extends Component {
 
 		console.log(diceTimeout);
 
+		this.computeDiceData(diceTimeout)
 
 		// =============================================
 

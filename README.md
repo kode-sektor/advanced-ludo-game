@@ -132,6 +132,11 @@ CELLPATH MOVEMENT SKETCH
 
 <img src="/public/images/determining-token-direction.jpg">
 
+DIE ROLL SEQUENCING 
+
+<img src="/public/images/die-roll-sequencing-1.jpg">
+<img src="/public/images/die-roll-sequencing-2.jpg">
+
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React
 - Platforms: Browser (desktop, mobile, tablet)
