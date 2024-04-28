@@ -136,6 +136,7 @@ DIE ROLL SEQUENCING
 
 <img src="/public/images/die-roll-sequencing-1.jpg">
 <img src="/public/images/die-roll-sequencing-2.jpg">
+<img src="/public/images/die-roll-sequencing-illustration.jpg">
 
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React

@@ -296,62 +296,66 @@ export default class App extends Component {
 		const maxDiceCycle = (diceTimeout[0].length > diceTimeout[1].length) ? diceTimeout[0].length : diceTimeout[1].length;
 		console.log(maxDiceCycle);
 
-		for (let dieCycle = 0; dieCycle < maxDiceCycle; dieCycle++) {
-			dieRollOneSum += diceTimeout[0][dieCycle];
+		// for (let dieCycle = 0; dieCycle < maxDiceCycle; dieCycle++) {
+		// 	dieRollOneSum += diceTimeout[0][dieCycle];
 
-			if (dieCycle === 0) {
-				timeout.push(
-					diceTimeout[0][dieCycle] < diceTimeout[1][0] ? diceTimeout[0][dieCycle] : diceTimeout[1][dieCycle]
-				)
-				duration.push(
-					[
-						[diceTimeout[0][0]],
-						[diceTimeout[1][0]]
-					]
-				);
-				dice.push([1, 2]);
-			} else {	// If 2nd element exists in both arrays
-				dieRollTwoSum += diceTimeout[1][dieCycle - 1]
-				if (diceTimeout[0][dieCycle] && diceTimeout[1][dieCycle]) {	// Check if next element exists in diceTimeout's first array 
-					if (dieRollOneSum < dieRollTwoSum) {
-						timeout.push(
-							diceTimeout[0][dieCycle],
-							dieRollTwoSum - dieRollOneSum
-						);
-						duration.push(
-							diceTimeout[0][dieCycle],
-							diceTimeout[1][dieCycle]
-						);
-						dice.push([1, 2]);
-					} else if (dieRollOneSum > dieRollTwoSum) {
-						timeout.push(
-							dieRollOneSum - dieRollTwoSum,
-							diceTimeout[0][dieCycle] - (dieRollOneSum - dieRollTwoSum)
-						);
-						duration.push(diceTimeout[1][dieCycle], diceTimeout[0][dieCycle]);
-						dice.push(2, 1);
-					} else {	// Capture condition with same timeout and squash into 1 cycle to avoid setting state twice at the same time
-						timeout.push(dieRollOneSum);
-						duration.push(
-							[
-								diceTimeout[0][dieCycle], diceTimeout[1][dieCycle]
-							]
-						);
-						dice.push([1, 2]);
-					}
-				} else {
-					if (diceTimeout[0][dieCycle]) {	// Current iteration obtainable only in 1st array
-						timeout.push(diceTimeout[0][dieCycle]);
-						duration.push(diceTimeout[0][dieCycle]);
-						dice.push(1);
-					}
-					if (diceTimeout[1][dieCycle]) {	// Current iteration obtainable only in 2nd array
-						timeout.push(diceTimeout[1][dieCycle]);
-						duration.push(diceTimeout[1][dieCycle]);
-						dice.push(2);
-					}
-				}
-			}
+		// 	if (dieCycle === 0) {
+		// 		timeout.push(
+		// 			diceTimeout[0][dieCycle] < diceTimeout[1][0] ? diceTimeout[0][dieCycle] : diceTimeout[1][dieCycle]
+		// 		)
+		// 		duration.push(
+		// 			[
+		// 				[diceTimeout[0][0]],
+		// 				[diceTimeout[1][0]]
+		// 			]
+		// 		);
+		// 		dice.push([1, 2]);
+		// 	} else {	// If 2nd element exists in both arrays
+		// 		dieRollTwoSum += diceTimeout[1][dieCycle - 1]
+		// 		if (diceTimeout[0][dieCycle] && diceTimeout[1][dieCycle]) {	// Check if next element exists in diceTimeout's first array 
+		// 			if (dieRollOneSum < dieRollTwoSum) {
+		// 				timeout.push(
+		// 					diceTimeout[0][dieCycle],
+		// 					dieRollTwoSum - dieRollOneSum
+		// 				);
+		// 				duration.push(
+		// 					diceTimeout[0][dieCycle],
+		// 					diceTimeout[1][dieCycle]
+		// 				);
+		// 				dice.push(1, 2);
+		// 			} else if (dieRollOneSum > dieRollTwoSum) {
+		// 				timeout.push(
+		// 					dieRollOneSum - dieRollTwoSum,
+		// 					diceTimeout[0][dieCycle] - (dieRollOneSum - dieRollTwoSum)
+		// 				);
+		// 				duration.push(diceTimeout[1][dieCycle], diceTimeout[0][dieCycle]);
+		// 				dice.push(2, 1);
+		// 			} else {	// Capture condition with same timeout and squash into 1 cycle to avoid setting state twice at the same time
+		// 				timeout.push(dieRollOneSum);
+		// 				duration.push(
+		// 					[
+		// 						diceTimeout[0][dieCycle], diceTimeout[1][dieCycle]
+		// 					]
+		// 				);
+		// 				dice.push([1, 2]);
+		// 			}
+		// 		} else {
+		// 			if (diceTimeout[0][dieCycle]) {	// Current iteration obtainable only in 1st array
+		// 				timeout.push(diceTimeout[0][dieCycle]);
+		// 				duration.push(diceTimeout[0][dieCycle]);
+		// 				dice.push(1);
+		// 			}
+		// 			if (diceTimeout[1][dieCycle]) {	// Current iteration obtainable only in 2nd array
+		// 				timeout.push(diceTimeout[1][dieCycle]);
+		// 				duration.push(diceTimeout[1][dieCycle]);
+		// 				dice.push(2);
+		// 			}
+		// 		}
+		// 	}
+		// }
+		
+		for (let dieCycle = 0; dieCycle < maxDiceCycle; dieCycle++) {
+			
 		}
 		return [timeout, duration, dice];
 	}
