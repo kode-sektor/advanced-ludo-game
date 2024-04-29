@@ -291,10 +291,15 @@ export default class App extends Component {
 		const dice = [];
 
 		let dieRollOneSum = 0;
-		let dieRollTwoSum = 0;
+		let diceTimeoutSum = 0;
 
-		const maxDiceCycle = (diceTimeout[0].length > diceTimeout[1].length) ? diceTimeout[0].length : diceTimeout[1].length;
-		console.log(maxDiceCycle);
+		if (diceTimeout[0].length > diceTimeout[1].length) {
+			const minDiceCycle = diceTimeout[1];
+			const maxDiceCycle = diceTimeout[0];
+		} else {
+			const minDiceCycle = diceTimeout[0];
+			const maxDiceCycle = diceTimeout[1];
+		}
 
 		// for (let dieCycle = 0; dieCycle < maxDiceCycle; dieCycle++) {
 		// 	dieRollOneSum += diceTimeout[0][dieCycle];
@@ -354,8 +359,49 @@ export default class App extends Component {
 		// 	}
 		// }
 		
-		for (let dieCycle = 0; dieCycle < maxDiceCycle; dieCycle++) {
+		// Loop across the lengthier of the 2 arrays
+		for (let maxDieCycle = 0; maxDieCycle < maxDiceCycle; maxDieCycle++) {
+			dieRollOneSum += maxDiceCycle[maxDieCycle];
+
+			// Since the idea is both dice are thrown at the same time, thus, on the first loop, both dice timeouts
+			// must be calculated and set in state (later on)
+			if (maxDieCycle === 0) {
+				// Add the smaller of first values of the 2 arrays
+				timeout.push(Math.min(dieRollOneSum, minDiceCycle[maxDieCycle]));
+				duration.push(
+					[
+						[diceTimeout[0][maxDieCycle]],
+						[diceTimeout[1][maxDieCycle]]
+					]
+				);
+				dice.push([1, 2]);
+				diceTimeoutSum += Math.min(dieRollOneSum, minDiceCycle[maxDieCycle]);
+				minDiceCycle.shift();	// 
+			}
+
+			// Loop across the shorter of the 2 arrays
+			for (let minDieCycle = 0; minDieCycle < minDiceCycle; minDieCycle++) {
+
+				if (dieRollOneSum > (diceTimeoutSum + minDiceCycle[minDieCycle])) {
+					timeout.push(minDiceCycle[minDieCycle]);
+					duration.push(minDiceCycle[minDieCycle]);
+					dice.push(2);
+					diceTimeoutSum += minDiceCycle[minDieCycle];
+					minDiceCycle.shift();
+				} else if (dieRollOneSum < (diceTimeoutSum + minDiceCycle[minDieCycle])) {
+					timeout.push(dieRollOneSum - diceTimeoutSum);
+					duration.push(minDiceCycle[minDieCycle]);
+					dice.push(2);
+					diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
+					minDiceCycle.shift();
+				}
+			}
+
+			// Since max array is the outer loop while min array is the inner loop, cater for
+			// remaining elements of the max array when inner loop is empty
 			
+			
+
 		}
 		return [timeout, duration, dice];
 	}
