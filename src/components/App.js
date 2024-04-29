@@ -391,21 +391,36 @@ export default class App extends Component {
 			// Loop across the shorter of the 2 arrays
 			for (let minDieCycle = 0; minDieCycle < minDiceCycle.length; minDieCycle++) {
 
-				// Calculate total duration of min array
-				dieRollTwoSum += minDiceCycle[minDieCycle];
+				if (maxDiceCycle[maxDieCycle] > minDieCycle[minDieCycle]) {
+					// Calculate total duration of min array
+					dieRollTwoSum += minDiceCycle[minDieCycle];
+					
+					if (dieRollOneSum > (diceTimeoutSum + minDiceCycle[minDieCycle])) {
+						timeout.push(minDiceCycle[minDieCycle]);
+						duration.push(minDiceCycle[minDieCycle]);
+						diceTimeoutSum += minDiceCycle[minDieCycle];
+					} else if (dieRollOneSum < (diceTimeoutSum + minDiceCycle[minDieCycle])) {
+						timeout.push(dieRollOneSum - diceTimeoutSum);
+						duration.push(minDiceCycle[minDieCycle]);
+						diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
+					}
+					dice.push(2);
+					minDiceCycle.shift();
+				} else {
+					// Calculate total duration of min array
+					dieRollOneSum += maxDiceCycle[maxDieCycle];
 
-				if (dieRollOneSum > (diceTimeoutSum + minDiceCycle[minDieCycle])) {
-					timeout.push(minDiceCycle[minDieCycle]);
-					duration.push(minDiceCycle[minDieCycle]);
-					dice.push(2);
-					diceTimeoutSum += minDiceCycle[minDieCycle];
-					minDiceCycle.shift();
-				} else if (dieRollOneSum < (diceTimeoutSum + minDiceCycle[minDieCycle])) {
-					timeout.push(dieRollOneSum - diceTimeoutSum);
-					duration.push(minDiceCycle[minDieCycle]);
-					dice.push(2);
-					diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
-					minDiceCycle.shift();
+					if (dieRollTwoSum > (diceTimeoutSum + maxDiceCycle[maxDieCycle])) {
+						timeout.push(maxDiceCycle[maxDieCycle]);
+						duration.push(maxDiceCycle[maxDieCycle]);
+						diceTimeoutSum += maxDiceCycle[maxDieCycle];
+					} else if (dieRollTwoSum < (diceTimeoutSum + maxDiceCycle[maxDieCycle])) {
+						timeout.push(dieRollTwoSum - diceTimeoutSum);
+						duration.push(maxDiceCycle[maxDieCycle]);
+						diceTimeoutSum += maxDiceCycle[maxDieCycle];
+					}
+					dice.push(1);
+					maxDiceCycle.shift();
 				}
 			}
 
