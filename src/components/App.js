@@ -385,7 +385,6 @@ export default class App extends Component {
 				);
 				dice.push([1, 2]);
 				diceTimeoutSum += Math.min(dieRollOneSum, minDiceCycle[maxDieCycle]);
-				minDiceCycle.shift();	// 
 			}
 
 			// Loop across the shorter of the 2 arrays
@@ -393,20 +392,54 @@ export default class App extends Component {
 
 				// Calculate total duration of min array
 				dieRollTwoSum += minDiceCycle[minDieCycle];
+				console.log("dieRollOneSum >: ", dieRollOneSum);
+				console.log("dieRollTwoSum >: ", dieRollTwoSum);
+				console.log("diceTimeoutSum >: ", diceTimeoutSum);
 
-				if (dieRollOneSum > (diceTimeoutSum + minDiceCycle[minDieCycle])) {
-					timeout.push(minDiceCycle[minDieCycle]);
+
+				// if (dieRollOneSum > (diceTimeoutSum + minDiceCycle[minDieCycle])) {
+
+				// 	timeout.push(minDiceCycle[minDieCycle]);
+				// 	duration.push(minDiceCycle[minDieCycle]);
+				// 	dice.push(2);
+				// 	diceTimeoutSum += minDiceCycle[minDieCycle];
+				// 	minDiceCycle.shift();
+				// } else if (dieRollOneSum < (diceTimeoutSum + minDiceCycle[minDieCycle])) {
+				// 	console.log("dieRollOneSum <: ", dieRollOneSum);
+				// 	console.log("dieRollTwoSum <: ", dieRollTwoSum);
+				// 	console.log("diceTimeoutSum <: ", diceTimeoutSum);
+
+				// 	timeout.push(dieRollOneSum - diceTimeoutSum);
+				// 	duration.push(minDiceCycle[minDieCycle]);
+				// 	dice.push(2);
+				// 	diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
+				// 	minDiceCycle.shift();
+				// }
+
+				if (dieRollOneSum > dieRollTwoSum) {
+					timeout.push(dieRollTwoSum - diceTimeoutSum);
+					duration.push(maxDiceCycle[maxDieCycle]);
+					dice.push(1);
+					diceTimeoutSum += maxDiceCycle[maxDieCycle];
+
+				} else if (dieRollOneSum < dieRollTwoSum) {
+					timeout.push(dieRollOneSum - diceTimeoutSum);
 					duration.push(minDiceCycle[minDieCycle]);
 					dice.push(2);
 					diceTimeoutSum += minDiceCycle[minDieCycle];
 					minDiceCycle.shift();
-				} else if (dieRollOneSum < (diceTimeoutSum + minDiceCycle[minDieCycle])) {
-					timeout.push(dieRollOneSum - diceTimeoutSum);
-					duration.push(minDiceCycle[minDieCycle]);
-					dice.push(2);
-					diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
-					minDiceCycle.shift();
-					break;
+				}
+
+				if ((minDieCycle + maxDieCycle === (minDiceCycle.length + maxDiceCycle.length) - 2)) {
+					if (dieRollOneSum > dieRollTwoSum) {
+						diceTimeout.push(dieRollOneSum - diceTimeoutSum);
+						duration.push(maxDiceCycle[maxDieCycle]);
+						dice.push(1);
+					} else {
+						diceTimeout.push(dieRollTwoSum - diceTimeoutSum);
+						duration.push(minDiceCycle[minDieCycle]);
+						dice.push(2);
+					}
 				}
 			}
 
@@ -414,22 +447,21 @@ export default class App extends Component {
 			// remaining elements of the max array when inner loop is empty. Recall min array 
 			// is being cut
 
-			if (maxDieCycle !== 0) {
-				if (!minDiceCycle.length) {
-					if (maxDieCycle === maxDiceCycle.length - 1) {
-						const maxDiceTimeout = Math.max(dieRollOneSum, dieRollTwoSum);
-						timeout.push(maxDiceTimeout - diceTimeoutSum);
-						duration.push(maxDiceCycle[maxDieCycle]);
-						dice.push(1);
-					} else {
-						timeout.push(dieRollOneSum - diceTimeoutSum);
-						duration.push(maxDiceCycle[maxDieCycle]);
-						dice.push(1);
-						diceTimeoutSum += maxDiceCycle[maxDieCycle];
-					}
-				}
-			}
-
+			// if (maxDieCycle !== 0) {
+			// 	if (!minDiceCycle.length) {
+			// 		if (maxDieCycle === maxDiceCycle.length - 1) {
+			// 			const maxDiceTimeout = Math.max(dieRollOneSum, dieRollTwoSum);
+			// 			timeout.push(maxDiceTimeout - diceTimeoutSum);
+			// 			duration.push(maxDiceCycle[maxDieCycle]);
+			// 			dice.push(1);
+			// 		} else {
+			// 			timeout.push(dieRollOneSum - diceTimeoutSum);
+			// 			duration.push(maxDiceCycle[maxDieCycle]);
+			// 			dice.push(1);
+			// 			diceTimeoutSum += maxDiceCycle[maxDieCycle];
+			// 		}
+			// 	}
+			// }
 		}
 		return [timeout, duration, dice];
 	}
