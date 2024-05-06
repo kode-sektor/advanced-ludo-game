@@ -295,6 +295,7 @@ export default class App extends Component {
 		let dieRollOneSum = 0;
 		let dieRollTwoSum = 0;
 		let diceTimeoutSum = 0;
+		let maxDiceTimeoutSum = 0;
 
 		let minDiceCycle = 0;
 		let maxDiceCycle = 0;
@@ -302,12 +303,21 @@ export default class App extends Component {
 		let currMinDie = 0;
 		let currMaxDie = 0;
 
+		// Ensure maxDiceCycle is the array with the larger first element
 		if (diceTimeout[0][0] > diceTimeout[1][0]) {
 			minDiceCycle = diceTimeout[1];
 			maxDiceCycle = diceTimeout[0];
 		} else {
 			minDiceCycle = diceTimeout[0];
 			maxDiceCycle = diceTimeout[1];
+		}
+
+		// Ensure maxDiceCycle's length is never shorter than minDiceCycle's length
+		// This guarantees minDiceCycle's loops will be completed
+		
+		const diceCycleDifference = minDiceCycle.length - maxDiceCycle.length;
+		if (diceCycleDifference > 0) {
+			maxDiceCycle = maxDiceCycle.concat([0]);
 		}
 
 		dieRollOneSum += maxDiceCycle[0];
@@ -427,8 +437,9 @@ export default class App extends Component {
 				// 	minDiceCycle.shift();
 				// }
 
+				// minDiceCycle.length will only be 0 if the minDiceCycle is .shift()ed or .spliced
+				// and this can only occur if the minDiceCycle is smaller (in length) than the maxDiceCycle
 				if ((minDiceCycle.length === 0) && (maxDieCycle === maxDiceCycle.length - 1)) {
-					alert("a");
 					if (dieRollOneSum > dieRollTwoSum) {
 						timeout.push(dieRollOneSum - diceTimeoutSum);
 						diceTimeout += (dieRollOneSum - diceTimeoutSum);
@@ -444,60 +455,90 @@ export default class App extends Component {
 				} else {
 					if (dieRollOneSum > dieRollTwoSum) {
 						alert("d");
-						alert(diceTimeoutSum);
-						timeout.push(dieRollTwoSum - diceTimeoutSum);
+						// alert(diceTimeoutSum);
+
+						if (maxDiceCycle[maxDieCycle] === 0) {
+							maxDiceTimeoutSum = Math.max(dieRollOneSum, dieRollTwoSum);
+							timeout.push(maxDiceTimeoutSum - diceTimeoutSum);
+							diceTimeoutSum += (maxDiceTimeoutSum - diceTimeoutSum);
+						} else {
+							timeout.push(dieRollTwoSum - diceTimeoutSum);
+							diceTimeoutSum += (dieRollTwoSum - diceTimeoutSum);
+						}						
 						duration.push(minDiceCycle[minDieCycle]);
 						dice.push(2);
-						diceTimeoutSum += (dieRollTwoSum - diceTimeoutSum);
 					} else {
-						alert("e");
-						alert(diceTimeoutSum);
-						timeout.push(dieRollOneSum - diceTimeoutSum);
+						console.log("dieRollOneSum >: ", dieRollOneSum);
+						console.log("dieRollTwoSum >: ", dieRollTwoSum);
+						console.log("diceTimeoutSum >: ", diceTimeoutSum);
+						console.log("timeout, duration : ", JSON.stringify(timeout), JSON.stringify(duration));
+
+						if (maxDiceCycle[maxDieCycle] === 0 && minDieCycle === minDiceCycle.length - 1) {
+							alert("e-1");
+							maxDiceTimeoutSum = Math.max(dieRollOneSum, dieRollTwoSum);
+							timeout.push(maxDiceTimeoutSum - diceTimeoutSum);
+							diceTimeoutSum += (maxDiceTimeoutSum - diceTimeoutSum);
+						} else {
+							alert("e-2");
+							timeout.push(dieRollOneSum - diceTimeoutSum);
+							diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
+						}
+						
 						duration.push(minDiceCycle[minDieCycle]);
 						dice.push(2);
-						diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
 						console.log(minDiceCycle);
-						minDiceCycle.splice(0, minDieCycle + 1);	// cut off looped items off minDice arrray and exit loop
+						// cut off looped items off minDice arrray and exit loop
+						(maxDiceCycle[maxDieCycle] !== 0) && minDiceCycle.splice(0, minDieCycle + 1);	
 					}
 				}
 			}
 
-			console.log("dieRollOneSum >: ", dieRollOneSum);
-			console.log("dieRollTwoSum >: ", dieRollTwoSum);
-			console.log("diceTimeoutSum >: ", diceTimeoutSum);			
-			console.log("minDiceCycle : ", minDiceCycle);
-			console.log("maxDiceCycle : ", maxDiceCycle);
-
-			// Only loop across max dice array in the event min dice array completes cycles
-			// If max dice array completes cycles first, the min array (above) would run
-			// completely and not break out because it is a nested loop.
-			dieRollOneSum += maxDiceCycle[maxDieCycle];
-
-			if (!minDiceCycle.length && (maxDieCycle === maxDiceCycle.length - 1)) {
-				if (dieRollOneSum > dieRollTwoSum) {
-					alert("f");
-					timeout.push(dieRollOneSum - diceTimeoutSum);
-					diceTimeout += (dieRollOneSum - diceTimeoutSum);
-				} else {
-					alert("g");
-					alert(diceTimeoutSum);
-					timeout.push(dieRollTwoSum - diceTimeoutSum);
-					diceTimeout += (dieRollTwoSum - diceTimeoutSum);
-				}
-				duration.push(maxDiceCycle[maxDieCycle]);
-				dice.push(1);
-			} else {
+			if (maxDiceCycle[maxDieCycle] !== 0) {
 				console.log("dieRollOneSum >: ", dieRollOneSum);
 				console.log("dieRollTwoSum >: ", dieRollTwoSum);
-				console.log("diceTimeoutSum >: ", diceTimeoutSum);
+				console.log("diceTimeoutSum >: ", diceTimeoutSum);			
+				console.log("minDiceCycle : ", minDiceCycle);
+				console.log("maxDiceCycle : ", maxDiceCycle);
 
-				alert("i");
-				alert(diceTimeoutSum);
-				timeout.push(dieRollOneSum - diceTimeoutSum);
-				duration.push(maxDiceCycle[maxDieCycle]);
-				dice.push(1);
-				diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
-			} 
+				// Only loop across max dice array in the event min dice array completes cycles
+				// If max dice array completes cycles first, the min array (above) would run
+				// completely and not break out because it is a nested loop.
+				dieRollOneSum += maxDiceCycle[maxDieCycle];
+
+				if (!minDiceCycle.length && (maxDieCycle === maxDiceCycle.length - 1)) {
+					if (dieRollOneSum > dieRollTwoSum) {
+						alert("f");
+						timeout.push(dieRollOneSum - diceTimeoutSum);
+						diceTimeout += (dieRollOneSum - diceTimeoutSum);
+					} else {
+						alert("g");
+						// alert(diceTimeoutSum);
+						timeout.push(dieRollTwoSum - diceTimeoutSum);
+						diceTimeout += (dieRollTwoSum - diceTimeoutSum);
+					}
+					duration.push(maxDiceCycle[maxDieCycle]);
+					dice.push(1);
+				} else {
+					console.log("dieRollOneSum >: ", dieRollOneSum);
+					console.log("dieRollTwoSum >: ", dieRollTwoSum);
+					console.log("diceTimeoutSum >: ", diceTimeoutSum);
+					console.log("timeout, duration : ", JSON.stringify(timeout), JSON.stringify(duration));
+
+					alert("i");
+					// alert(diceTimeoutSum);
+
+					if (dieRollOneSum > dieRollTwoSum) {
+						timeout.push(dieRollTwoSum - diceTimeoutSum);
+						diceTimeoutSum += (dieRollTwoSum - diceTimeoutSum);
+					} else {
+						timeout.push(dieRollOneSum - diceTimeoutSum);
+						diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
+					}
+					duration.push(maxDiceCycle[maxDieCycle]);				
+					dice.push(1);
+				} 
+			}
+			
 
 
 
@@ -541,8 +582,8 @@ export default class App extends Component {
 
 		const diceData = this.computeDiceData(
 			[
-				[1.42, 0.45, 0.35],
-				[0.7, 0.4, 1.9]
+				[1.42, 0.45],
+				[0.7, 1.0, 1.9]
 			]
 		)
 		console.log(diceData);
