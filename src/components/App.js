@@ -399,7 +399,16 @@ export default class App extends Component {
 		// Loop across the lengthier of the 2 arrays
 		for (let maxDieCycle = 0; maxDieCycle < maxDiceCycle.length; maxDieCycle++) {
 
-			
+			// This condition (before running loop on minDiceArray) exists here arising to predictable steps
+			// during the loop process:
+			// First, the maxDiceArray is deliberately made the parent array and it has the larger first element
+			// of the 2 arrays. Hence (dieRollOneSum > dieRollTwoSum) will always hold true on the very first 
+			// loop.
+			// Second, because minDiceCycle's first element (dieRollSum) is the lesser value, this inner loop gets processed
+			// and based on the condition it's dieRollSums becomes greater, it then drops back to the parent array.
+			// Third, after processing in the parent array, the condition to throw the process back into the inner array
+			// is the condition being dieRollOneSum larger than dieRollTwoSum. If it's not, the loop keeps running only
+			// on the parent array, eschewing the inner array
 			if (dieRollOneSum > dieRollTwoSum) {
 				computeMinDiceData(maxDieCycle);
 			}	
@@ -524,7 +533,16 @@ export default class App extends Component {
 			duration.push(maxDiceCycle[maxDieCycle]);
 			dice.push(1);
 
+			// If maxDiceArray needs to loop twice in a series when minDiceArray is yet to complete loops,
+			// sidestep minDiceArray to run loop only on parent array and when done with loop running only
+			// on maxDiceArray, switch back into child loop.
+
+			// This has been explained extensively in the comments some lines above (at the start of the child loop)
+			// But this presents a structural problem because on the final loop on the parent array, the process
+			// cannot climb back into the child array.
 			
+			// Unless of course, the inner loop was turned into a function and called here (last loop on maxDiceArray)
+			// just like so:
 			if (minDiceCycle.length && (maxDieCycle === maxDiceCycle.length - 1)) {
 				computeMinDiceData(maxDieCycle);
 			}
