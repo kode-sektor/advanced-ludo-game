@@ -337,11 +337,13 @@ export default class App extends Component {
 		minDiceCycle.shift();
 		maxDiceCycle.shift();
 
-		const compileTimeout = (diff) => {
-			if (diff < 0.15) {
-				
+		const compileTimeout = (diff, dur, die) => {
+			if (diff < 0.1) {
+				timeout[timeout.length - 1] = timeout[timeout.length - 1] + diff;
+				duration[duration.length - 1] = [duration[duration.length - 1], dur];
+				dice[dice.length - 1] = [dice[dice.length - 1], die];
 			} else {
-
+				// Run previous code
 			}
 		}
 

@@ -137,6 +137,13 @@ DIE ROLL SEQUENCING
 <img src="/public/images/die-roll-sequencing-1.jpg">
 <img src="/public/images/die-roll-sequencing-2.jpg">
 <img src="/public/images/die-roll-sequencing-illustration.jpg">
+<img src="/public/images/die-roll-sequencing-illustration-1.jpg">
+<img src="/public/images/die-roll-sequencing-algorithm.jpg">
+<img src="/public/images/die-roll-sequencing-illustration-3.jpg">
+
+	- Die Roll Sequencing with different array lengths 
+<img src="/public/images/die-roll-sequencing-illustration-different-array-lengths.jpg">
+<img src="/public/images/die-roll-sequencing-illustration-2.jpg">
 
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React
