@@ -343,11 +343,14 @@ export default class App extends Component {
 				duration[duration.length - 1] = [duration[duration.length - 1], dur];
 				dice[dice.length - 1] = [dice[dice.length - 1], die];
 			} else {
-				// Run previous code
+				timeout.push(diff);
+				duration.push(dur);
+				dice.push(die);
 			}
+			diceTimeoutSum += diff;
 		}
 
-		const computeMinDiceData = (maxDieCycle) => {
+		const computeMinDiceData = () => {
 
 			// Loop across the shorter of the 2 arrays
 			for (let minDieCycle = 0; minDieCycle < minDiceCycle.length; minDieCycle++) {
@@ -358,119 +361,104 @@ export default class App extends Component {
 				if (dieRollOneSum > dieRollTwoSum) {
 					if (lastMaxCycle && (minDieCycle === minDiceCycle.length - 1)) {
 						maxDiceTimeoutSum = Math.max(dieRollOneSum, dieRollTwoSum);
-						timeout.push(maxDiceTimeoutSum - diceTimeoutSum);
-						diceTimeoutSum += (maxDiceTimeoutSum - diceTimeoutSum);
-					}  else if (lastMaxCycle) {
-						timeout.push(dieRollTwoSum - diceTimeoutSum);
-						diceTimeoutSum += (dieRollTwoSum - diceTimeoutSum);
-					} else {
-						timeout.push(dieRollTwoSum - diceTimeoutSum);
-						diceTimeoutSum += (dieRollTwoSum - diceTimeoutSum);
+						compileTimeout(maxDiceTimeoutSum - diceTimeoutSum, minDiceCycle[minDieCycle], 2);
+					}
+					else {
+						compileTimeout(dieRollTwoSum - diceTimeoutSum, minDiceCycle[minDieCycle], 2);						
 					}	
-					// if ((dieRollTwoSum - diceTimeoutSum) >= 0.15) {
-					// 	duration.push(minDiceCycle[minDieCycle]);
-					// 	dice.push(2);
-					// }
-					duration.push(minDiceCycle[minDieCycle]);
-					dice.push(2);
 				} else {
 					// If on last cycle on minDiceCycle and minDiceCycle is lengthier than maxDiceCycle,
 					// use larger of two timeouts to calculate last timeout
 					if (lastMaxCycle && (minDieCycle === minDiceCycle.length - 1)) {
 						maxDiceTimeoutSum = Math.max(dieRollOneSum, dieRollTwoSum);
-						timeout.push(maxDiceTimeoutSum - diceTimeoutSum);
-						diceTimeoutSum += (maxDiceTimeoutSum - diceTimeoutSum);
+						compileTimeout(maxDiceTimeoutSum - diceTimeoutSum, minDiceCycle[minDieCycle], 2);
 					} else if (lastMaxCycle) {
-						timeout.push(dieRollTwoSum - diceTimeoutSum);
-						diceTimeoutSum += (dieRollTwoSum - diceTimeoutSum);
+						compileTimeout(dieRollTwoSum - diceTimeoutSum, minDiceCycle[minDieCycle], 2);
 					} else {
-						diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
+						compileTimeout(dieRollOneSum - diceTimeoutSum,  minDiceCycle[minDieCycle], 2);
 					}
-					duration.push(minDiceCycle[minDieCycle]);
-					dice.push(2);
-					// Cut off looped items off minDice arrray which automatically
-					// exits loop and onto the maxDiceCycle (so long maxDiceCycle exists!)
+					/*
+					Cut off looped items off minDice arrray which automatically
+					exits loop and onto the maxDiceCycle (so long maxDiceCycle exists!)
 
-					// The current iteration of the parent array if 0 means the parent array (maxDiceArray) is 
-					// shorter than the child array (minDiceArray). Hence, if parent array is shorter,
-					// no dropping off this inner loop until the loops running on the inner is completed
+					The current iteration of the parent array if 0 means the parent array (maxDiceArray) is 
+					shorter than the child array (minDiceArray). Hence, if parent array is shorter,
+					no dropping off this inner loop until the loops running on the inner is completed*/
 					!lastMaxCycle && minDiceCycle.splice(0, minDieCycle + 1);	
 				}
 			}
 		}
-
 		// Loop across the lengthier of the 2 arrays
 		for (let maxDieCycle = 0; maxDieCycle < maxDiceCycle.length; maxDieCycle++) {
 
+			// Toggle 'lastMaxCycle' (watches for last cycle on parent loop if shorter than min array)
+			// and switch true on first loop
 			(maxDiceCycle[maxDieCycle] === 0) && (lastMaxCycle = true);
 
-			// This condition (before running loop on minDiceArray) exists here arising due to predictable steps
-			// during the loop process:
-			// First, the maxDiceArray is deliberately made the parent array and it has the larger first element
-			// of the 2 arrays. Hence (dieRollOneSum > dieRollTwoSum) will always hold true on the very first 
-			// loop.
-			// Second, because minDiceCycle's first element (dieRollSum) is the lesser value, this inner loop gets processed
-			// and based on the condition it's dieRollSums becomes greater, it then drops back to the parent array.
-			// Third, after processing in the parent array, the condition to throw the process back into the inner array
-			// is the condition being dieRollOneSum is larger than dieRollTwoSum. If it's not, the loop keeps running only
-			// on the parent array, eschewing the inner array
+			/*This condition (before running loop on minDiceArray) exists here arising due to predictable steps
+			during the loop process:
+			First, the maxDiceArray is deliberately made the parent array and it has the larger first element
+			of the 2 arrays. Hence (dieRollOneSum > dieRollTwoSum) will always hold true on the very first 
+			loop.
+			Second, because minDiceCycle's first element (dieRollSum) is the lesser value, this inner loop gets processed
+			and based on the condition it's dieRollSums becomes greater, it then drops back to the parent array.
+			Third, after processing in the parent array, the condition to throw the process back into the inner array
+			is the condition being dieRollOneSum is larger than dieRollTwoSum. If it's not, the loop keeps running only
+			on the parent array, eschewing the inner array*/
 			if (dieRollOneSum > dieRollTwoSum) {
-				computeMinDiceData(maxDieCycle);
+				computeMinDiceData();
 			}	
 
+			// Skip if last element in parent array reaches. Remember 
 			if (!lastMaxCycle) {
 
-				// An appended '0' to the maximum dice (parent) array is the condition where the minDiceArray has more
-				// elements. But why? Because there's a shift() method run on the array before the loop, thus if the 
-				// parent array had only one child, the whole loop process would not even run:
+				/*
+				An appended '0' to the maximum dice (parent) array is the condition where the minDiceArray has more
+				elements. But why? Because there's a shift() method run on the array before the loop, thus if the 
+				parent array had only one child, the whole loop process would not even run:
+				*/
 				
 				// Condition to ensure ensuing code does not run when maxDiceArray elements are used up
 				if (maxDiceCycle[maxDieCycle] !== 0) {
-					// Only loop across max dice array in the event min dice array completes cycles
-					// If max dice array completes cycles first, the min array (above) would run
-					// completely and not break out because it is a nested loop.
+					/*Only loop across max dice array in the event min dice array completes cycles
+					If max dice array completes cycles first, the min array (above) would run
+					completely and not break out because it is a nested loop.*/
 					dieRollOneSum += maxDiceCycle[maxDieCycle];
 				}
-
 				if (minDiceCycle.length) {	// Child array still exists
 					if (dieRollOneSum > dieRollTwoSum) {
-						timeout.push(dieRollTwoSum - diceTimeoutSum);
-						diceTimeoutSum += (dieRollTwoSum - diceTimeoutSum);
+						compileTimeout(dieRollTwoSum - diceTimeoutSum, maxDiceCycle[maxDieCycle], 1);
 					} else {
-						timeout.push(dieRollOneSum - diceTimeoutSum);
-						diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
+						compileTimeout(dieRollOneSum - diceTimeoutSum,  maxDiceCycle[maxDieCycle], 1);
 					}
 				} else {	// Child array no longer exists
 					// Last cycle on both arrays
 					if (maxDieCycle === maxDiceCycle.length - 1) {
 						if (dieRollOneSum > dieRollTwoSum) {	// Use larger of die roll sums
-							timeout.push(dieRollOneSum - diceTimeoutSum);
-							diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
+							compileTimeout(dieRollOneSum - diceTimeoutSum,  maxDiceCycle[maxDieCycle], 1);
 						} else {
-							timeout.push(dieRollTwoSum - diceTimeoutSum);
-							diceTimeoutSum += (dieRollTwoSum - diceTimeoutSum);
+							compileTimeout(dieRollTwoSum - diceTimeoutSum,  maxDiceCycle[maxDieCycle], 1);
 						}
 					} else {	// Child (minDiceArray completed) array but parent array loop continues
-						timeout.push(dieRollOneSum - diceTimeoutSum);
-						diceTimeoutSum += (dieRollOneSum - diceTimeoutSum);
+						compileTimeout(dieRollOneSum - diceTimeoutSum,  maxDiceCycle[maxDieCycle], 1);
 					}
 				}
-				duration.push(maxDiceCycle[maxDieCycle]);
-				dice.push(1);
+				/*
+					If maxDiceArray needs to loop twice in a series when minDiceArray is yet to complete loops,
+					sidestep minDiceArray to run loop only on parent array and when done with loop running only
+					on maxDiceArray, switch back into child loop.
 
-				// If maxDiceArray needs to loop twice in a series when minDiceArray is yet to complete loops,
-				// sidestep minDiceArray to run loop only on parent array and when done with loop running only
-				// on maxDiceArray, switch back into child loop.
+					This has been explained extensively in the comments some lines above (at the start of the child loop)
+					But this presents a structural problem because on the final loop on the parent array, the process
+					cannot climb back into the child array.
+					
+					Unless of course, the inner loop was turned into a function and called here (last loop on maxDiceArray)
+					just like so: (Must be placed at very bottom of parent loop)
+				*/
 
-				// This has been explained extensively in the comments some lines above (at the start of the child loop)
-				// But this presents a structural problem because on the final loop on the parent array, the process
-				// cannot climb back into the child array.
-				
-				// Unless of course, the inner loop was turned into a function and called here (last loop on maxDiceArray)
-				// just like so: (Must be placed at very bottom of parent loop)
 				if (minDiceCycle.length && (maxDieCycle === maxDiceCycle.length - 1)) {
-					computeMinDiceData(maxDieCycle);
-					lastMaxCycle = true;	// explicitly set flag because tracking last max diecycle by loop is tricky
+					computeMinDiceData();
+					lastMaxCycle = true;	// Explicitly set flag because tracking last max diecycle by loop is tricky
 				}
 			}
 		}
@@ -502,8 +490,8 @@ export default class App extends Component {
 			// 	[0.7, 1.0]
 			// ]
 			[
-				[1.42, 0.45],
-				[0.7, 1.0, 1.9]
+				[1.42, 0.45, 0.35],
+				[0.7, 1.09, 1.9]
 			]
 		)
 		console.log(diceData);
