@@ -60,9 +60,11 @@ export default class App extends Component {
 	}
 
 	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
-		// Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
-		// New dice value will add to previous seed position for each seed while taking care of error that may
-		// arise from addition with null
+		/*
+			Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
+			New dice value will add to previous seed position for each seed while taking care of error that may
+			arise from addition with null
+		*/
 		this.setState({
 			...this.state,
 			players: {
@@ -108,12 +110,15 @@ export default class App extends Component {
 		let fragmentedMove = 0;
 
 		const initMove = (breakout) => {
-			// Determine direction of travel. For diagonal travel, x & y must update in state at the same time
+			/*
+				Determine direction of travel. For diagonal travel, x & y must update in state at the same time
 
-			// Breakout loop has to be looped over by 1 length less than array length because
-			// the method in the loop works with both the current and next loop
-			// However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
-			const popCellPaths = (breakout === null) ? 0 : 1;
+				Breakout loop has to be looped over by 1 length less than array length because
+				the method in the loop works with both the current and next loop
+				However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
+				
+			*/
+				const popCellPaths = (breakout === null) ? 0 : 1;
 			let combinedPaths = (breakout === null) ? 2 : (cellPaths.length - 1)	
 			if (cellPath < combinedPaths) {
 				setTimeout(() => {
@@ -148,20 +153,22 @@ export default class App extends Component {
 							x = this.state.players[`${id}`].coordinates[0].x - fragmentedMove;
 							y = this.state.players[`${id}`].coordinates[0].y;
 						} else {
-							// When approaching diagonals, both x and y will advance 1 cell each
-							// This advancement requires 1 to be subtracted from the next fragmented move 
-							// values. 
-							
-							// For example, a total dice value of 15 from 6 - 0 position is broken
-							// into [4, 6, 2, 3] where each value indicates a change in direction on either
-							// x or y axis, just after 4 is a diagonal which would move both x & y by -1
-							// respectively. So that means the fragmented moves array should transform 
-							// into something like [4, [1,1], 5, 2, 3]. The next move after the diagonal
-							// should become shorn of 1.
-							
-							// If it is on the fly while looping, a check will be made for these diagonals
-							// which are 4, 17, 30 and 43 and the cell paths array 
-							// console.log("this.state.players[`${id}`].cell + fragmentedMove :", this.state.players[`${id}`].cell + fragmentedMove);
+							/*
+								When approaching diagonals, both x and y will advance 1 cell each
+								This advancement requires 1 to be subtracted from the next fragmented move 
+								values. 
+								
+								For example, a total dice value of 15 from 6 - 0 position is broken
+								into [4, 6, 2, 3] where each value indicates a change in direction on either
+								x or y axis, just after 4 is a diagonal which would move both x & y by -1
+								respectively. So that means the fragmented moves array should transform 
+								into something like [4, [1,1], 5, 2, 3]. The next move after the diagonal
+								should become shorn of 1.
+								
+								If it is on the fly while looping, a check will be made for these diagonals
+								which are 4, 17, 30 and 43 and the cell paths array 
+								console.log("this.state.players[`${id}`].cell + fragmentedMove :", this.state.players[`${id}`].cell + fragmentedMove);
+							*/
 							if (cellPaths[cellPath + 1] > 1) {	// Next fragmented move must exist to set diagonal
 								cellPaths[cellPath + 1] = cellPaths[cellPath + 1] - 1	// Subtract 1 from next 
 								if (this.state.players[`${id}`].cell === 4) {
@@ -199,12 +206,14 @@ export default class App extends Component {
 					initMove(this.state.players[`${id}`].cell);
 				}, timer * 1000)
 			} else {
-				// Why put this in setTimeout() and not just setState() ordinarily?
-				// The reason is because this else case will fire the setState() right away because
-				// the 'if' of this else also sets state in a setTimeout(). In other words, you are 
-				// setting state right away after just setting a state thus at risk of losing any
-				// logic that runs on the last loop. 
-				// For this reason, a setTimeout() must be set in this else case too.
+				/*
+					Why put this in setTimeout() and not just setState() ordinarily?
+					The reason is because this else case will fire the setState() right away because
+					the 'if' of this else also sets state in a setTimeout(). In other words, you are 
+					setting state right away after just setting a state thus at risk of losing any
+					logic that runs on the last loop. 
+					For this reason, a setTimeout() must be set in this else case too.
+				*/
 				setTimeout(() => {
 					this.setState({
 						...this.state,
@@ -245,10 +254,10 @@ export default class App extends Component {
 		const diceTimeout = ([...Array(cycleSteps)].map((_, i) => 0 + i)).map(
 			(value, index) => {
 				let pcntStepRollDuration = this.getRandomWithinRange(16.7 / 100, 80 / 100);	// Between 16.7% and 80%
-				console.log("pcntStepRollDuration : ", pcntStepRollDuration);
-				console.log("randomTimeout : ", randomTimeout);
-				console.log("timeoutSegment : ", timeoutSegment);
-				console.log("randomTimeout - timeoutSegment", (randomTimeout - timeoutSegment))
+				// console.log("pcntStepRollDuration : ", pcntStepRollDuration);
+				// console.log("randomTimeout : ", randomTimeout);
+				// console.log("timeoutSegment : ", timeoutSegment);
+				// console.log("randomTimeout - timeoutSegment", (randomTimeout - timeoutSegment))
 
 				/*
 					WHAT WE WANT TO ACHIEVE
@@ -261,14 +270,15 @@ export default class App extends Component {
 					- But remember total sequence must equal 3 seconds, and 1.5s + 0.75s + 0.375s = 2.625s
 					- Hence the last sequence must be the total minus the 1st and 2nd sequence (3s - (1.5s + 0.75s)) = 0.75s
 				*/
+				/*
+					The problem with this is that it increments the 
+					timeoutSegment += pcntStepRollDuration * (randomTimeout - timeoutSegment);
+					return timeoutSegment;
+					Do the following instead:
 
-				// The problem with this is that it increments the 
-				// timeoutSegment += pcntStepRollDuration * (randomTimeout - timeoutSegment);
-				// return timeoutSegment;
-				// Do the following instead:
-
-				// Take care of last loop to ensure 3rd sequence matches total specified duration (e.g. 3 seconds)
-				// By making pcntStepRollDuration = 1, this ensures the remaining sequence helps complete the 3-s duration
+					Take care of last loop to ensure 3rd sequence matches total specified duration (e.g. 3 seconds)
+					By making pcntStepRollDuration = 1, this ensures the remaining sequence helps complete the 3-s duration
+				*/
 				pcntStepRollDuration = index === Array(cycleSteps).length - 1 ? 1 : pcntStepRollDuration;
 
 				value = pcntStepRollDuration * (randomTimeout - timeoutSegment);
@@ -355,35 +365,38 @@ export default class App extends Component {
 			// Loop across the shorter of the 2 arrays
 			for (let minDieCycle = 0; minDieCycle < minDiceCycle.length; minDieCycle++) {
 
+				const currMinDieCycle = minDiceCycle[minDieCycle];
+
 				// Calculate total duration of min array
-				dieRollTwoSum += minDiceCycle[minDieCycle];
+				dieRollTwoSum += currMinDieCycle;
 
 				if (dieRollOneSum > dieRollTwoSum) {
 					if (lastMaxCycle && (minDieCycle === minDiceCycle.length - 1)) {
 						maxDiceTimeoutSum = Math.max(dieRollOneSum, dieRollTwoSum);
-						compileTimeout(maxDiceTimeoutSum - diceTimeoutSum, minDiceCycle[minDieCycle], 2);
+						compileTimeout(maxDiceTimeoutSum - diceTimeoutSum, currMinDieCycle, 2);
 					}
 					else {
-						compileTimeout(dieRollTwoSum - diceTimeoutSum, minDiceCycle[minDieCycle], 2);						
+						compileTimeout(dieRollTwoSum - diceTimeoutSum, currMinDieCycle, 2);						
 					}	
 				} else {
 					// If on last cycle on minDiceCycle and minDiceCycle is lengthier than maxDiceCycle,
 					// use larger of two timeouts to calculate last timeout
 					if (lastMaxCycle && (minDieCycle === minDiceCycle.length - 1)) {
 						maxDiceTimeoutSum = Math.max(dieRollOneSum, dieRollTwoSum);
-						compileTimeout(maxDiceTimeoutSum - diceTimeoutSum, minDiceCycle[minDieCycle], 2);
+						compileTimeout(maxDiceTimeoutSum - diceTimeoutSum, currMinDieCycle, 2);
 					} else if (lastMaxCycle) {
-						compileTimeout(dieRollTwoSum - diceTimeoutSum, minDiceCycle[minDieCycle], 2);
+						compileTimeout(dieRollTwoSum - diceTimeoutSum, currMinDieCycle, 2);
 					} else {
-						compileTimeout(dieRollOneSum - diceTimeoutSum,  minDiceCycle[minDieCycle], 2);
+						compileTimeout(dieRollOneSum - diceTimeoutSum,  currMinDieCycle, 2);
 					}
 					/*
-					Cut off looped items off minDice arrray which automatically
-					exits loop and onto the maxDiceCycle (so long maxDiceCycle exists!)
+						Cut off looped items off minDice arrray which automatically
+						exits loop and onto the maxDiceCycle (so long maxDiceCycle exists!)
 
-					The current iteration of the parent array if 0 means the parent array (maxDiceArray) is 
-					shorter than the child array (minDiceArray). Hence, if parent array is shorter,
-					no dropping off this inner loop until the loops running on the inner is completed*/
+						The current iteration of the parent array if 0 means the parent array (maxDiceArray) is 
+						shorter than the child array (minDiceArray). Hence, if parent array is shorter,
+						no dropping off this inner loop until the loops running on the inner is completed
+					*/
 					!lastMaxCycle && minDiceCycle.splice(0, minDieCycle + 1);	
 				}
 			}
@@ -391,20 +404,24 @@ export default class App extends Component {
 		// Loop across the lengthier of the 2 arrays
 		for (let maxDieCycle = 0; maxDieCycle < maxDiceCycle.length; maxDieCycle++) {
 
+			const currMaxDieCycle = maxDiceCycle[maxDieCycle];
+
 			// Toggle 'lastMaxCycle' (watches for last cycle on parent loop if shorter than min array)
 			// and switch true on first loop
-			(maxDiceCycle[maxDieCycle] === 0) && (lastMaxCycle = true);
+			(currMaxDieCycle === 0) && (lastMaxCycle = true);
 
-			/*This condition (before running loop on minDiceArray) exists here arising due to predictable steps
-			during the loop process:
-			First, the maxDiceArray is deliberately made the parent array and it has the larger first element
-			of the 2 arrays. Hence (dieRollOneSum > dieRollTwoSum) will always hold true on the very first 
-			loop.
-			Second, because minDiceCycle's first element (dieRollSum) is the lesser value, this inner loop gets processed
-			and based on the condition it's dieRollSums becomes greater, it then drops back to the parent array.
-			Third, after processing in the parent array, the condition to throw the process back into the inner array
-			is the condition being dieRollOneSum is larger than dieRollTwoSum. If it's not, the loop keeps running only
-			on the parent array, eschewing the inner array*/
+			/*
+				This condition (before running loop on minDiceArray) exists here arising due to predictable steps
+				during the loop process:
+				First, the maxDiceArray is deliberately made the parent array and it has the larger first element
+				of the 2 arrays. Hence (dieRollOneSum > dieRollTwoSum) will always hold true on the very first 
+				loop.
+				Second, because minDiceCycle's first element (dieRollSum) is the lesser value, this inner loop gets processed
+				and based on the condition it's dieRollSums becomes greater, it then drops back to the parent array.
+				Third, after processing in the parent array, the condition to throw the process back into the inner array
+				is the condition being dieRollOneSum is larger than dieRollTwoSum. If it's not, the loop keeps running only
+				on the parent array, eschewing the inner array
+			*/
 			if (dieRollOneSum > dieRollTwoSum) {
 				computeMinDiceData();
 			}	
@@ -413,34 +430,34 @@ export default class App extends Component {
 			if (!lastMaxCycle) {
 
 				/*
-				An appended '0' to the maximum dice (parent) array is the condition where the minDiceArray has more
-				elements. But why? Because there's a shift() method run on the array before the loop, thus if the 
-				parent array had only one child, the whole loop process would not even run:
+					An appended '0' to the maximum dice (parent) array is the condition where the minDiceArray has more
+					elements. But why? Because there's a shift() method run on the array before the loop, thus if the 
+					parent array had only one child, the whole loop process would not even run:
 				*/
 				
 				// Condition to ensure ensuing code does not run when maxDiceArray elements are used up
-				if (maxDiceCycle[maxDieCycle] !== 0) {
+				if (currMaxDieCycle !== 0) {
 					/*Only loop across max dice array in the event min dice array completes cycles
 					If max dice array completes cycles first, the min array (above) would run
 					completely and not break out because it is a nested loop.*/
-					dieRollOneSum += maxDiceCycle[maxDieCycle];
+					dieRollOneSum += currMaxDieCycle;
 				}
 				if (minDiceCycle.length) {	// Child array still exists
 					if (dieRollOneSum > dieRollTwoSum) {
-						compileTimeout(dieRollTwoSum - diceTimeoutSum, maxDiceCycle[maxDieCycle], 1);
+						compileTimeout(dieRollTwoSum - diceTimeoutSum, currMaxDieCycle, 1);
 					} else {
-						compileTimeout(dieRollOneSum - diceTimeoutSum,  maxDiceCycle[maxDieCycle], 1);
+						compileTimeout(dieRollOneSum - diceTimeoutSum,  currMaxDieCycle, 1);
 					}
 				} else {	// Child array no longer exists
 					// Last cycle on both arrays
 					if (maxDieCycle === maxDiceCycle.length - 1) {
 						if (dieRollOneSum > dieRollTwoSum) {	// Use larger of die roll sums
-							compileTimeout(dieRollOneSum - diceTimeoutSum,  maxDiceCycle[maxDieCycle], 1);
+							compileTimeout(dieRollOneSum - diceTimeoutSum,  currMaxDieCycle, 1);
 						} else {
-							compileTimeout(dieRollTwoSum - diceTimeoutSum,  maxDiceCycle[maxDieCycle], 1);
+							compileTimeout(dieRollTwoSum - diceTimeoutSum,  currMaxDieCycle, 1);
 						}
 					} else {	// Child (minDiceArray completed) array but parent array loop continues
-						compileTimeout(dieRollOneSum - diceTimeoutSum,  maxDiceCycle[maxDieCycle], 1);
+						compileTimeout(dieRollOneSum - diceTimeoutSum,  currMaxDieCycle, 1);
 					}
 				}
 				/*
@@ -478,17 +495,9 @@ export default class App extends Component {
 		diceTimeout[0] = this.getDiceTimeout(cycleSteps[0]);
 		diceTimeout[1] = this.getDiceTimeout(cycleSteps[1]);
 
-		console.log(diceTimeout);
+		console.log(diceTimeout.slice());
 
 		const diceData = this.computeDiceData(
-			// [
-			// 	[1.42, 0.45, 0.35],
-			// 	[0.7, 1.0, 1.9]
-			// ]
-			// [
-			// 	[1.42, 0.45, 0.35],
-			// 	[0.7, 1.0]
-			// ]
 			[
 				[1.42, 0.45, 0.35],
 				[0.7, 1.09, 1.9]
@@ -501,52 +510,51 @@ export default class App extends Component {
 		// 	[0.7, 0.4, 1.9]
 		// ]
 
-		// =============================================
 
-		// let rollDuration = 3 // this.getRandomWithinRange(1.5, 3);	// 3
-		// const cycleStep = 3  // this.getRandomWithinRange(1, 3, true);	// 3
-		// const diceVals = this.randomDice();
+		let rollDuration = 3 // this.getRandomWithinRange(1.5, 3);	// 3
+		const cycleStep = diceTimeout[0].length;
+		const diceVals = this.randomDice();
 
-		// const randomRoll = (step) => {
-		// 	console.log("Cycle Step: ", cycleStep);
-		// 	console.log("Roll Duration: ", rollDuration);
+		const randomRoll = (step) => {
 
-		// 	if (step < cycleStep) {
-		// 		setTimeout(() => {
-		// 			let pcntStepRollDuration = (this.getRandomWithinRange(16.7 / 100, 80 / 100));	// Between 16.7% and 80%
-		// 			console.log("pcntStepRollDuration : ", pcntStepRollDuration);
-		// 			let stepRollDuration = pcntStepRollDuration * rollDuration;	// e.g. 50% of 3 = 1.5
-		// 			console.log("stepRollDuration : ", stepRollDuration)
-		// 			rollDuration = rollDuration - stepRollDuration;	// e.g. 3 - 1.5
-		// 			console.log("rollDuration : ", rollDuration)
+			if (step < cycleStep) {
+				setTimeout(() => {
 
-		// 			let transformVals = []
-		// 			for (let i = 0; i < 2; i++) {
-		// 				transformVals.push(this.getRandomWithinRange(-400, 400));	// e.g. [309, -112]
-		// 			}
-		// 			console.log(transformVals[0], transformVals[1] )
-		// 			this.setState({
-		// 				...this.state,
-		// 				dice: {
-		// 					...this.state.dice,
-		// 					[`${order}`]: {
-		// 						value: "" ,
-		// 						position: {
-		// 							x: transformVals[0],
-		// 							y: transformVals[1]
-		// 						},
-		// 						// rollDuration: rollDuration
-		// 						rollDuration: 0.2
-		// 					}
-		// 				}
-		// 			})
-		// 			step++;
-		// 			randomRoll(step)
-		// 		// }, step === 0 ? 0 : rollDuration * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
-		// 		}, 200);	// 1, 2 or 3 (Condition to avoid delay on first run)
-		// 	}
-		// }
-		// randomRoll(0);
+					let transformVals = []
+					for (let i = 0; i < 2; i++) {
+						transformVals.push(this.getRandomWithinRange(-400, 400));	// e.g. [309, -112]
+					}
+					console.log(transformVals[0], transformVals[1]);
+					this.setState({
+						...this.state,
+						dice: {
+							...this.state.dice,
+							first: {
+								value: "" ,
+								position: {
+									x: transformVals[0],
+									y: transformVals[1]
+								},
+								// rollDuration: rollDuration
+								rollDuration: 0.2
+							},
+							second: {
+								value: "" ,
+								position: {
+									x: transformVals[0],
+									y: transformVals[1]
+								},
+								// rollDuration: rollDuration
+								rollDuration: 0.2
+							}
+						}
+					})
+					step++;
+					randomRoll(step)
+				}, step === 0 ? 0 : diceData[timeout] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
+			}
+		}
+		randomRoll(0);
 	}
 
 	rollDice = () => {
