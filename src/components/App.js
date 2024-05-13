@@ -515,16 +515,32 @@ export default class App extends Component {
 		const cycleStep = diceTimeout[0].length;
 		const diceVals = this.randomDice();
 
+		let dieOneLastCycle = false;
+		let dieTwoLastCycle = false;
+
 		const randomRoll = (step) => {
 
 			if (step < cycleStep) {
 				setTimeout(() => {
 
 					let transformVals = []
-					for (let i = 0; i < 2; i++) {
+					for (let i = 0; i < 4; i++) {
 						transformVals.push(this.getRandomWithinRange(-400, 400));	// e.g. [309, -112]
 					}
-					console.log(transformVals[0], transformVals[1]);
+					console.log(transformVals);
+
+					let currTimeout = diceData[0];
+					let currDuration = diceData[1];
+					let currDice = diceData[2];
+					
+					// Catch loop that maps as last loop to original diceTimeout array
+					if (Array.isArray(currDuration[step])) {
+
+					} else {
+						
+					}
+
+
 					this.setState({
 						...this.state,
 						dice: {
@@ -541,8 +557,8 @@ export default class App extends Component {
 							second: {
 								value: "" ,
 								position: {
-									x: transformVals[0],
-									y: transformVals[1]
+									x: transformVals[2],
+									y: transformVals[3]
 								},
 								// rollDuration: rollDuration
 								rollDuration: 0.2
@@ -551,7 +567,7 @@ export default class App extends Component {
 					})
 					step++;
 					randomRoll(step)
-				}, step === 0 ? 0 : diceData[timeout] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
+				}, step === 0 ? 0 : diceData[0] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
 			}
 		}
 		randomRoll(0);
