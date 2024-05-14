@@ -485,6 +485,8 @@ export default class App extends Component {
 	selectDie = () => {
 
 	}
+
+
 	
 	roll = (order) => {
 		let cycleSteps = [];	
@@ -505,18 +507,31 @@ export default class App extends Component {
 		)
 		console.log(diceData);
 
-		// [
-		// 	[1.42, 0.45, 0.35],
-		// 	[0.7, 0.4, 1.9]
-		// ]
-
-
 		let rollDuration = 3 // this.getRandomWithinRange(1.5, 3);	// 3
 		const cycleStep = diceTimeout[0].length;
 		const diceVals = this.randomDice();
 
-		let dieOneLastCycle = false;
-		let dieTwoLastCycle = false;
+		const mapDice = (index) => {
+			
+		}
+
+		let diceArrLastCycle = 0;
+		let dieOneLastCycle = 0;
+		let dieTwoLastCycle = 0;
+
+		
+		// Catch loop that maps as last loop to original diceTimeout array
+		if (Array.isArray(diceData[0][diceData.length - 1])) {
+			dieOneLastCycle = diceData[0][diceData[0].length - 1];
+			dieTwoLastCycle = diceData[0][diceData[0].length - 1];
+		} else {
+			diceArrLastCycle = diceTimeout[0].findLastIndex((element) => Array.isArray(element) === true);
+			dieOneLastCycle = diceTimeout[0].findLastIndex((element) => element === 1);
+			dieTwoLastCycle = diceTimeout[0].findLastIndex((element) => element === 2);
+
+			dieOneLastCycle = (dieOneLastCycle > diceArrLastCycle) ? dieOneLastCycle : diceArrLastCycle;
+			dieTwoLastCycle = (dieTwoLastCycle > diceArrLastCycle) ? dieTwoLastCycle : diceArrLastCycle;
+		}
 
 		const randomRoll = (step) => {
 
@@ -533,14 +548,6 @@ export default class App extends Component {
 					let currDuration = diceData[1];
 					let currDice = diceData[2];
 					
-					// Catch loop that maps as last loop to original diceTimeout array
-					if (Array.isArray(currDuration[step])) {
-
-					} else {
-						
-					}
-
-
 					this.setState({
 						...this.state,
 						dice: {
@@ -548,7 +555,7 @@ export default class App extends Component {
 							first: {
 								value: "" ,
 								position: {
-									x: transformVals[0],
+									x: step === dieOneLastCycle ?  transformVals[0],
 									y: transformVals[1]
 								},
 								// rollDuration: rollDuration
