@@ -512,7 +512,14 @@ export default class App extends Component {
 		const diceVals = this.randomDice();
 
 		const mapDice = (index) => {
-			
+			const diceTransformMap = {
+				1 : [[-360, -360], [-360, 360], [-360, 0], [0, 0]],
+				2 : [[] [270, 0]], 
+				3 : [[-360, -270], [-360, 90], [0, 90]],
+				4 : [[-360, -90], [-360, 270], [0, 270]],
+				5 : [[-270, -360], [-270, -270], [-270, -180], [-270, -90], [-270, 0], [-270, 90]  [90, 0]],
+				6 : [[-360, -180], [-360, 180], [-360, ] [[180, 0], [0, 180]]]
+			}
 		}
 
 		let diceArrLastCycle = 0;
@@ -539,7 +546,7 @@ export default class App extends Component {
 				setTimeout(() => {
 
 					let transformVals = []
-					for (let i = 0; i < 4; i++) {
+					for (let i = 0; i < 6; i++) {
 						transformVals.push(this.getRandomWithinRange(-400, 400));	// e.g. [309, -112]
 					}
 					console.log(transformVals);
@@ -555,20 +562,22 @@ export default class App extends Component {
 							first: {
 								value: "" ,
 								position: {
-									x: step === dieOneLastCycle ?  transformVals[0],
-									y: transformVals[1]
+									x: step === dieOneLastCycle ? mapDice(currDice) : transformVals[0],
+									y: transformVals[1],
+									z: transformVals[2]
 								},
 								// rollDuration: rollDuration
-								rollDuration: 0.2
+								rollDuration: currDuration
 							},
 							second: {
 								value: "" ,
 								position: {
-									x: transformVals[2],
-									y: transformVals[3]
+									x: transformVals[3],
+									y: transformVals[4],
+									z: transformVals[5]
 								},
 								// rollDuration: rollDuration
-								rollDuration: 0.2
+								rollDuration: currDuration
 							}
 						}
 					})

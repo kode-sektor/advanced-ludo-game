@@ -471,6 +471,10 @@ button {
 	transform-style: preserve-3d;
 	transition: 1s ease;
 }
+#die-one {
+	/* transform: rotateX(-270deg) rotateY(90deg) !important; */
+	transform: rotateX(90deg) rotateY(0deg) rotateZ(270deg) !important;
+}
 [class*="side-"] {
 	position: absolute;
 	width: 100%;
