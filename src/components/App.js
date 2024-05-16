@@ -512,14 +512,17 @@ export default class App extends Component {
 		const diceVals = this.randomDice();
 
 		const mapDice = (index) => {
+			const randomTransforms = [360, -360]
 			const diceTransformMap = {
-				1 : [[-360, -360], [-360, 360], [-360, 0], [0, 0]],
-				2 : [[] [270, 0]], 
-				3 : [[-360, -270], [-360, 90], [0, 90]],
-				4 : [[-360, -90], [-360, 270], [0, 270]],
-				5 : [[-270, -360], [-270, -270], [-270, -180], [-270, -90], [-270, 0], [-270, 90]  [90, 0]],
-				6 : [[-360, -180], [-360, 180], [-360, ] [[180, 0], [0, 180]]]
+				1 : [0, 0],
+				2 : [270, 0], 
+				3 : [0, 90],
+				4 : [0, 270],
+				5 : [90, 0],
+				6 : [0, 180]    // Also [180, 0]
 			}
+
+			let dieTransformX = diceTransformMap[index][0] + randomTransforms[getRandomWithinRange(0, 1, true)] + getRandomWithinRange(1, 10);
 		}
 
 		let diceArrLastCycle = 0;
