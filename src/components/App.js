@@ -489,6 +489,41 @@ export default class App extends Component {
 
 	
 	roll = (order) => {
+
+		const mapDice = (value) => {
+			alert(value);
+			
+			let dieTransformX = 0;
+			let dieTransformY = 0;
+			let dieTransformZ = 0;
+
+			const randomTransforms = [360, 0, -360];
+			const diceTransformMap = {	// [x, y coordinates of die value]
+				1 : [0, 0],
+				2 : [270, 0], 
+				3 : [0, 90],
+				4 : [0, 270],
+				5 : [90, 0],
+				6 : [0, 180]    // Also [180, 0]
+			}
+
+			dieTransformX = diceTransformMap[value][0] + randomTransforms[this.getRandomWithinRange(0, 1, true)] + this.getRandomWithinRange(1, 10);
+			/*
+				If die value is 2 or 5, run random transform-Y value because die will roll on Y-axis,
+				hence the current die face stays the same.
+				Then flip transform-Z + or -360deg to make a complete spin and return to current die face
+			*/
+			if (value === 2 || value === 5) {
+				dieTransformY = this.getRandomWithinRange(-400, 400);
+				dieTransformZ = randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
+			} else {
+				dieTransformY = diceTransformMap[value][1] + randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
+				dieTransformZ = this.getRandomWithinRange(-400, 400);
+			}
+
+			return [dieTransformX, dieTransformY, dieTransformZ];
+		}
+
 		let cycleSteps = [];	
 		let diceTimeout = [];
 		
@@ -511,24 +546,9 @@ export default class App extends Component {
 		const cycleStep = diceTimeout[0].length;
 		const diceVals = this.randomDice();
 
-		const mapDice = (index) => {
-			const randomTransforms = [360, -360]
-			const diceTransformMap = {
-				1 : [0, 0],
-				2 : [270, 0], 
-				3 : [0, 90],
-				4 : [0, 270],
-				5 : [90, 0],
-				6 : [0, 180]    // Also [180, 0]
-			}
-
-			let dieTransformX = diceTransformMap[index][0] + randomTransforms[getRandomWithinRange(0, 1, true)] + getRandomWithinRange(1, 10);
-		}
-
 		let diceArrLastCycle = 0;
 		let dieOneLastCycle = 0;
 		let dieTwoLastCycle = 0;
-
 		
 		// Catch loop that maps as last loop to original diceTimeout array
 		if (Array.isArray(diceData[0][diceData.length - 1])) {
@@ -569,24 +589,22 @@ export default class App extends Component {
 									y: transformVals[1],
 									z: transformVals[2]
 								},
-								// rollDuration: rollDuration
 								rollDuration: currDuration
 							},
-							second: {
-								value: "" ,
-								position: {
-									x: transformVals[3],
-									y: transformVals[4],
-									z: transformVals[5]
-								},
-								// rollDuration: rollDuration
-								rollDuration: currDuration
-							}
+							// second: {
+							// 	value: "" ,
+							// 	position: {
+							// 		x: transformVals[3],
+							// 		y: transformVals[4],
+							// 		z: transformVals[5]
+							// 	},
+							// 	rollDuration: currDuration
+							// }
 						}
 					})
 					step++;
 					randomRoll(step)
-				}, step === 0 ? 0 : diceData[0] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
+				}, step === 0 ? 0 : diceData[0][step - 1] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
 			}
 		}
 		randomRoll(0);
