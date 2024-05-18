@@ -498,28 +498,34 @@ export default class App extends Component {
 				6 : [0, 180]    // Also [180, 0]
 			}
 
-			dieTransformX = diceTransformMap[value][0] + randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
+			dieTransformX = diceTransformMap[value][0] + randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(0, 10);
 			/*
 				If die value is 2 or 5, run random transform-Y value because die will roll on Y-axis,
 				hence the current die face stays the same.
 				Then flip transform-Z + or -360deg to make a complete spin and return to current die face
+				
+				This piece of code (this.getRandomWithinRange(0, 10)) gets a random number between 0 and 10 to just tilt
+				the die slightly in random direction to add visual depth. The maximum possible tilt though is not 10 deg
+				but 20 deg because 2 transforms are at play on a die to make the tilt. For e.g, if the die value is 3, 
+				dieTransformX and dieTransformZ if in the same direction and with the maximum possible tilt (10deg), would
+				add to each other to become 20deg
 			*/
 			if (value === 2 || value === 5) {
 				dieTransformY = this.getRandomWithinRange(-400, 400);
-				dieTransformZ = randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
-			} else if (value === 3) {
-				dieTransformX = randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
+				dieTransformZ = randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(0, 10);
+			} else if (value === 3 || value === 4) {
+				dieTransformX = randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(0, 10);
 				dieTransformY = diceTransformMap[value][1] + randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
-				dieTransformZ = randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
+				dieTransformZ = randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(0, 10);
 			}
 			else {
-				dieTransformY = diceTransformMap[value][1] + randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
+				dieTransformY = diceTransformMap[value][1] + randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(0, 10);
 				dieTransformZ = this.getRandomWithinRange(-400, 400);
 			}
 			console.log("ALL TRANSFORMS: ", [dieTransformX, dieTransformY, dieTransformZ]);
 			return [dieTransformX, dieTransformY, dieTransformZ];
 		}
-		const mappedDieTransform = mapDice(3);		
+		const mappedDieTransform = mapDice(6);		
 
 		let cycleSteps = [];	
 		let diceTimeout = [];
