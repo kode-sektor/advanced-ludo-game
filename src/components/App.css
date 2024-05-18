@@ -473,6 +473,7 @@ button {
 }
 #die-one {
 	transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+	/* transform: rotateX(0deg) rotateY(310deg) rotateZ(350deg) !important; */
 }
 [class*="side-"] {
 	position: absolute;

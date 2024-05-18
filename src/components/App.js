@@ -18,12 +18,12 @@ export default class App extends Component {
 		dice: {
 			first: {
 				value: 1,
-				position: {x : 0, y: 0},
+				position: {x: 0, y: 0, z: 0},
 				rollDuration: 0
 			},
 			second: {
 				value: 1,
-				position: {x : 0, y: 0},
+				position: {x: 0, y: 0, z: 0},
 				rollDuration: 0
 			}
 		}
@@ -327,7 +327,6 @@ export default class App extends Component {
 		if (diceCycleDifference > 0) {
 			maxDiceCycle = maxDiceCycle.concat([0]);
 		}
-
 		dieRollOneSum += maxDiceCycle[0];
 		dieRollTwoSum += minDiceCycle[0];
 
@@ -364,9 +363,7 @@ export default class App extends Component {
 
 			// Loop across the shorter of the 2 arrays
 			for (let minDieCycle = 0; minDieCycle < minDiceCycle.length; minDieCycle++) {
-
 				const currMinDieCycle = minDiceCycle[minDieCycle];
-
 				// Calculate total duration of min array
 				dieRollTwoSum += currMinDieCycle;
 
@@ -403,13 +400,11 @@ export default class App extends Component {
 		}
 		// Loop across the lengthier of the 2 arrays
 		for (let maxDieCycle = 0; maxDieCycle < maxDiceCycle.length; maxDieCycle++) {
-
 			const currMaxDieCycle = maxDiceCycle[maxDieCycle];
 
 			// Toggle 'lastMaxCycle' (watches for last cycle on parent loop if shorter than min array)
 			// and switch true on first loop
 			(currMaxDieCycle === 0) && (lastMaxCycle = true);
-
 			/*
 				This condition (before running loop on minDiceArray) exists here arising due to predictable steps
 				during the loop process:
@@ -428,13 +423,11 @@ export default class App extends Component {
 
 			// Skip if last element in parent array reaches. Remember 
 			if (!lastMaxCycle) {
-
 				/*
 					An appended '0' to the maximum dice (parent) array is the condition where the minDiceArray has more
 					elements. But why? Because there's a shift() method run on the array before the loop, thus if the 
 					parent array had only one child, the whole loop process would not even run:
 				*/
-				
 				// Condition to ensure ensuing code does not run when maxDiceArray elements are used up
 				if (currMaxDieCycle !== 0) {
 					/*Only loop across max dice array in the event min dice array completes cycles
@@ -472,7 +465,6 @@ export default class App extends Component {
 					Unless of course, the inner loop was turned into a function and called here (last loop on maxDiceArray)
 					just like so: (Must be placed at very bottom of parent loop)
 				*/
-
 				if (minDiceCycle.length && (maxDieCycle === maxDiceCycle.length - 1)) {
 					computeMinDiceData();
 					lastMaxCycle = true;	// Explicitly set flag because tracking last max diecycle by loop is tricky
@@ -488,10 +480,9 @@ export default class App extends Component {
 
 
 	
-	roll = (order) => {
+	roll = () => {
 
 		const mapDice = (value) => {
-			alert(value);
 			
 			let dieTransformX = 0;
 			let dieTransformY = 0;
@@ -507,7 +498,7 @@ export default class App extends Component {
 				6 : [0, 180]    // Also [180, 0]
 			}
 
-			dieTransformX = diceTransformMap[value][0] + randomTransforms[this.getRandomWithinRange(0, 1, true)] + this.getRandomWithinRange(1, 10);
+			dieTransformX = diceTransformMap[value][0] + randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
 			/*
 				If die value is 2 or 5, run random transform-Y value because die will roll on Y-axis,
 				hence the current die face stays the same.
@@ -516,21 +507,30 @@ export default class App extends Component {
 			if (value === 2 || value === 5) {
 				dieTransformY = this.getRandomWithinRange(-400, 400);
 				dieTransformZ = randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
-			} else {
+			} else if (value === 3) {
+				dieTransformX = randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
+				dieTransformY = diceTransformMap[value][1] + randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
+				dieTransformZ = randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
+			}
+			else {
 				dieTransformY = diceTransformMap[value][1] + randomTransforms[this.getRandomWithinRange(0, 2, true)] + this.getRandomWithinRange(1, 10);
 				dieTransformZ = this.getRandomWithinRange(-400, 400);
 			}
-
+			console.log("ALL TRANSFORMS: ", [dieTransformX, dieTransformY, dieTransformZ]);
 			return [dieTransformX, dieTransformY, dieTransformZ];
 		}
+		const mappedDieTransform = mapDice(3);		
 
 		let cycleSteps = [];	
 		let diceTimeout = [];
 		
 		cycleSteps = this.getDiceCycle();	// [3, 3]
 		console.log(cycleSteps)
-		diceTimeout[0] = this.getDiceTimeout(cycleSteps[0]);
-		diceTimeout[1] = this.getDiceTimeout(cycleSteps[1]);
+		// diceTimeout[0] = this.getDiceTimeout(cycleSteps[0]);
+		// diceTimeout[1] = this.getDiceTimeout(cycleSteps[1]);
+
+		diceTimeout[0] = [1.42, 0.45, 0.35];
+		diceTimeout[1] = [0.7, 1.09, 1.9];
 
 		console.log(diceTimeout.slice());
 
@@ -540,10 +540,18 @@ export default class App extends Component {
 				[0.7, 1.09, 1.9]
 			]
 		)
+		/*
+			Returns something like: 
+			[
+				[0.7, 0.72, 0.44999999999999996, 1.82] 	 // timeout (settransition loop time)
+				[Array(2), 1.09, Array(2), 0.35]	// die transition duration (css)	
+				[Array(2), 2, Array(2), 1]	// dice 
+			]
+		*/
 		console.log(diceData);
 
 		let rollDuration = 3 // this.getRandomWithinRange(1.5, 3);	// 3
-		const cycleStep = diceTimeout[0].length;
+		const cycleStep = diceData[0].length;
 		const diceVals = this.randomDice();
 
 		let diceArrLastCycle = 0;
@@ -551,13 +559,18 @@ export default class App extends Component {
 		let dieTwoLastCycle = 0;
 		
 		// Catch loop that maps as last loop to original diceTimeout array
-		if (Array.isArray(diceData[0][diceData.length - 1])) {
-			dieOneLastCycle = diceData[0][diceData[0].length - 1];
-			dieTwoLastCycle = diceData[0][diceData[0].length - 1];
+		/* 
+			Attempt to determine index of last entries of die 1 and 2.
+			These last indexes of the die 1 and 2 enables us to apply the correct die value position
+			on final timeout
+		*/
+		if (Array.isArray(diceData[2][diceData[2].length - 1])) {	
+			dieOneLastCycle = diceData[2][diceData[2].length - 1];
+			dieTwoLastCycle = diceData[2][diceData[2].length - 1];
 		} else {
-			diceArrLastCycle = diceTimeout[0].findLastIndex((element) => Array.isArray(element) === true);
-			dieOneLastCycle = diceTimeout[0].findLastIndex((element) => element === 1);
-			dieTwoLastCycle = diceTimeout[0].findLastIndex((element) => element === 2);
+			diceArrLastCycle = diceData[2].findLastIndex((element) => Array.isArray(element) === true);
+			dieOneLastCycle = diceData[2].findLastIndex((element) => element === 1);
+			dieTwoLastCycle = diceData[2].findLastIndex((element) => element === 2);
 
 			dieOneLastCycle = (dieOneLastCycle > diceArrLastCycle) ? dieOneLastCycle : diceArrLastCycle;
 			dieTwoLastCycle = (dieTwoLastCycle > diceArrLastCycle) ? dieTwoLastCycle : diceArrLastCycle;
@@ -565,18 +578,21 @@ export default class App extends Component {
 
 		const randomRoll = (step) => {
 
-			if (step < cycleStep) {
-				setTimeout(() => {
+			console.log("dieOneLastCycle : ", dieOneLastCycle);
+			console.log("dieTwoLastCycle : ", dieTwoLastCycle);
 
+			if (step < cycleStep) {
+				
+				setTimeout(() => {
 					let transformVals = []
 					for (let i = 0; i < 6; i++) {
 						transformVals.push(this.getRandomWithinRange(-400, 400));	// e.g. [309, -112]
 					}
 					console.log(transformVals);
 
-					let currTimeout = diceData[0];
-					let currDuration = diceData[1];
-					let currDice = diceData[2];
+					let currTimeout = diceData[0][step];
+					let currDuration = diceData[1][step];
+					let currDice = diceData[2][step];
 					
 					this.setState({
 						...this.state,
@@ -584,10 +600,15 @@ export default class App extends Component {
 							...this.state.dice,
 							first: {
 								value: "" ,
-								position: {
-									x: step === dieOneLastCycle ? mapDice(currDice) : transformVals[0],
+								/* position: {
+									x: transformVals[0],
 									y: transformVals[1],
 									z: transformVals[2]
+								}, */
+								position: {
+									x: step === dieOneLastCycle ? mappedDieTransform[0] : transformVals[0],
+									y: step === dieOneLastCycle ? mappedDieTransform[1] : transformVals[1],
+									z: step === dieOneLastCycle ? mappedDieTransform[2] : transformVals[2]
 								},
 								rollDuration: currDuration
 							},
@@ -604,15 +625,14 @@ export default class App extends Component {
 					})
 					step++;
 					randomRoll(step)
-				}, step === 0 ? 0 : diceData[0][step - 1] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
+				}, step === 0 ? 0 : diceData[0][step] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
 			}
 		}
 		randomRoll(0);
 	}
 
 	rollDice = () => {
-		this.roll("first");
-		// this.roll("second");
+		this.roll();
 	}
 
 	render() {
@@ -920,7 +940,8 @@ export default class App extends Component {
 							<div id="die-one" className="die"
 								style={{
 										transform: `rotateX(${this.state.dice.first.position.x}deg)
-											rotateY(${this.state.dice.first.position.y}deg)`,
+											rotateY(${this.state.dice.first.position.y}deg)
+											rotateZ(${this.state.dice.first.position.z}deg)`,
 										transitionDuration: this.state.dice.first.rollDuration + "s"
 								}}>
 								<div className="side-one"></div>
@@ -943,7 +964,8 @@ export default class App extends Component {
 							<div id="die-two" className="die"
 								style={{
 									transform: `rotateX(${this.state.dice.second.position.x}deg)
-										rotateY(${this.state.dice.second.position.y}deg)`,
+										rotateY(${this.state.dice.second.position.y}deg),
+										rotateZ(${this.state.dice.second.position.z}deg)`,
 									transitionDuration: this.state.dice.second.rollDuration + "s"
 								}}>
 								<div className="side-one"></div>
