@@ -471,7 +471,7 @@ button {
 	transform-style: preserve-3d;
 	transition: 1s ease;
 }
-#die-one {
+#die-one, #die-two {
 	transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
 	/* transform: rotateX(0deg) rotateY(310deg) rotateZ(350deg) !important; */
 }
@@ -577,10 +577,10 @@ button {
 .side-six > .die-inner + .die-inner:before {
 	right: 15%;
 	top: 50%;
-	margin-top: -5px;
+	margin-top: -4px;
 }
 .side-six > .die-inner + .die-inner:after {
 	left: 15%;
 	top: 50%;
-	margin-top: -5px;
+	margin-top: -4px;
 }

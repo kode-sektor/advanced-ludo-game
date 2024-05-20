@@ -145,6 +145,9 @@ DIE ROLL SEQUENCING
 <img src="/public/images/die-roll-sequencing-illustration-different-array-lengths.jpg">
 <img src="/public/images/die-roll-sequencing-illustration-2.jpg">
 
+	- Determining the dice faces and matching with correct final transitions and roll value
+<img src="/public/images/dice-faces.jpg">
+
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React
 - Platforms: Browser (desktop, mobile, tablet)
