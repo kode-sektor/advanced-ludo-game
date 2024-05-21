@@ -298,12 +298,22 @@ export default class App extends Component {
 	*/
 	computeDiceData = (diceTimeout) => {
 
-		console.log("diceTimeout: ", diceTimeout);
+		let diceTimeoutSlice = diceTimeout.slice();
+		console.log("diceTimeout: ", diceTimeoutSlice);
 		const timeout = [];
 		const duration = [];
 		const dice = [];
 
 		let lastMaxCycle = false;
+
+		/* 
+			Control for switching the dice and transition. This is done because the code in computeMinDiceData()
+			picks the greater element as the max array. Hence the first timeout on die 1 will always be longer
+			(spin longer) than die 2's. To distort this predictability, die 1 and die 2 will be switched
+
+			To solve this, instead of generating a random number afresh, a part of the code is leveraged upon 
+		*/
+		let dieFlip = (diceTimeout[0][0]).toFixed(1).slice(-1) < 5 ? false : true;	
 
 		let dieRollOneSum = 0;
 		let dieRollTwoSum = 0;
@@ -347,7 +357,16 @@ export default class App extends Component {
 		minDiceCycle.shift();
 		maxDiceCycle.shift();
 
+		// Main code that packages the timeout, duration and corresponding dice
+		// into arrays.
 		const compileTimeout = (diff, dur, die) => {
+			if (dieFlip) {	// Ensure die 1 and die 2 spin lengths are random
+				if (die === 1) {
+					die = 2;
+				} else {
+					die = 1;
+				}
+			}
 			if (diff < 0.1) {
 				timeout[timeout.length - 1] = timeout[timeout.length - 1] + diff;
 				duration[duration.length - 1] = [duration[duration.length - 1], dur];
@@ -475,16 +494,10 @@ export default class App extends Component {
 		return [timeout, duration, dice];
 	}
 
-	selectDie = () => {
-
-	}
-
-
 	
 	roll = () => {
 
 		const mapDice = (value) => {
-			
 			
 			let dieTransformX = 0;
 			let dieTransformY = 0;
