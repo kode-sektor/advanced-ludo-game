@@ -3,7 +3,13 @@ import { randomDice, getRandomWithinRange, getDiceCycle, getDiceTimeout, compute
 
 export default class RollBtn extends Component {
 
+	state = {
+		disabled : false
+	}
+
 	roll = () => {
+
+		this.setState({disabled : true});
 
 		const mapDice = (value) => {
 			let dieTransformX = 0;
@@ -82,7 +88,7 @@ export default class RollBtn extends Component {
 		// Catch loop that maps as last loop to original diceTimeout array
 		/* 
 			Determine index of last entries of die 1 and 2.
-			These last indexes of the die 1 and 2 enables the correct application of die value position
+			These last indexes of the die 1 and 2 enable the correct application of die value position
 			on final timeout
 		*/
 		if (Array.isArray(diceData[2][diceData[2].length - 1])) {	
@@ -98,11 +104,12 @@ export default class RollBtn extends Component {
 		}
 
 		const randomRoll = (step) => {
+			let currDuration = 0
 
 			if (step < cycleStep) {
 				
 				setTimeout(() => {
-					let currDuration = diceData[1][step];
+					currDuration = diceData[1][step];
 					let currDice = diceData[2][step];
 					let diceObj = {};
 
@@ -149,11 +156,17 @@ export default class RollBtn extends Component {
 							}
 						}
 					}
-
 					this.props.setDice(diceObj)
 					step++;
 					randomRoll(step)
 				}, step === 0 ? 0 : diceData[0][step] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
+			} else {	// Re-enable roll button after roll
+				setTimeout(() => {
+					this.setState({disabled : false});
+				}, Array.isArray(diceData[1][diceData[1].length - 1]) ?
+					(Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000) :
+					(diceData[1][diceData[1].length - 1] * 1000)
+				);
 			}
 		}
 		randomRoll(0);
@@ -163,8 +176,8 @@ export default class RollBtn extends Component {
 	render() {
 		return (
 			<section className="roll-button-container">
-				<div id="roll-button" className="roll-button" onClick={this.roll}>
-					<button className="roll" role="button">Roll</button>
+				<div id="roll-button" className="roll-button">
+					<button disabled={this.state.disabled} className="roll" role="button" onClick={this.roll}>Roll</button>
 				</div>
 			</section>
 		)
