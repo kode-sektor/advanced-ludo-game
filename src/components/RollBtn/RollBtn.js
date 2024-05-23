@@ -177,7 +177,9 @@ export default class RollBtn extends Component {
 		return (
 			<section className="roll-button-container">
 				<div id="roll-button" className="roll-button">
-					<button disabled={this.state.disabled} className="roll" role="button" onClick={this.roll}>Roll</button>
+					<button disabled={this.state.disabled} className="roll" role="button" onClick={this.roll}>
+						Roll
+					</button>
 				</div>
 			</section>
 		)

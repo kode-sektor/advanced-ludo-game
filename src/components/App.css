@@ -78,6 +78,9 @@ button {
 	flex-direction: column;
 }
 .roll-series {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	height: 80%;
 }
 .roll-button-container {
@@ -111,6 +114,8 @@ button {
     outline: none;
     touch-action: manipulation; 
 	transition: 1s ease;
+}.roll:disabled {
+	cursor: not-allowed;
 }
 .roll:hover, .roll:focus {
 	opacity: .8;

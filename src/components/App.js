@@ -5,6 +5,7 @@ import { players } from "../data/players.js";
 import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../data/constants.js"
 
 import RollBtn from '../components/RollBtn/RollBtn.js'
+import DiceValues from '../components/DiceValues/DiceValues.js'
 
 export default class App extends Component {
 
@@ -223,15 +224,14 @@ export default class App extends Component {
 		}
 		initMove(this.state.players[`${id}`].cell);
 	}
-	
-
 
 	render() {
 		return (
 			<div className="board-game">
 				<section className="dice-widget">
 					<section className="roll-series">
-						{/* Double-six multiple rolls */}
+						<DiceValues
+						/>
 					</section>
 					<RollBtn
 						setDice={this.setDice}
