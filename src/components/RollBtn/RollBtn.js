@@ -9,6 +9,8 @@ export default class RollBtn extends Component {
 
 	roll = () => {
 
+		console.log(this.props);
+
 		this.setState({disabled : true});
 
 		const mapDice = (value) => {
@@ -162,6 +164,11 @@ export default class RollBtn extends Component {
 				}, step === 0 ? 0 : diceData[0][step] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
 			} else {	// Re-enable roll button after roll
 				setTimeout(() => {
+					// if (diceValues[0] === 6 && diceValues[1] === 6) {
+
+					// } else {
+						
+					// }
 					this.setState({disabled : false});
 				}, Array.isArray(diceData[1][diceData[1].length - 1]) ?
 					(Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000) :
@@ -174,11 +181,13 @@ export default class RollBtn extends Component {
 
 	
 	render() {
+		let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
+
 		return (
 			<section className="roll-button-container">
 				<div id="roll-button" className="roll-button">
 					<button disabled={this.state.disabled} className="roll" role="button" onClick={this.roll}>
-						Roll
+						{(diceVals[0] === 6 && diceVals[1] === 6) ? "Roll Again" : "Roll"}
 					</button>
 				</div>
 			</section>

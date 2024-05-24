@@ -235,6 +235,7 @@ export default class App extends Component {
 					</section>
 					<RollBtn
 						setDice={this.setDice}
+						dice={this.state.dice}
 					/>
 				</section>
 				<section className="board">
