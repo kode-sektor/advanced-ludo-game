@@ -7,9 +7,15 @@ export default class RollBtn extends Component {
 		disabled : false
 	}
 
-	roll = () => {
+	getDiceVals = (index) => {
+		let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
+		console.log(index);
+		console.log(diceVals);
+		console.log(diceVals[index]);
+		return diceVals[index];
+	}
 
-		console.log(this.props);
+	roll = () => {
 
 		this.setState({disabled : true});
 
@@ -123,9 +129,12 @@ export default class RollBtn extends Component {
 					// If transition for 2 dice have extremely short loop time, combine both into one
 					// settimeout loop
 					if (Array.isArray(currDice)) {	// [1, 2]
+						let firstDieValues = this.getDiceVals(0);
+						let secondDieValues = this.getDiceVals(1);
+
 						diceObj = {
 							1: {
-								value: diceValues[0],
+								value: step === dieOneLastCycle ? [...firstDieValues, diceValues[0]] : firstDieValues,
 								position: {
 									x: step === dieOneLastCycle ? mappedDieTransforms[currDice[0] - 1][0] : transformVals[0],
 									y: step === dieOneLastCycle ? mappedDieTransforms[currDice[0] - 1][1] : transformVals[1],
@@ -134,7 +143,7 @@ export default class RollBtn extends Component {
 								rollDuration: currDuration[0]
 							},
 							2: {
-								value: diceValues[1],
+								value: step === dieTwoLastCycle ? [...secondDieValues, diceValues[1]] : secondDieValues,
 								position: {
 									x: step === dieTwoLastCycle ? mappedDieTransforms[currDice[1] - 1][0] : transformVals[3],
 									y: step === dieTwoLastCycle ? mappedDieTransforms[currDice[1] - 1][1] : transformVals[4],
@@ -144,11 +153,14 @@ export default class RollBtn extends Component {
 							}
 						}
 					} else {
+						let dieValues = this.getDiceVals(0);
+						console.log(currDice - 1);
+						console.log(dieValues);
 						// Since this is utility code, determine correct last die cycle if the die is 1 or 2
 						const lastDieCycle = currDice === 1 ? dieOneLastCycle : dieTwoLastCycle;
 						diceObj = {
 							[`${ currDice }`]: {
-								value: diceValues[currDice - 1],
+								value: step === lastDieCycle ? [...dieValues, diceValues[currDice - 1]] : dieValues,
 								position: {
 									x: step === lastDieCycle ? mappedDieTransforms[currDice - 1][0] : transformVals[0],
 									y: step === lastDieCycle ? mappedDieTransforms[currDice - 1][1] : transformVals[1],
@@ -169,11 +181,12 @@ export default class RollBtn extends Component {
 					// } else {
 						
 					// }
-					this.setState({disabled : false});
-				}, Array.isArray(diceData[1][diceData[1].length - 1]) ?
-					(Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000) :
-					(diceData[1][diceData[1].length - 1] * 1000)
-				);
+					this.setState({ disabled: false });
+					// }, Array.isArray(diceData[1][diceData[1].length - 1]) ?
+					// 	(Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000) :
+					// 	(diceData[1][diceData[1].length - 1] * 1000)
+					// );
+				}, 1000);
 			}
 		}
 		randomRoll(0);
@@ -181,13 +194,13 @@ export default class RollBtn extends Component {
 
 	
 	render() {
-		let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
+		// let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
 
 		return (
 			<section className="roll-button-container">
 				<div id="roll-button" className="roll-button">
 					<button disabled={this.state.disabled} className="roll" role="button" onClick={this.roll}>
-						{(diceVals[0] === 6 && diceVals[1] === 6) ? "Roll Again" : "Roll"}
+						{(this.getDiceVals[0] === 6 && this.getDiceVals[1] === 6) ? "Roll Again" : "Roll"}
 					</button>
 				</div>
 			</section>

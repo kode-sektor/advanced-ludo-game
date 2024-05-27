@@ -20,12 +20,12 @@ export default class App extends Component {
 		transitionDuration: 0,
 		dice: {
 			1: {
-				value: 1,
+				value: [],
 				position: {x: 0, y: 0, z: 0},
 				rollDuration: 0
 			},
 			2: {
-				value: 1,
+				value: [],
 				position: {x: 0, y: 0, z: 0},
 				rollDuration: 0
 			}
