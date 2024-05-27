@@ -9,9 +9,6 @@ export default class RollBtn extends Component {
 
 	getDiceVals = (index) => {
 		let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
-		console.log(index);
-		console.log(diceVals);
-		console.log(diceVals[index]);
 		return diceVals[index];
 	}
 
