@@ -226,10 +226,14 @@ export default class App extends Component {
 	}
 
 	render() {
+		
 		return (
 			<div className="board-game">
 				<section className="dice-widget">
 					<section className="roll-series">
+						{
+							
+						}
 						<DiceValues
 						/>
 					</section>

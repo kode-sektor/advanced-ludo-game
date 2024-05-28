@@ -46,7 +46,11 @@ export default class RollBtn extends Component {
 			if (value === 2 || value === 5) {
 				dieTransformY = getRandomWithinRange(-400, 400);
 				dieTransformZ = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
-			} else if (value === 3 || value === 4) {
+			} else if (value === 3) {
+				dieTransformX = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
+				dieTransformY = diceTransformMap[value][1] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(1, 10);
+				dieTransformZ = diceTransformMap[value][0] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(1, 10);
+			} else if (value === 4) {
 				dieTransformX = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 				dieTransformY = diceTransformMap[value][1] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(1, 10);
 				dieTransformZ = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
@@ -60,6 +64,7 @@ export default class RollBtn extends Component {
 
 		const diceValues = [];
 		randomDice(diceValues);
+		console.log ("dice Values: ", diceValues);
 		const mappedDieTransforms = [mapDice(diceValues[0]), mapDice(diceValues[1])];		
 
 		let cycleSteps = [];	
@@ -97,8 +102,8 @@ export default class RollBtn extends Component {
 			on final timeout
 		*/
 		if (Array.isArray(diceData[2][diceData[2].length - 1])) {	
-			dieOneLastCycle = diceData[2][diceData[2].length - 1];
-			dieTwoLastCycle = diceData[2][diceData[2].length - 1];
+			dieOneLastCycle = diceData[2].indexOf(diceData[2][diceData[2].length - 1]);
+			dieTwoLastCycle = diceData[2].indexOf(diceData[2][diceData[2].length - 1]);
 		} else {
 			diceArrLastCycle = diceData[2].findLastIndex((element) => Array.isArray(element) === true);
 			dieOneLastCycle = diceData[2].findLastIndex((element) => element === 1);
@@ -150,9 +155,7 @@ export default class RollBtn extends Component {
 							}
 						}
 					} else {
-						let dieValues = this.getDiceVals(0);
-						console.log(currDice - 1);
-						console.log(dieValues);
+						let dieValues = this.getDiceVals(currDice - 1);
 						// Since this is utility code, determine correct last die cycle if the die is 1 or 2
 						const lastDieCycle = currDice === 1 ? dieOneLastCycle : dieTwoLastCycle;
 						diceObj = {
@@ -197,7 +200,7 @@ export default class RollBtn extends Component {
 			<section className="roll-button-container">
 				<div id="roll-button" className="roll-button">
 					<button disabled={this.state.disabled} className="roll" role="button" onClick={this.roll}>
-						{(this.getDiceVals[0] === 6 && this.getDiceVals[1] === 6) ? "Roll Again" : "Roll"}
+						{((this.getDiceVals(0)).slice(-1) === 6 && (this.getDiceVals(1)).slice(-1) === 6) ? "Roll Again" : "Roll"}
 					</button>
 				</div>
 			</section>

@@ -284,3 +284,8 @@ export const computeDiceData = (diceTimeout) => {
 	}
 	return [timeout, duration, dice];
 }
+
+export const getDiceVals = (index) => {
+	let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
+	return diceVals[index];
+}
