@@ -182,11 +182,10 @@ export default class RollBtn extends Component {
 						
 					// }
 					this.setState({ disabled: false });
-					// }, Array.isArray(diceData[1][diceData[1].length - 1]) ?
-					// 	(Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000) :
-					// 	(diceData[1][diceData[1].length - 1] * 1000)
-					// );
-				}, 1000);
+				}, Array.isArray(diceData[1][diceData[1].length - 1]) ?
+					(Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000) :
+					(diceData[1][diceData[1].length - 1] * 1000)
+				);
 			}
 		}
 		randomRoll(0);
