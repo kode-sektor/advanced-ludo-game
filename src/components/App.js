@@ -226,15 +226,15 @@ export default class App extends Component {
 	}
 
 	render() {
-		
+		let state = this.state;
+		let dice = this.state.dice;
+
 		return (
 			<div className="board-game">
 				<section className="dice-widget">
 					<section className="roll-series">
-						{
-							
-						}
 						<DiceValues
+							dice={dice}
 						/>
 					</section>
 					<RollBtn

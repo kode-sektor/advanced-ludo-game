@@ -134,9 +134,20 @@ export default class RollBtn extends Component {
 						let firstDieValues = this.getDiceVals(0);
 						let secondDieValues = this.getDiceVals(1);
 
+						let firstDieObj = {
+							selected: false,
+							disabled: false,
+							value: diceValues[0]
+						}
+						let secondDieObj = {
+							selected: false,
+							disabled: false,
+							value: diceValues[1]
+						}
+
 						diceObj = {
 							1: {
-								value: step === dieOneLastCycle ? [...firstDieValues, diceValues[0]] : firstDieValues,
+								value: step === dieOneLastCycle ? [...firstDieValues, firstDieObj] : firstDieValues,
 								position: {
 									x: step === dieOneLastCycle ? mappedDieTransforms[currDice[0] - 1][0] : transformVals[0],
 									y: step === dieOneLastCycle ? mappedDieTransforms[currDice[0] - 1][1] : transformVals[1],
@@ -145,7 +156,7 @@ export default class RollBtn extends Component {
 								rollDuration: currDuration[0]
 							},
 							2: {
-								value: step === dieTwoLastCycle ? [...secondDieValues, diceValues[1]] : secondDieValues,
+								value: step === dieTwoLastCycle ? [...secondDieValues, secondDieObj] : secondDieValues,
 								position: {
 									x: step === dieTwoLastCycle ? mappedDieTransforms[currDice[1] - 1][0] : transformVals[3],
 									y: step === dieTwoLastCycle ? mappedDieTransforms[currDice[1] - 1][1] : transformVals[4],
@@ -156,11 +167,16 @@ export default class RollBtn extends Component {
 						}
 					} else {
 						let dieValues = this.getDiceVals(currDice - 1);
+						let dieObj = {
+							selected: false,
+							disabled: false,
+							value: diceValues[currDice - 1]
+						}
 						// Since this is utility code, determine correct last die cycle if the die is 1 or 2
 						const lastDieCycle = currDice === 1 ? dieOneLastCycle : dieTwoLastCycle;
 						diceObj = {
 							[`${ currDice }`]: {
-								value: step === lastDieCycle ? [...dieValues, diceValues[currDice - 1]] : dieValues,
+								value: step === lastDieCycle ? [...dieValues, dieObj] : dieValues,
 								position: {
 									x: step === lastDieCycle ? mappedDieTransforms[currDice - 1][0] : transformVals[0],
 									y: step === lastDieCycle ? mappedDieTransforms[currDice - 1][1] : transformVals[1],

@@ -1,6 +1,7 @@
 import React from 'react';
 
-const DiceValues = () => {
+const DiceValues = ({dice}) => {
+
 	return (
 		<table>
 			<thead>
@@ -9,10 +10,20 @@ const DiceValues = () => {
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td></td>
-					<td></td>
-				</tr>
+			{
+				dice[1].value.map((diceList, index) => {
+					return (
+						<tr key={index}>
+							<td>
+								{diceList}
+							</td>
+							<td>
+								{diceList}
+							</td>
+						</tr>
+					)
+				})
+			}
 			</tbody>
 		</table>
 	)
