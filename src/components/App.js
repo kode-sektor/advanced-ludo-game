@@ -20,12 +20,12 @@ export default class App extends Component {
 		transitionDuration: 0,
 		dice: {
 			1: {
-				value: [],
+				asst: [],
 				position: {x: 0, y: 0, z: 0},
 				rollDuration: 0
 			},
 			2: {
-				value: [],
+				asst: [],
 				position: {x: 0, y: 0, z: 0},
 				rollDuration: 0
 			}
@@ -227,7 +227,7 @@ export default class App extends Component {
 
 	render() {
 		let state = this.state;
-		let dice = this.state.dice;
+		let dice = state.dice;
 
 		return (
 			<div className="board-game">

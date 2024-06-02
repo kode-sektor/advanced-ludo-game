@@ -11,14 +11,15 @@ const DiceValues = ({dice}) => {
 			</thead>
 			<tbody>
 			{
-				dice[1].value.map((diceList, index) => {
+					dice[1].asst.map((diceList, index) => {
+						console.log(diceList);
 					return (
 						<tr key={index}>
 							<td>
-								{diceList.value}
+								{/* {diceList.value} */}
 							</td>
 							<td>
-								{diceList.value}
+								{/* {diceList.value} */}
 							</td>
 						</tr>
 					)
