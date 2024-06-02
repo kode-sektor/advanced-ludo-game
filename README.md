@@ -148,6 +148,12 @@ DIE ROLL SEQUENCING
 	- Determining the dice faces and matching with correct final transitions and roll value
 <img src="/public/images/dice-faces.jpg">
 
+CALCULATING SUM OF UNSELECTED DICE
+<img src="/public/images/calculating-unselected-dice-sum.jpg">
+
+ASSISTANT DICE VALUES
+<img src="/public/images/list-dice-values-in-assistant.jpg">
+
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React
 - Platforms: Browser (desktop, mobile, tablet)

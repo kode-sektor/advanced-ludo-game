@@ -15,10 +15,10 @@ const DiceValues = ({dice}) => {
 					return (
 						<tr key={index}>
 							<td>
-								{diceList}
+								{diceList.value}
 							</td>
 							<td>
-								{diceList}
+								{diceList.value}
 							</td>
 						</tr>
 					)
