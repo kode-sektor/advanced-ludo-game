@@ -83,6 +83,11 @@ button {
 	align-items: center;
 	height: 80%;
 }
+.dice-assistant {
+	margin-top: 20%;
+	padding: 25px;
+	border: 2px solid purple;
+}
 .roll-button-container {
 	height: 20%;
 	border: 2px solid indigo;

@@ -8,8 +8,6 @@ export default class RollBtn extends Component {
 		doubleSix: false
 	}
 
-	diceValues = [];
-
 	getDiceVals = (index) => {
 		let dice = this.props.dice;
 		let diceVals = [dice[1].asst.value, dice[2].asst.value];
@@ -66,27 +64,32 @@ export default class RollBtn extends Component {
 				add to each other to become 20deg
 			*/
 			if (value === 2 || value === 5) {
+				console.log("value - 2 or 5: ", value)
 				dieTransformY = getRandomWithinRange(-400, 400);
 				dieTransformZ = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 			} else if (value === 3) {
+				console.log("value - 3: ", value)
 				dieTransformX = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 				dieTransformY = diceTransformMap[value][1] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(1, 10);
 				dieTransformZ = diceTransformMap[value][0] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(1, 10);
 			} else if (value === 4) {
+				console.log("value - 4: ", value)
 				dieTransformX = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 				dieTransformY = diceTransformMap[value][1] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(1, 10);
 				dieTransformZ = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 			}
 			else {
+				console.log("value - 1 or 6: ", value)
 				dieTransformY = diceTransformMap[value][1] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 				dieTransformZ = getRandomWithinRange(-400, 400);
 			}
 			return [dieTransformX, dieTransformY, dieTransformZ];
 		}
 
-		randomDice(this.diceValues);
+		const diceValues = [];
+		randomDice(diceValues);
 		// console.log ("dice Values: ", diceValues);
-		const mappedDieTransforms = [mapDice(this.diceValues[0]), mapDice(this.diceValues[1])];		
+		const mappedDieTransforms = [mapDice(diceValues[0]), mapDice(diceValues[1])];		
 
 		let cycleSteps = [];	
 		let diceTimeout = [];
@@ -108,7 +111,7 @@ export default class RollBtn extends Component {
 				[Array(2), 2, Array(2), 1]	// dice 
 			]
 		*/
-		// console.log(diceData);
+		console.log(diceData);
 
 		const cycleStep = diceData[0].length;
 
@@ -152,8 +155,8 @@ export default class RollBtn extends Component {
 					// If transition for 2 dice have extremely short loop time, combine both into one
 					// settimeout loop
 					if (Array.isArray(currDice)) {	// [1, 2]
-						let firstDieValues = this.diceValues[0];
-						let secondDieValues = this.diceValues[1];
+						let firstDieValues = diceValues[0];
+						let secondDieValues = diceValues[1];
 
 
 						let firstDieObj = {
@@ -188,7 +191,7 @@ export default class RollBtn extends Component {
 							}
 						}
 					} else {
-						let dieValues = this.diceValues[currDice - 1];
+						let dieValues = diceValues[currDice - 1];
 						let dieObj = {
 							selected: false,
 							disabled: false,
@@ -198,9 +201,7 @@ export default class RollBtn extends Component {
 						const lastDieCycle = currDice === 1 ? dieOneLastCycle : dieTwoLastCycle;
 						diceObj = {
 							[`${ currDice }`]: {
-								asst: step === lastDieCycle ?
-									[...this.props.dice[`${currDice}`].asst, dieObj] :
-									this.props.dice[`${currDice}`].asst,
+								asst: step === lastDieCycle ? [...this.props.dice[`${ currDice }`].asst, dieObj] : this.props.dice[`${ currDice }`].asst,
 								position: {
 									x: step === lastDieCycle ? mappedDieTransforms[currDice - 1][0] : transformVals[0],
 									y: step === lastDieCycle ? mappedDieTransforms[currDice - 1][1] : transformVals[1],
@@ -223,8 +224,8 @@ export default class RollBtn extends Component {
 					// }
 					this.checkForDoubleSix();
 				}, Array.isArray(diceData[1][diceData[1].length - 1]) ?
-					(Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000) :
-					(diceData[1][diceData[1].length - 1] * 1000)
+					console.log(Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000) :
+					console.log(diceData[1][diceData[1].length - 1] * 1000)
 				);
 			}
 		}

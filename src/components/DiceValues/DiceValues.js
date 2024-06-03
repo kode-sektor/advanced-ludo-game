@@ -3,30 +3,33 @@ import React from 'react';
 const DiceValues = ({dice}) => {
 
 	return (
-		<table>
-			<thead>
-				<tr>
-					<th>Dice Values</th>
-				</tr>
-			</thead>
-			<tbody>
-			{
+		<section className='dice-assistant'>
+			<table>
+				<thead>
+					<tr>
+						<th>Dice Values</th>
+					</tr>
+				</thead>
+				<tbody>
+				{
 					dice[1].asst.map((diceList, index) => {
 						console.log(diceList);
-					return (
-						<tr key={index}>
-							<td>
-								{/* {diceList.value} */}
-							</td>
-							<td>
-								{/* {diceList.value} */}
-							</td>
-						</tr>
-					)
-				})
-			}
-			</tbody>
-		</table>
+						let dice2 = dice[2].asst;
+						return (
+							<tr key={index}>
+								<td>
+									<img src={`images/die-faces/die${diceList.value}.jpg`} alt={`die-${diceList.value}`} />
+								</td>
+								<td>
+									<img src={`images/die-faces/die${dice2[index]?.value}.jpg`} alt={dice2[index]?.value} />
+								</td>
+							</tr>
+						)
+					})
+				}
+				</tbody>
+			</table>
+		</section>
 	)
 }
 

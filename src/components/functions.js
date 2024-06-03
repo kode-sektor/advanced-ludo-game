@@ -10,6 +10,7 @@ export const getRandomWithinRange = (min, max, int = false) => {
 		Math.floor(Math.random() * (max - min + 1)) + min :
 		Math.round(((Math.random() * (max - min)) + min) * 100) / 100;
 	
+	console.log("DICE VALUES : ", result);
 	return result;	//
 }
 
