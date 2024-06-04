@@ -13,7 +13,7 @@ const DiceValues = ({dice}) => {
 				<tbody>
 				{
 					dice[1].asst.map((diceList, index) => {
-						console.log(diceList);
+						// console.log(diceList);
 						let dice2 = dice[2].asst;
 						return (
 							<tr key={index}>

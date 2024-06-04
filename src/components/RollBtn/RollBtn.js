@@ -64,22 +64,22 @@ export default class RollBtn extends Component {
 				add to each other to become 20deg
 			*/
 			if (value === 2 || value === 5) {
-				console.log("value - 2 or 5: ", value)
+				// console.log("value - 2 or 5: ", value)
 				dieTransformY = getRandomWithinRange(-400, 400);
 				dieTransformZ = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 			} else if (value === 3) {
-				console.log("value - 3: ", value)
+				// console.log("value - 3: ", value)
 				dieTransformX = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 				dieTransformY = diceTransformMap[value][1] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(1, 10);
 				dieTransformZ = diceTransformMap[value][0] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(1, 10);
 			} else if (value === 4) {
-				console.log("value - 4: ", value)
+				// console.log("value - 4: ", value)
 				dieTransformX = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 				dieTransformY = diceTransformMap[value][1] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(1, 10);
 				dieTransformZ = randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 			}
 			else {
-				console.log("value - 1 or 6: ", value)
+				// console.log("value - 1 or 6: ", value)
 				dieTransformY = diceTransformMap[value][1] + randomTransforms[getRandomWithinRange(0, 2, true)] + getRandomWithinRange(0, 10);
 				dieTransformZ = getRandomWithinRange(-400, 400);
 			}
@@ -90,6 +90,8 @@ export default class RollBtn extends Component {
 		randomDice(diceValues);
 		// console.log ("dice Values: ", diceValues);
 		const mappedDieTransforms = [mapDice(diceValues[0]), mapDice(diceValues[1])];		
+
+		// console.log("mappedDieTransforms :", mappedDieTransforms);
 
 		let cycleSteps = [];	
 		let diceTimeout = [];
@@ -158,6 +160,33 @@ export default class RollBtn extends Component {
 						let firstDieValues = diceValues[0];
 						let secondDieValues = diceValues[1];
 
+						/*
+							When the dice are rolled, recall that the first die has a longer transition duration
+							because the computeDiceData function was structured in such a way that the max array 
+							is looped across first, before the inner. 
+							
+							Then a switch called dieFlip was created in this same computeDiceData function to 
+							switch dice 1 and 2 on the first (and any other) loop to make the transition duration 
+							to be random. Because of the switch, it must also be taken into account here.
+						*/
+						let currDiceFirstIndex = 0;
+						let currDiceSecondIndex = 0;
+						let currDurationFirstIndex = 0;
+						let currDurationSecondIndex = 0;
+
+						let dieFlip = diceData[2][step][0];
+						
+						if (dieFlip === 1) {
+							currDiceFirstIndex = 0;
+							currDiceSecondIndex = 1;
+							currDurationFirstIndex = 0;
+							currDurationSecondIndex = 1;
+						} else {
+							currDiceFirstIndex = 1;
+							currDiceSecondIndex = 0;
+							currDurationFirstIndex = 1;
+							currDurationSecondIndex = 0;
+						}
 
 						let firstDieObj = {
 							selected: false,
@@ -174,20 +203,26 @@ export default class RollBtn extends Component {
 							1: {
 								asst: step === dieOneLastCycle ? [...this.props.dice[1].asst, firstDieObj] : this.props.dice[1].asst,
 								position: {
-									x: step === dieOneLastCycle ? mappedDieTransforms[currDice[0] - 1][0] : transformVals[0],
-									y: step === dieOneLastCycle ? mappedDieTransforms[currDice[0] - 1][1] : transformVals[1],
-									z: step === dieOneLastCycle ? mappedDieTransforms[currDice[0] - 1][2] : transformVals[2]
+									x: step === dieOneLastCycle ?
+										mappedDieTransforms[currDice[currDiceFirstIndex] - 1][0] : transformVals[0],
+									y: step === dieOneLastCycle ?
+										mappedDieTransforms[currDice[currDiceFirstIndex] - 1][1] : transformVals[1],
+									z: step === dieOneLastCycle ?
+										mappedDieTransforms[currDice[currDiceFirstIndex] - 1][2] : transformVals[2]
 								},
-								rollDuration: currDuration[0]
+								rollDuration: currDuration[currDurationFirstIndex]
 							},
 							2: {
 								asst: step === dieTwoLastCycle ? [...this.props.dice[2].asst, secondDieObj] : this.props.dice[2].asst,
 								position: {
-									x: step === dieTwoLastCycle ? mappedDieTransforms[currDice[1] - 1][0] : transformVals[3],
-									y: step === dieTwoLastCycle ? mappedDieTransforms[currDice[1] - 1][1] : transformVals[4],
-									z: step === dieTwoLastCycle ? mappedDieTransforms[currDice[1] - 1][2] : transformVals[5]
+									x: step === dieTwoLastCycle ?
+										mappedDieTransforms[currDice[currDiceSecondIndex] - 1][0] : transformVals[3],
+									y: step === dieTwoLastCycle ?
+										mappedDieTransforms[currDice[currDiceSecondIndex] - 1][1] : transformVals[4],
+									z: step === dieTwoLastCycle ?
+										mappedDieTransforms[currDice[currDiceSecondIndex] - 1][2] : transformVals[5]
 								},
-								rollDuration: currDuration[1]
+								rollDuration: currDuration[currDurationSecondIndex]
 							}
 						}
 					} else {
@@ -200,8 +235,11 @@ export default class RollBtn extends Component {
 						// Since this is utility code, determine correct last die cycle if the die is 1 or 2
 						const lastDieCycle = currDice === 1 ? dieOneLastCycle : dieTwoLastCycle;
 						diceObj = {
+							...this.props.dice,
 							[`${ currDice }`]: {
-								asst: step === lastDieCycle ? [...this.props.dice[`${ currDice }`].asst, dieObj] : this.props.dice[`${ currDice }`].asst,
+								asst: step === lastDieCycle ?
+									[...this.props.dice[`${currDice}`].asst, dieObj] :
+									this.props.dice[`${currDice}`].asst,
 								position: {
 									x: step === lastDieCycle ? mappedDieTransforms[currDice - 1][0] : transformVals[0],
 									y: step === lastDieCycle ? mappedDieTransforms[currDice - 1][1] : transformVals[1],

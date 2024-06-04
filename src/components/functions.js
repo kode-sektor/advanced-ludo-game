@@ -10,7 +10,7 @@ export const getRandomWithinRange = (min, max, int = false) => {
 		Math.floor(Math.random() * (max - min + 1)) + min :
 		Math.round(((Math.random() * (max - min)) + min) * 100) / 100;
 	
-	console.log("DICE VALUES : ", result);
+	// console.log("DICE VALUES : ", result);
 	return result;	//
 }
 
@@ -251,18 +251,18 @@ export const computeDiceData = (diceTimeout) => {
 				if (dieRollOneSum > dieRollTwoSum) {
 					compileTimeout(dieRollTwoSum - diceTimeoutSum, currMaxDieCycle, 1);
 				} else {
-					compileTimeout(dieRollOneSum - diceTimeoutSum,  currMaxDieCycle, 1);
+					compileTimeout(dieRollOneSum - diceTimeoutSum, currMaxDieCycle, 1);
 				}
 			} else {	// Child array no longer exists
 				// Last cycle on both arrays
 				if (maxDieCycle === maxDiceCycle.length - 1) {
 					if (dieRollOneSum > dieRollTwoSum) {	// Use larger of die roll sums
-						compileTimeout(dieRollOneSum - diceTimeoutSum,  currMaxDieCycle, 1);
+						compileTimeout(dieRollOneSum - diceTimeoutSum, currMaxDieCycle, 1);
 					} else {
-						compileTimeout(dieRollTwoSum - diceTimeoutSum,  currMaxDieCycle, 1);
+						compileTimeout(dieRollTwoSum - diceTimeoutSum, currMaxDieCycle, 1);
 					}
 				} else {	// Child (minDiceArray completed) array but parent array loop continues
-					compileTimeout(dieRollOneSum - diceTimeoutSum,  currMaxDieCycle, 1);
+					compileTimeout(dieRollOneSum - diceTimeoutSum, currMaxDieCycle, 1);
 				}
 			}
 			/*
