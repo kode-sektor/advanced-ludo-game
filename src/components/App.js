@@ -29,7 +29,8 @@ export default class App extends Component {
 				position: {x: 0, y: 0, z: 0},
 				rollDuration: 0
 			}
-		}
+		},
+		doubleSix: false
 	}
 
 	setDice = (diceObj) => {
@@ -227,7 +228,7 @@ export default class App extends Component {
 
 	render() {
 		let state = this.state;
-		let dice = state.dice;
+		let dice = this.state.dice;
 
 		return (
 			<div className="board-game">
