@@ -27,7 +27,7 @@ export default class RollBtn extends Component {
 				})
 			} else {
 				this.setState({
-					disabled: true,
+					disabled: false,
 					doubleSix: false
 				})
 			}
