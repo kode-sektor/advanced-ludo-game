@@ -43,6 +43,24 @@ export default class App extends Component {
 		})
 	}
 
+	setDiceAssistant = (diceObj) => {
+		console.log(diceObj)
+		this.setState({
+			...this.state,
+			dice: {
+				1: {
+					...this.state.dice[1],
+					asst : [...this.state.dice[1].asst, diceObj[1].asst]
+				},
+				2: {
+					...this.state.dice[2],
+					asst : [...this.state.dice[2].asst, diceObj[2].asst]
+				}
+			}
+		})
+	}
+
+
 	fragmentMove = (id, startCell, finalCell, cellPaths) => {
 		// let startCell = cell;	// 0
 		// let finalCell = cell + dieVal;	// 15 
@@ -240,6 +258,7 @@ export default class App extends Component {
 					</section>
 					<RollBtn
 						setDice={this.setDice}
+						setDiceAssistant={this.setDiceAssistant}
 						dice={this.state.dice}
 					/>
 				</section>

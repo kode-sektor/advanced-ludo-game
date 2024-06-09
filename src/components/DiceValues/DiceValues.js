@@ -12,20 +12,20 @@ const DiceValues = ({dice}) => {
 				</thead>
 				<tbody>
 				{
-					dice[1].asst.map((diceList, index) => {
-						console.log(diceList);
-						let dice2 = dice[2].asst;
-						return (
-							<tr key={index}>
-								<td>
-									<img src={`images/die-faces/die${diceList.value}.jpg`} alt={`die-${diceList.value}`} />
-								</td>
-								<td>
-									<img src={`images/die-faces/die${dice2[index]?.value}.jpg`} alt={dice2[index]?.value} />
-								</td>
-							</tr>
-						)
-					})
+					// dice[1].asst.map((diceList, index) => {
+					// 	console.log(diceList);
+					// 	let dice2 = dice[2].asst;
+					// 	return (
+					// 		<tr key={index}>
+					// 			<td>
+					// 				<img src={`images/die-faces/die${diceList.value}.jpg`} alt={`die-${diceList.value}`} />
+					// 			</td>
+					// 			<td>
+					// 				<img src={`images/die-faces/die${dice2[index]?.value}.jpg`} alt={dice2[index]?.value} />
+					// 			</td>
+					// 		</tr>
+					// 	)
+					// })
 				}
 				</tbody>
 			</table>

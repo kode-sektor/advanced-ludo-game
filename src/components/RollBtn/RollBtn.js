@@ -4,7 +4,7 @@ import { randomDice, getRandomWithinRange, getDiceCycle, getDiceTimeout, compute
 export default class RollBtn extends Component {
 
 	state = {
-		// disabled: false,
+		disabled: false,
 		doubleSix: false
 	}
 
@@ -33,7 +33,7 @@ export default class RollBtn extends Component {
 
 	roll = () => {
 
-		this.setState({ disabled: true });
+		// this.setState({ disabled: true });
 		
 		let firstDieObj = {};
 		let secondDieObj = {};
@@ -94,7 +94,7 @@ export default class RollBtn extends Component {
 		// console.log ("dice Values: ", diceValues);
 		const mappedDieTransforms = [mapDice(diceValues[0]), mapDice(diceValues[1])];		
 
-		// console.log("mappedDieTransforms :", mappedDieTransforms);
+		console.log("mappedDieTransforms :", mappedDieTransforms);
 
 		let cycleSteps = [];	
 		let diceTimeout = [];
@@ -123,6 +123,7 @@ export default class RollBtn extends Component {
 		let diceArrLastCycle = 0;
 		let dieOneLastCycle = 0;
 		let dieTwoLastCycle = 0;
+		let dieLastCycle = 0;
 		
 		// Catch loop that maps as last loop to original diceTimeout array
 		/* 
@@ -237,37 +238,46 @@ export default class RollBtn extends Component {
 							value: dieValues
 						}
 						// Since this is utility code, determine correct last die cycle if the die is 1 or 2
-						const lastDieCycle = currDice === 1 ? dieOneLastCycle : dieTwoLastCycle;
+						// const dieLastCycle = currDice === 1 ? dieOneLastCycle : dieTwoLastCycle;
+						if (step === dieOneLastCycle) {
+							dieLastCycle = dieOneLastCycle;
+						} else if (step === dieTwoLastCycle) {
+							dieLastCycle = dieTwoLastCycle;
+						}
+						console.log("step, dieLastCycle : ", step, dieLastCycle);
+						if (step === dieLastCycle) {
+							console.log(mappedDieTransforms[currDice - 1][0]);
+						}
 						diceObj = {
 							...this.props.dice,
 							[`${ currDice }`]: {
-								// asst: step === lastDieCycle ?
+								// asst: step === dieLastCycle ?
 									// [...this.props.dice[`${currDice}`].asst, dieObj] :
 								// this.props.dice[`${currDice}`].asst,
 								...this.props.dice[`${currDice}`],
 								position: {
-									x: step === lastDieCycle ? mappedDieTransforms[currDice - 1][0] : transformVals[0],
-									y: step === lastDieCycle ? mappedDieTransforms[currDice - 1][1] : transformVals[1],
-									z: step === lastDieCycle ? mappedDieTransforms[currDice - 1][2] : transformVals[2]
+									x: step === dieLastCycle ? mappedDieTransforms[currDice - 1][0] : transformVals[0],
+									y: step === dieLastCycle ? mappedDieTransforms[currDice - 1][1] : transformVals[1],
+									z: step === dieLastCycle ? mappedDieTransforms[currDice - 1][2] : transformVals[2]
 								},
 								rollDuration: currDuration
 							}
 						}
 					}
+					// console.log("dieOneLastCycle, dieTwoLastCycle, step : ", dieOneLastCycle, dieTwoLastCycle, step);
 					this.props.setDice(diceObj);
 					step++;
 					randomRoll(step)
 				}, step === 0 ? 0 : diceData[0][step] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
 			} else {	// Re-enable roll button after roll
-				console.log(this.props.dice);
+				// console.log(this.props.dice);
+				// console.log(firstDieObj);
 				diceObj = {
 					1: {
-						...this.props.dice[1],
-						asst: [...this.props.dice[1].asst, firstDieObj]
+						asst: firstDieObj
 					},
 					2: {
-						...this.props.dice[2],
-						asst: [...this.props.dice[2].asst, secondDieObj]
+						asst: secondDieObj
 					}
 				}
 				setTimeout(() => {
@@ -276,7 +286,7 @@ export default class RollBtn extends Component {
 					// } else {
 						
 					// }
-					this.props.setDice(diceObj);
+					this.props.setDiceAssistant(diceObj);
 					// this.checkForDoubleSix(firstDieObj, secondDieObj);
 				}, /*Array.isArray(diceData[1][diceData[1].length - 1]) ?
 					console.log(Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000) :
