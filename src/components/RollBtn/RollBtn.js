@@ -17,18 +17,16 @@ export default class RollBtn extends Component {
 
 	checkForDoubleSix = (firstDieObj, secondDieObj) => {
 		let diceVals = [firstDieObj.value, secondDieObj.value];
-		console.log(diceVals);
 		if (diceVals[0]) {
 			if (diceVals[0] === 6 && diceVals[1] === 6) {
 				this.setState({
 					...this.state,
-					disabled: false,
 					doubleSix: true
 				})
 			} else {
 				this.setState({
-					disabled: false,
-					doubleSix: false
+					...this.state,
+					disabled: true,
 				})
 			}
 		}
@@ -97,8 +95,6 @@ export default class RollBtn extends Component {
 		// console.log ("dice Values: ", diceValues);
 		const mappedDieTransforms = [mapDice(diceValues[0]), mapDice(diceValues[1])];		
 
-		console.log("mappedDieTransforms :", mappedDieTransforms);
-
 		let cycleSteps = [];	
 		let diceTimeout = [];
 		
@@ -165,7 +161,6 @@ export default class RollBtn extends Component {
 					if (Array.isArray(currDice)) {	// [1, 2]
 						let firstDieValues = diceValues[0];
 						let secondDieValues = diceValues[1];
-
 						/*
 							When the dice are rolled, recall that the first die has a longer transition duration
 							because the computeDiceData function was structured in such a way that the max array 
@@ -207,7 +202,6 @@ export default class RollBtn extends Component {
 
 						diceObj = {
 							1: {
-								// asst: step === dieOneLastCycle ? [...this.props.dice[1].asst, firstDieObj] : this.props.dice[1].asst,
 								...this.props.dice[1],
 								position: {
 									x: step === dieOneLastCycle ?
@@ -220,7 +214,6 @@ export default class RollBtn extends Component {
 								rollDuration: currDuration[currDurationFirstIndex]
 							},
 							2: {
-								// asst: step === dieTwoLastCycle ? [...this.props.dice[2].asst, secondDieObj] : this.props.dice[2].asst,
 								...this.props.dice[2],
 								position: {
 									x: step === dieTwoLastCycle ?
@@ -247,7 +240,7 @@ export default class RollBtn extends Component {
 						} else if (step === dieTwoLastCycle) {
 							dieLastCycle = dieTwoLastCycle;
 						}
-						console.log("step, dieLastCycle : ", step, dieLastCycle);
+						// console.log("step, dieLastCycle : ", step, dieLastCycle);
 						if (step === dieLastCycle) {
 							console.log(mappedDieTransforms[currDice - 1][0]);
 						}
@@ -267,7 +260,7 @@ export default class RollBtn extends Component {
 							}
 						}
 					}
-					console.log("dieOneLastCycle, dieTwoLastCycle, step : ", dieOneLastCycle, dieTwoLastCycle, step);
+					// console.log("dieOneLastCycle, dieTwoLastCycle, step : ", dieOneLastCycle, dieTwoLastCycle, step);
 					this.props.setDice(diceObj);
 					step++;
 					randomRoll(step)

@@ -6,6 +6,7 @@ import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../data/
 
 import RollBtn from '../components/RollBtn/RollBtn.js'
 import DiceValues from '../components/DiceValues/DiceValues.js'
+import DiceCount from '../components/DiceCount/DiceCount.js'
 
 export default class App extends Component {
 
@@ -252,6 +253,9 @@ export default class App extends Component {
 			<div className="board-game">
 				<section className="dice-widget">
 					<section className="roll-series">
+						<DiceCount
+							dice={dice}
+						/>
 						<DiceValues
 							dice={dice}
 						/>
