@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSolid, faDice } from '@fortawesome/free-solid-svg-icons';
+
 
 
 export default class RollBtn extends Component {
@@ -24,10 +26,15 @@ export default class RollBtn extends Component {
 	render() {
 
 		return (
-			<span className="die-bubble">
-				<FontAwesomeIcon icon="fa-solid fa-dice" />
-				<span className='die-count'>{ this.calculateTally(this.props.dice)}</span>
-			</span>
+			<section className='dice-sum'>
+				<h3>
+					Dice Count
+				</h3>
+				<span className="dice-bubble">
+					<FontAwesomeIcon icon={faDice} size='3x' inverse swapOpacity mask={['far', 'circle']}/>
+					<span className='dice-count'>{this.calculateTally(this.props.dice)}</span>
+				</span>
+			</section>
 		)
 	}
 }

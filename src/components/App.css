@@ -6,6 +6,7 @@
 	--white: #fff;
 	
 	--black: #111;
+	--blue: #124bf5;
 
 	--seed-blue: #192fa7;
 	--seed-red: #f83227;
@@ -76,9 +77,11 @@ button {
 .dice-widget {
 	display: flex;
 	flex-direction: column;
+	background-color: rgba(0,0,0,.3);
 }
 .roll-series {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	height: 80%;
@@ -593,4 +596,35 @@ button {
 	left: 15%;
 	top: 50%;
 	margin-top: -4px;
+}
+.dice-sum {
+	display: flex;
+	flex-direction: column-reverse;
+	border: 2px solid brown;
+}
+.dice-bubble {
+	display: inline-block;
+	position: relative;
+	border: thin solid orange;
+}
+.dice-count {
+	position: absolute;
+    top: -6px;
+    right: -11px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 46px;
+    height: 46px;
+    padding: 1px 10px 0 10px;
+    border: 3px solid #f4fdff;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+	color: var(--white);
+    text-align: center;
+    z-index: 1;
+	background: var(--blue);
+	opacity: .9;
+    transition: transform 0.15s, background-color 0.5s;
 }

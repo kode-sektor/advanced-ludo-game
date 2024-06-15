@@ -154,6 +154,9 @@ CALCULATING SUM OF UNSELECTED DICE
 ASSISTANT DICE VALUES
 <img src="/public/images/list-dice-values-in-assistant.jpg">
 
+DISPLAYING SELECTED DICE
+<img src="/public/images/displaying-selected-dice.jpg">
+
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React
 - Platforms: Browser (desktop, mobile, tablet)
