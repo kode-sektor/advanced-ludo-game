@@ -157,6 +157,13 @@ ASSISTANT DICE VALUES
 DISPLAYING SELECTED DICE
 <img src="/public/images/displaying-selected-dice.jpg">
 
+CALCULATING MOVE DISTANCE
+<img src="/public/images/calculating-move-distance.jpg">
+
+DISABLING SELECTED DICE
+<img src="/public/images/displaying-selected-dice">
+
+
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React
 - Platforms: Browser (desktop, mobile, tablet)
