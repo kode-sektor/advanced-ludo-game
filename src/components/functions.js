@@ -290,3 +290,20 @@ export const getDiceVals = (index) => {
 	let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
 	return diceVals[index];
 }
+
+export const setDiceAssistant = (diceObj) => {
+	console.log(diceObj)
+	this.setState({
+		...this.state,
+		dice: {
+			1: {
+				...this.state.dice[1],
+				asst : [...this.state.dice[1].asst, diceObj[1].asst]
+			},
+			2: {
+				...this.state.dice[2],
+				asst : [...this.state.dice[2].asst, diceObj[2].asst]
+			}
+		}
+	})
+}

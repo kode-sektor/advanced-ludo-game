@@ -51,11 +51,29 @@ export default class App extends Component {
 			dice: {
 				1: {
 					...this.state.dice[1],
-					asst : [...this.state.dice[1].asst, diceObj[1].asst]
+					asst : [...this.state.dice[1].asst, diceObj[1].asst] 
 				},
 				2: {
 					...this.state.dice[2],
 					asst : [...this.state.dice[2].asst, diceObj[2].asst]
+				}
+			}
+		})
+	}
+
+	updateDiceAssistant = (die, index, diceObj) => {
+		let asst = this.state.dice[die].asst;    // [{selected: false, disabled: false, value: 6}...]
+		let currAsst = asst[index];    // [{selected: false, disabled: false, value: 6}]
+		let obj = { ...currAsst, ...diceObj };    // [{selected: false, disabled: true, value: 6}]
+		asst[index] = obj;
+
+		this.setState({
+			...this.state,
+			dice: {
+				...this.state.dice,
+				[`${die}`]: {
+					...this.state.dice[1],
+					asst : asst 
 				}
 			}
 		})
@@ -258,6 +276,7 @@ export default class App extends Component {
 						/>
 						<DiceValues
 							dice={dice}
+							updateDiceAssistant={this.updateDiceAssistant}
 						/>
 					</section>
 					<RollBtn

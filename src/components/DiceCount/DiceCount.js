@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSolid, faDice } from '@fortawesome/free-solid-svg-icons';
 
 
-
 export default class RollBtn extends Component {
 
 	state = {
