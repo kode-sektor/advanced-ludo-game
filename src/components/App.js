@@ -72,7 +72,7 @@ export default class App extends Component {
 			dice: {
 				...this.state.dice,
 				[`${die}`]: {
-					...this.state.dice[1],
+					...this.state.dice[`${die}`],
 					asst : asst 
 				}
 			}

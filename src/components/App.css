@@ -628,3 +628,8 @@ button {
 	opacity: .9;
     transition: transform 0.15s, background-color 0.5s;
 }
+.die-btn-asst {
+	display: block;
+	appearance: none;
+	overflow-clip-margin: border-box;
+}

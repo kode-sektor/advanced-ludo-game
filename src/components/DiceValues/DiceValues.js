@@ -8,12 +8,11 @@ const DiceValues = ({ dice, updateDiceAssistant }) => {
 		let index = button.dataset.index;
 		let dieVal = Number(button.dataset.value);
 		let buttonID = button.id;
-
 		buttonID = buttonID.split("-");
 		buttonID = buttonID[buttonID.length - 1];
-		
+
 		let diceObj = {
-			selected: !dice[`${die}`].asst[buttonID].selected,    // toggle selected: true / false
+			selected: !dice[`${die}`].asst[index].selected,    // toggle selected: true / false
 			value: dieVal
 		}
 		updateDiceAssistant(die, index, diceObj);
