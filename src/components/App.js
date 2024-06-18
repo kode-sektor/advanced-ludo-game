@@ -299,7 +299,18 @@ export default class App extends Component {
 							<section className="camp">
 								<section className="window">
 									<div className="cell">
-										<button
+										<Button 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedOne.coordinates[0].x,
+													y: this.state.players.seedOne.coordinates[0].y
+												}
+											}
+											move={this.move}
+											id="seed-one"
+										/>
+										{/* <button
 											disabled={this.state.inMotion}
 											style={{
 												transform: `translate(${this.state.players.seedOne.coordinates[0].x * 6.6}vh, 
@@ -309,7 +320,7 @@ export default class App extends Component {
 											onClick={(e) => {this.move(e) }}
 											className={this.state.inMotion ? "moving seed" : "seed"}
 											id="seedOne">
-										</button>
+										</button> */}
 									</div>
 									<div className="cell">
 										<button
