@@ -7,6 +7,7 @@ import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../data/
 import RollBtn from '../components/RollBtn/RollBtn.js'
 import DiceValues from '../components/DiceValues/DiceValues.js'
 import DiceCount from '../components/DiceCount/DiceCount.js'
+import Seed from '../components/Seed/Seed.js'
 
 export default class App extends Component {
 
@@ -299,7 +300,7 @@ export default class App extends Component {
 							<section className="camp">
 								<section className="window">
 									<div className="cell">
-										<Button 
+										<Seed 
 											inMotion={this.state.inMotion}
 											coords={
 												{
@@ -307,59 +308,52 @@ export default class App extends Component {
 													y: this.state.players.seedOne.coordinates[0].y
 												}
 											}
+											dur={this.state.transitionDuration}
 											move={this.move}
-											id="seed-one"
+											id="seedOne"
 										/>
-										{/* <button
-											disabled={this.state.inMotion}
-											style={{
-												transform: `translate(${this.state.players.seedOne.coordinates[0].x * 6.6}vh, 
-														${this.state.players.seedOne.coordinates[0].y * 6.6}vh)`,
-												transitionDuration: this.state.transitionDuration + "s"
-											}}
-											onClick={(e) => {this.move(e) }}
-											className={this.state.inMotion ? "moving seed" : "seed"}
-											id="seedOne">
-										</button> */}
 									</div>
 									<div className="cell">
-										<button
-											disabled={this.state.inMotion}
-											style={{
-												transform: `translate(${this.state.players.seedTwo.coordinates[0].x * 6.6}vh, 
-														${this.state.players.seedTwo.coordinates[0].y * 6.6}vh)`,
-												transitionDuration: this.state.transitionDuration + "s"
-											}}
-											onClick={(e) => { this.move(e)}}
-											className={this.state.inMotion ? "moving seed" : "seed"}
-											id="seedTwo">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedTwo.coordinates[0].x,
+													y: this.state.players.seedTwo.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedTwo"
+										/>
 									</div>
 									<div className="cell">
-										<button
-											disabled={this.state.inMotion}
-											style={{
-												transform: `translate(${this.state.players.seedThree.coordinates[0].x * 6.6}vh, 
-														${this.state.players.seedThree.coordinates[0].y * 6.6}vh)`,
-												transitionDuration: this.state.transitionDuration + "s"
-											}}
-											onClick={(e) => { this.move(e) }}
-											className={this.state.inMotion ? "moving seed" : "seed"}
-											id="seedThree">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedThree.coordinates[0].x,
+													y: this.state.players.seedThree.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedThree"
+										/>
 									</div>
 									<div className="cell">
-										<button
-											disabled={this.state.inMotion}
-											style={{
-												transform: `translate(${this.state.players.seedFour.coordinates[0].x * 6.6}vh, 
-														${this.state.players.seedFour.coordinates[0].y * 6.6}vh)`,
-												transitionDuration: this.state.transitionDuration + "s"
-											}}
-											onClick={(e) => { this.move(e) }}
-											className={this.state.inMotion ? "moving seed" : "seed"}
-											id="seedFour">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedFour.coordinates[0].x,
+													y: this.state.players.seedFour.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedFour"
+										/>
 									</div>
 								</section>
 								<section className="imprint">
@@ -402,28 +396,61 @@ export default class App extends Component {
 							<section className="camp">
 								<section className="window">
 									<div className="cell">
-										<button
-											onClick={(e) => { this.move()}}
-											className="seed" id="seed-v">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedFive.coordinates[0].x,
+													y: this.state.players.seedFive.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedFive"
+										/>
 									</div>
 									<div className="cell">
-										<button
-											onClick={(e) => { this.move()}}
-											className="seed" id="seed-vi">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedSix.coordinates[0].x,
+													y: this.state.players.seedSix.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedSix"
+										/>
+
 									</div>
 									<div className="cell">
-										<button
-											onClick={(e) => { this.move()}}
-											className="seed" id="seed-vii">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedSeven.coordinates[0].x,
+													y: this.state.players.seedSeven.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedSeven"
+										/>
 									</div>
 									<div className="cell">
-										<button
-											onClick={(e) => { this.move() }}
-											className="seed" id="seed-viii">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedEight.coordinates[0].x,
+													y: this.state.players.seedEight.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedEight"
+										/>
 									</div>
 								</section>
 								<section className="imprint">
@@ -466,28 +493,60 @@ export default class App extends Component {
 							<section className="camp">
 								<section className="window">
 									<div className="cell">
-										<button 
-											onClick={(e) => { this.move() }}
-											className="seed" id="seed-ix">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedNine.coordinates[0].x,
+													y: this.state.players.seedNine.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedNine"
+										/>
 									</div>
 									<div className="cell">
-										<button 
-											onClick={(e) => { this.move() }}
-											className="seed" id="seed-x">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedTen.coordinates[0].x,
+													y: this.state.players.seedTen.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedTen"
+										/>
 									</div>
 									<div className="cell">
-										<button 
-											onClick={(e) => { this.move() }}
-											className="seed" id="seed-xi">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedEleven.coordinates[0].x,
+													y: this.state.players.seedEleven.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedEleven"
+										/>
 									</div>
 									<div className="cell">
-										<button 
-											onClick={(e) => { this.move() }}
-											className="seed" id="seed-xii">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedTwelve.coordinates[0].x,
+													y: this.state.players.seedTwelve.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedTwelve"
+										/>
 									</div>
 								</section>
 								<section className="imprint">
@@ -530,28 +589,60 @@ export default class App extends Component {
 							<section className="camp">
 								<section className="window">
 									<div className="cell">
-										<button 
-											onClick={(e) => { this.move() }}
-											className="seed" id="seed-xiii">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedThirteen.coordinates[0].x,
+													y: this.state.players.seedThirteen.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedThirteen"
+										/>
 									</div>
 									<div className="cell">
-										<button 
-											onClick={(e) => { this.move() }}
-											className="seed" id="seed-xiv">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedFourteen.coordinates[0].x,
+													y: this.state.players.seedFourteen.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedFourteen"
+										/>
 									</div>
 									<div className="cell">
-										<button 
-											onClick={(e) => { this.move() }}
-											className="seed" id="seed-xv">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedFifteen.coordinates[0].x,
+													y: this.state.players.seedFifteen.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedFifteen"
+										/>
 									</div>
 									<div className="cell">
-										<button 
-											onClick={(e) => { this.move() }}
-											className="seed" id="seed-xvi">
-										</button>
+										<Seed 
+											inMotion={this.state.inMotion}
+											coords={
+												{
+													x: this.state.players.seedSixteen.coordinates[0].x,
+													y: this.state.players.seedSixteen.coordinates[0].y
+												}
+											}
+											dur={this.state.transitionDuration}
+											move={this.move}
+											id="seedSixteen"
+										/>
 									</div>
 								</section>
 								<section className="imprint">

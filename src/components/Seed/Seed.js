@@ -4,7 +4,7 @@ export default class RollBtn extends Component {
 
 	render() {
 
-		const { inMotion, coords, move, id } = props;
+		const { inMotion, coords, move, dur, id } = this.props;
 
 		return (
 			<button disabled={inMotion}
@@ -13,7 +13,7 @@ export default class RollBtn extends Component {
 				style={{
 					transform: `translate(${coords.x * 6.6}vh, 
 							${coords.y * 6.6}vh)`,
-					transitionDuration: this.state.transitionDuration + "s"
+					transitionDuration: dur + "s"
 				}}
 				onClick={(e) => {move(e)}}
 				>
