@@ -8,6 +8,7 @@ import RollBtn from '../components/RollBtn/RollBtn.js'
 import DiceValues from '../components/DiceValues/DiceValues.js'
 import DiceCount from '../components/DiceCount/DiceCount.js'
 import Seed from '../components/Seed/Seed.js'
+import Dice from '../components/Dice/Dice.js'
 
 export default class App extends Component {
 
@@ -676,54 +677,9 @@ export default class App extends Component {
 						{/* The centre cellbox of the Ludo */}
 						<section className="home"></section>
 						<section className="dice-container">
-							<div id="die-one" className="die"
-								style={{
-										transform: `rotateX(${this.state.dice[1].position.x}deg)
-											rotateY(${this.state.dice[1].position.y}deg)
-											rotateZ(${this.state.dice[1].position.z}deg)`,
-										transitionDuration: this.state.dice[1].rollDuration + "s"
-								}}>
-								<div className="side-one"></div>
-								<div className="side-two"></div>
-								<div className="side-three">
-									<div className="die-inner"></div>
-								</div>
-								<div className="side-four">
-									<div className="die-inner"></div>
-								</div>
-								<div className="side-five">
-									<div className="die-inner"></div>
-									<div className="die-inner"></div>
-								</div>
-								<div className="side-six">
-									<div className="die-inner"></div>
-									<div className="die-inner"></div>
-								</div>
-							</div>								
-							<div id="die-two" className="die"
-								style={{
-										transform: `rotateX(${this.state.dice[2].position.x}deg)
-											rotateY(${this.state.dice[2].position.y}deg)
-											rotateZ(${this.state.dice[2].position.z}deg)`,
-										transitionDuration: this.state.dice[2].rollDuration + "s"
-								}}>
-								<div className="side-one"></div>
-								<div className="side-two"></div>
-								<div className="side-three">
-									<div className="die-inner"></div>
-								</div>
-								<div className="side-four">
-									<div className="die-inner"></div>
-								</div>
-								<div className="side-five">
-									<div className="die-inner"></div>
-									<div className="die-inner"></div>
-								</div>
-								<div className="side-six">
-									<div className="die-inner"></div>
-									<div className="die-inner"></div>
-								</div>
-							</div>								
+							<Dice
+								dice={this.state.dice}
+							/>
 						</section>
 					</section>
 				</section>
