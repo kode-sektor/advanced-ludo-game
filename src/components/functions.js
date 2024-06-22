@@ -42,40 +42,39 @@ export const getDiceTimeout = (cycleSteps) => {
 	// console.log("randomTimeout : ", randomTimeout);
 	
 	const diceTimeout = ([...Array(cycleSteps)].map((_, i) => 0 + i)).map((value, index) => {
-			let pcntStepRollDuration = getRandomWithinRange(16.7 / 100, 80 / 100);	// Between 16.7% and 80%
-			// console.log("pcntStepRollDuration : ", pcntStepRollDuration);
-			// console.log("randomTimeout : ", randomTimeout);
-			// console.log("timeoutSegment : ", timeoutSegment);
-			// console.log("randomTimeout - timeoutSegment", (randomTimeout - timeoutSegment))
+		let pcntStepRollDuration = getRandomWithinRange(16.7 / 100, 80 / 100);	// Between 16.7% and 80%
+		// console.log("pcntStepRollDuration : ", pcntStepRollDuration);
+		// console.log("randomTimeout : ", randomTimeout);
+		// console.log("timeoutSegment : ", timeoutSegment);
+		// console.log("randomTimeout - timeoutSegment", (randomTimeout - timeoutSegment))
 
-			/*
-				WHAT WE WANT TO ACHIEVE
-				- Imagine a 3-sequence roll of a die having a 3-second duration
-				- Assume a flat random figure of 0.5, 0.5 and 0.5
-					0.5 of (3 - 0) = 1.5s for 1st sequence
-					0.5 of (3 - 1.5) = 0.75s for 2nd sequence
-					0.5 of (3 - 1.5 - 0.75) = 0.375s for 3rd sequence
-					
-				- But remember total sequence must equal 3 seconds, and 1.5s + 0.75s + 0.375s = 2.625s
-				- Hence the last sequence must be the total minus the 1st and 2nd sequence (3s - (1.5s + 0.75s)) = 0.75s
-			*/
-			/*
-				The problem with this is that it increments the 
-				timeoutSegment += pcntStepRollDuration * (randomTimeout - timeoutSegment);
-				return timeoutSegment;
-				Do the following instead:
+		/*
+			WHAT WE WANT TO ACHIEVE
+			- Imagine a 3-sequence roll of a die having a 3-second duration
+			- Assume a flat random figure of 0.5, 0.5 and 0.5
+				0.5 of (3 - 0) = 1.5s for 1st sequence
+				0.5 of (3 - 1.5) = 0.75s for 2nd sequence
+				0.5 of (3 - 1.5 - 0.75) = 0.375s for 3rd sequence
+				
+			- But remember total sequence must equal 3 seconds, and 1.5s + 0.75s + 0.375s = 2.625s
+			- Hence the last sequence must be the total minus the 1st and 2nd sequence (3s - (1.5s + 0.75s)) = 0.75s
+		*/
+		/*
+			The problem with this is that it increments the 
+			timeoutSegment += pcntStepRollDuration * (randomTimeout - timeoutSegment);
+			return timeoutSegment;
+			Do the following instead:
 
-				Take care of last loop to ensure 3rd sequence matches total specified duration (e.g. 3 seconds)
-				By making pcntStepRollDuration = 1, this ensures the remaining sequence helps complete the 3-s duration
-				because 1 is a whole number, not a fraction like the others
-			*/
-			pcntStepRollDuration = index === Array(cycleSteps).length - 1 ? 1 : pcntStepRollDuration;
+			Take care of last loop to ensure 3rd sequence matches total specified duration (e.g. 3 seconds)
+			By making pcntStepRollDuration = 1, this ensures the remaining sequence helps complete the 3-s duration
+			because 1 is a whole number, not a fraction like the others
+		*/
+		pcntStepRollDuration = index === Array(cycleSteps).length - 1 ? 1 : pcntStepRollDuration;
 
-			value = pcntStepRollDuration * (randomTimeout - timeoutSegment);
-			timeoutSegment += value;
-			return Math.round(value * 100) / 100;
-		}
-	)
+		value = pcntStepRollDuration * (randomTimeout - timeoutSegment);
+		timeoutSegment += value;
+		return Math.round(value * 100) / 100;
+	})
 	return diceTimeout;
 }
 
@@ -289,21 +288,4 @@ export const computeDiceData = (diceTimeout) => {
 export const getDiceVals = (index) => {
 	let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
 	return diceVals[index];
-}
-
-export const setDiceAssistant = (diceObj) => {
-	console.log(diceObj)
-	this.setState({
-		...this.state,
-		dice: {
-			1: {
-				...this.state.dice[1],
-				asst : [...this.state.dice[1].asst, diceObj[1].asst]
-			},
-			2: {
-				...this.state.dice[2],
-				asst : [...this.state.dice[2].asst, diceObj[2].asst]
-			}
-		}
-	})
 }

@@ -9,6 +9,7 @@ import DiceValues from '../components/DiceValues/DiceValues.js'
 import DiceCount from '../components/DiceCount/DiceCount.js'
 import Seed from '../components/Seed/Seed.js'
 import Dice from '../components/Dice/Dice.js'
+import OutpostLane from '../components/OutpostLane/OutpostLane.js'
 
 export default class App extends Component {
 
@@ -290,14 +291,10 @@ export default class App extends Component {
 				<section className="board">
 					<section className="ludo">
 						<section className="base home-one">
-							<section className="outpost-lane">
-								<div className="cell" title="11"></div>
-								<div className="cell" title="10"></div>
-								<div className="cell" title="9"></div>
-								<div className="cell" title="8"></div>
-								<div className="cell" title="7"></div>
-								<div className="cell" title="6"></div>
-							</section>
+							<OutpostLane
+								max={11}
+								min={6}
+							/>
 							<section className="camp">
 								<section className="window">
 									<div className="cell">
@@ -386,14 +383,10 @@ export default class App extends Component {
 							</section>
 						</section>
 						<section className="base home-two">
-							<section className="outpost-lane">
-								<div className="cell" title="24"></div>
-								<div className="cell" title="23"></div>
-								<div className="cell" title="22"></div>
-								<div className="cell" title="21"></div>
-								<div className="cell" title="20"></div>
-								<div className="cell" title="19"></div>
-							</section>
+							<OutpostLane
+								max={24}
+								min={19}
+							/>
 							<section className="camp">
 								<section className="window">
 									<div className="cell">
@@ -423,7 +416,6 @@ export default class App extends Component {
 											move={this.move}
 											id="seedSix"
 										/>
-
 									</div>
 									<div className="cell">
 										<Seed 
@@ -483,14 +475,10 @@ export default class App extends Component {
 							</section>
 						</section>
 						<section className="base home-three">
-							<section className="outpost-lane">
-								<div className="cell" title="37"></div>
-								<div className="cell" title="36"></div>
-								<div className="cell" title="35"></div>
-								<div className="cell" title="34"></div>
-								<div className="cell" title="33"></div>
-								<div className="cell" title="32"></div>
-							</section>
+							<OutpostLane
+								max={37}
+								min={32}
+							/>
 							<section className="camp">
 								<section className="window">
 									<div className="cell">
@@ -579,14 +567,10 @@ export default class App extends Component {
 							</section>
 						</section>
 						<section className="base home-four">
-							<section className="outpost-lane">
-								<div className="cell" title="50"></div>
-								<div className="cell" title="49"></div>
-								<div className="cell" title="48"></div>
-								<div className="cell" title="47"></div>
-								<div className="cell" title="46"></div>
-								<div className="cell" title="45"></div>
-							</section>
+							<OutpostLane
+								max={50}
+								min={45}
+							/>
 							<section className="camp">
 								<section className="window">
 									<div className="cell">
