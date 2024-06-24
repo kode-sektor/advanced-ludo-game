@@ -10,6 +10,7 @@ import DiceCount from '../components/DiceCount/DiceCount.js'
 import Seed from '../components/Seed/Seed.js'
 import Dice from '../components/Dice/Dice.js'
 import OutpostLane from '../components/OutpostLane/OutpostLane.js'
+import Exit from '../components/Exit/Exit.js'
 
 export default class App extends Component {
 
@@ -361,27 +362,30 @@ export default class App extends Component {
 									<span>LUDO</span>
 								</section>
 							</section>
-							<section className="exit">
-								<section className="lair">
-									<div className="cell" title="6"></div>
-									<div className="cell" title="5"></div>
-									<div className="cell" title="4"></div>
-									<div className="cell" title="3"></div>
-									<div className="cell" title="2"></div>
-									<div className="cell" title="1"></div>
-									<div className="cell" title="52"></div>
-								</section>
-								<section className="portal">
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell" title="51"></div>
-								</section>
-							</section>
+							<Exit 
+								base={"home-one"}
+								max={5}
+								min={1}
+							/>
 						</section>
+						{/* <section className="lair">
+							<div className="cell"></div>
+							<div className="cell" title="5"></div>
+							<div className="cell" title="4"></div>
+							<div className="cell" title="3"></div>
+							<div className="cell" title="2"></div>
+							<div className="cell" title="1"></div>
+							<div className="cell" title="52"></div>
+						</section>
+						<section className="portal">
+							<div className="cell"></div>
+							<div className="cell"></div>
+							<div className="cell"></div>
+							<div className="cell"></div>
+							<div className="cell"></div>
+							<div className="cell"></div>
+							<div className="cell" title="51"></div>
+						</section> */}
 						<section className="base home-two">
 							<OutpostLane
 								max={24}

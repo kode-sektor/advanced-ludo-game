@@ -289,3 +289,11 @@ export const getDiceVals = (index) => {
 	let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
 	return diceVals[index];
 }
+
+export const calcMoveDistance = () => {
+	
+}
+
+export const canBreakout = () => {
+	
+}

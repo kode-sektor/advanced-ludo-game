@@ -21,6 +21,7 @@ export default class RollBtn extends Component {
 			if (diceVals[0] === 6 && diceVals[1] === 6) {
 				this.setState({
 					...this.state,
+					disabled: false,
 					doubleSix: true
 				})
 			} else {
