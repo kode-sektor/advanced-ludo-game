@@ -36,8 +36,6 @@ export default class Camp extends Component {
 									y: this.state.players[`seed${seeds[1]}`].coordinates[0].y
 								}
 							}
-							dur={this.state.transitionDuration}
-							move={this.move}
 							id={`seed${seeds[1]}`}
 						/>
 					</div>
@@ -49,8 +47,6 @@ export default class Camp extends Component {
 									y: this.state.players[`seed${seeds[2]}`].coordinates[0].y
 								}
 							}
-							dur={this.state.transitionDuration}
-							move={this.move}
 							id={`seed${seeds[2]}`}
 						/>
 					</div>
@@ -62,8 +58,6 @@ export default class Camp extends Component {
 									y: this.state.players[`seed${seeds[3]}`].coordinates[0].y
 								}
 							}
-							dur={this.state.transitionDuration}
-							move={this.move}
 							id={`seed${seeds[3]}`}
 						/>
 					</div>

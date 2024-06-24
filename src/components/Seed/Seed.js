@@ -226,7 +226,7 @@ export default class RollBtn extends Component {
 				style={{
 					transform: `translate(${coords.x * 6.6}vh, 
 							${coords.y * 6.6}vh)`,
-					transitionDuration: dur + "s"
+					transitionDuration: this.state.transitionDuration + "s"
 				}}
 				onClick={(e) => {move(e)}}
 				>
