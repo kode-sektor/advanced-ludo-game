@@ -9,7 +9,7 @@ export default class RollBtn extends Component {
 	isMovable = (e) => {
 		alert('yes');
 		console.log(e);
-		
+		return true;
 		let id = e.target.id;
 
 		if (this.state.inMotion) {

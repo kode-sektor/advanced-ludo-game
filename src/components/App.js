@@ -4,13 +4,11 @@ import "./App.css";
 import { players } from "../data/players.js";
 import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../data/constants.js"
 
-import RollBtn from '../components/RollBtn/RollBtn.js'
-import DiceValues from '../components/DiceValues/DiceValues.js'
-import DiceCount from '../components/DiceCount/DiceCount.js'
 import Seed from '../components/Seed/Seed.js'
 import Dice from '../components/Dice/Dice.js'
 import OutpostLane from '../components/OutpostLane/OutpostLane.js'
 import Exit from '../components/Exit/Exit.js'
+import DiceWidget from "./DiceWidget/DiceWidget.js";
 
 export default class App extends Component {
 
@@ -273,7 +271,13 @@ export default class App extends Component {
 
 		return (
 			<div className="board-game">
-				<section className="dice-widget">
+				<DiceWidget
+					dice={dice}
+					setDice={this.setDice}
+					setDiceAssistant={this.setDiceAssistant}
+					updateDiceAssistant={this.updateDiceAssistant}
+				/>
+				{/* <section className="dice-widget">
 					<section className="roll-series">
 						<DiceCount
 							dice={dice}
@@ -288,7 +292,7 @@ export default class App extends Component {
 						setDiceAssistant={this.setDiceAssistant}
 						dice={this.state.dice}
 					/>
-				</section>
+				</section> */}
 				<section className="board">
 					<section className="ludo">
 						<section className="base home-one">
@@ -365,27 +369,10 @@ export default class App extends Component {
 							<Exit 
 								base={"home-one"}
 								max={5}
-								min={1}
+								min={0}
+								portal={6}
 							/>
 						</section>
-						{/* <section className="lair">
-							<div className="cell"></div>
-							<div className="cell" title="5"></div>
-							<div className="cell" title="4"></div>
-							<div className="cell" title="3"></div>
-							<div className="cell" title="2"></div>
-							<div className="cell" title="1"></div>
-							<div className="cell" title="52"></div>
-						</section>
-						<section className="portal">
-							<div className="cell"></div>
-							<div className="cell"></div>
-							<div className="cell"></div>
-							<div className="cell"></div>
-							<div className="cell"></div>
-							<div className="cell"></div>
-							<div className="cell" title="51"></div>
-						</section> */}
 						<section className="base home-two">
 							<OutpostLane
 								max={24}
@@ -457,26 +444,12 @@ export default class App extends Component {
 									<span>LUDO</span>
 								</section>
 							</section>
-							<section className="exit">
-								<section className="lair">
-									<div className="cell"></div>
-									<div className="cell" title="18"></div>
-									<div className="cell" title="17"></div>
-									<div className="cell" title="16"></div>
-									<div className="cell" title="15"></div>
-									<div className="cell" title="14"></div>
-									<div className="cell" title="13"></div>
-								</section>
-								<section className="portal">
-									<div className="cell" title=""></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell" title="12"></div>
-								</section>
-							</section>
+							<Exit 
+								base={"home-two"}
+								max={18}
+								min={13}
+								portal={6}
+							/>
 						</section>
 						<section className="base home-three">
 							<OutpostLane
@@ -549,26 +522,12 @@ export default class App extends Component {
 									<span>LUDO</span>
 								</section>
 							</section>
-							<section className="exit">
-								<section className="lair">
-									<div className="cell"></div>
-									<div className="cell" title="31"></div>
-									<div className="cell" title="30"></div>
-									<div className="cell" title="29"></div>
-									<div className="cell" title="28"></div>
-									<div className="cell" title="27"></div>
-									<div className="cell" title="26"></div>
-								</section>
-								<section className="portal">
-									<div className="cell" title=""></div>
-									<div className="cell" title=""></div>
-									<div className="cell" title=""></div>
-									<div className="cell" title=""></div>
-									<div className="cell" title=""></div>
-									<div className="cell" title=""></div>
-									<div className="cell" title="25"></div>
-								</section>
-							</section>
+							<Exit 
+								base={"home-three"}
+								max={31}
+								min={26}
+								portal={6}
+							/>
 						</section>
 						<section className="base home-four">
 							<OutpostLane
@@ -641,26 +600,12 @@ export default class App extends Component {
 									<span>LUDO</span>
 								</section>
 							</section>
-							<section className="exit">
-								<section className="lair">
-									<div className="cell" title=""></div>
-									<div className="cell" title="44"></div>
-									<div className="cell" title="43"></div>
-									<div className="cell" title="42"></div>
-									<div className="cell" title="41"></div>
-									<div className="cell" title="40"></div>
-									<div className="cell" title="39"></div>
-								</section>
-								<section className="portal">
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell"></div>
-									<div className="cell" title="38"></div>
-								</section>
-							</section>
+							<Exit 
+								base={"home-four"}
+								max={44}
+								min={39}
+								portal={6}
+							/>
 						</section>
 						{/* The centre cellbox of the Ludo */}
 						<section className="home"></section>
