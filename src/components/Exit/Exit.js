@@ -14,7 +14,6 @@ const Exit = ({ base, max, min, portal }) => {
 						<div key={index} className="cell" title={value}></div>
 				})
 				}
-				{/* <div className="cell" title={min - 1 === 0 ? "51" : min - 1}></div>				 */}
 			</section>   
 			<section className="portal">
 				{
@@ -24,7 +23,6 @@ const Exit = ({ base, max, min, portal }) => {
 							<div key={index} className="cell" title={`${base}-cell-${value}`}></div>
 					})
 				}
-				{/* <div className="cell" title={min - 1 === 0 ? "52" : min - 1}></div> */}
 			</section>
 		</section>
 	)
