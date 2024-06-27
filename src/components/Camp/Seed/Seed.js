@@ -1,15 +1,36 @@
 import React, { Component } from 'react';
 
-import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../data/constants.js"
-import { players } from "../../data/players.js";
-import { calcMoveDistance, canBreakout } from '../functions.js'
+import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../../data/constants.js"
+import { players } from "../../../data/players.js";
+import { calcMoveDistance, canBreakout } from '../../functions.js'
 
 
 export default class RollBtn extends Component {
 
 	state = {
+		absCell: 0,
+		movable: true,
+		inMotion: false,
 		transitionDuration: 0,
 	}
+
+	componentDidUpdate() {
+		 
+		(function isMovable() {
+			let id = this.props.id;
+			let cell = players.this.props.id.cell;
+			let moveDistance = calcMoveDistance()
+
+			if (this.state.inMotion) {
+				return false;
+			}
+			else if (!canBreakout(cell) || cell + moveDistance > 51) {
+				return false;
+			} else {
+				return true
+			}
+		}());
+    }
 
 	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
 		/*
@@ -220,7 +241,7 @@ export default class RollBtn extends Component {
 		const { inMotion, coords, move, dur, id } = this.props;
 
 		return (
-			<button disabled={this.isMovable}
+			<button disabled={this.state.movable}
 				className={inMotion ? "moving seed" : "seed"}
 				id={id}
 				style={{

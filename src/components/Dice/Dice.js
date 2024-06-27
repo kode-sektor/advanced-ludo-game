@@ -5,7 +5,7 @@ import Die from './Die/Die.js';
 const Dice = ({dice}) => {
 
 	return (
-		<>
+		<section className="dice-container">
 			<Die
 				coords={
 					{
@@ -26,7 +26,7 @@ const Dice = ({dice}) => {
 				}
 				dur={dice[2].rollDuration}
 			/>
-		</>
+		</section>
 	)
 }
 

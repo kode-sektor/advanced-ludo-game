@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import "./App.css";
 import { players } from "../data/players.js";
 
-import Seed from '../components/Seed/Seed.js'
 import Dice from '../components/Dice/Dice.js'
 import Camp from '../components/Camp/Camp.js'
 import OutpostLane from '../components/OutpostLane/OutpostLane.js'
@@ -157,11 +156,9 @@ export default class App extends Component {
 						</section>
 						{/* The centre cellbox of the Ludo */}
 						<section className="home"></section>
-						<section className="dice-container">
-							<Dice
-								dice={this.state.dice}
-							/>
-						</section>
+						<Dice
+							dice={this.state.dice}
+						/>
 					</section>
 				</section>
 				<aside className="stats"></aside>

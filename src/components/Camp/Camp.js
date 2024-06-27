@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { players } from "../../data/players.js";
-import Seed from '../../components/Seed/Seed.js';
+import Seed from './Seed/Seed.js';
 
 
 export default class Camp extends Component {
