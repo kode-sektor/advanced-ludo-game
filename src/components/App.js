@@ -101,6 +101,7 @@ export default class App extends Component {
 							/>
 							<Camp 
 								seeds={["One", "Two", "Three", "Four"]}
+								dice={dice}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -116,6 +117,7 @@ export default class App extends Component {
 							/>
 							<Camp 
 								seeds={["Five", "Six", "Seven", "Eight"]}
+								dice={dice}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -131,6 +133,7 @@ export default class App extends Component {
 							/>
 							<Camp 
 								seeds={["Nine", "Ten", "Eleven", "Twelve"]}
+								dice={dice}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -146,6 +149,7 @@ export default class App extends Component {
 							/>
 							<Camp 
 								seeds={["Thirteen", "Fourteen", "Fifteen", "Sixteen"]}
+								dice={dice}
 							/>
 							<Exit 
 								base={"home-four"}

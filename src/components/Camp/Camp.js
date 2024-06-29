@@ -12,7 +12,7 @@ export default class Camp extends Component {
 
 	render() {
 
-		const { seeds, dur } = this.props;
+		const { seeds, dice } = this.props;
 
 		return (
 			<section className="camp">
@@ -26,6 +26,7 @@ export default class Camp extends Component {
 								}
 							}
 							id={`seed${seeds[0]}`}
+							dice={dice}
 						/>
 					</div>
 					<div className="cell">
@@ -37,6 +38,7 @@ export default class Camp extends Component {
 								}
 							}
 							id={`seed${seeds[1]}`}
+							dice={dice}
 						/>
 					</div>
 					<div className="cell">
@@ -48,6 +50,7 @@ export default class Camp extends Component {
 								}
 							}
 							id={`seed${seeds[2]}`}
+							dice={dice}
 						/>
 					</div>
 					<div className="cell">
@@ -59,6 +62,7 @@ export default class Camp extends Component {
 								}
 							}
 							id={`seed${seeds[3]}`}
+							dice={dice}
 						/>
 					</div>
 				</section>

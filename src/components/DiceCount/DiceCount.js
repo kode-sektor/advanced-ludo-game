@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSolid, faDice } from '@fortawesome/free-solid-svg-icons';
+import { calcMoveDistance } from '../functions.js';
 
 
 export default class RollBtn extends Component {
@@ -9,18 +10,6 @@ export default class RollBtn extends Component {
 	state = {
 	}
 
-	calculateTally = (dice) => {
-		let diceOneAsst = Object.values(dice[1])[0];
-		let diceTwoAsst = Object.values(dice[2])[0];
-
-		const filteredDiceOneAsst = diceOneAsst.filter((die) => die.selected === true && die.disabled === false);
-		const filteredDiceTwoAsst = diceTwoAsst.filter((die) => die.selected === true && die.disabled === false);
-
-		const totalDiceOneAsst = filteredDiceOneAsst.reduce((total, { value }) => total + value, 0);
-		const totalDiceTwoAsst = filteredDiceTwoAsst.reduce((total, { value }) => total + value, 0);
-		
-		return totalDiceOneAsst + totalDiceTwoAsst;
-	}
 	
 	render() {
 
@@ -31,7 +20,7 @@ export default class RollBtn extends Component {
 				</h3>
 				<span className="dice-bubble">
 					<FontAwesomeIcon icon={faDice} size='3x' inverse swapOpacity mask={['far', 'circle']}/>
-					<span className='dice-count'>{this.calculateTally(this.props.dice)}</span>
+					<span className='dice-count'>{calcMoveDistance(this.props.dice)}</span>
 				</span>
 			</section>
 		)

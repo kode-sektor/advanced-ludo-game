@@ -290,8 +290,17 @@ export const getDiceVals = (index) => {
 	return diceVals[index];
 }
 
-export const calcMoveDistance = () => {
+export const calcMoveDistance = (dice) => {
+	let diceOneAsst = Object.values(dice[1])[0];
+	let diceTwoAsst = Object.values(dice[2])[0];
+
+	const filteredDiceOneAsst = diceOneAsst.filter((die) => die.selected === true && die.disabled === false);
+	const filteredDiceTwoAsst = diceTwoAsst.filter((die) => die.selected === true && die.disabled === false);
+
+	const totalDiceOneAsst = filteredDiceOneAsst.reduce((total, { value }) => total + value, 0);
+	const totalDiceTwoAsst = filteredDiceTwoAsst.reduce((total, { value }) => total + value, 0);
 	
+	return totalDiceOneAsst + totalDiceTwoAsst;
 }
 
 export const canBreakout = () => {

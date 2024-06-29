@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 
 import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../../data/constants.js"
 import { players } from "../../../data/players.js";
-import { calcMoveDistance, canBreakout } from '../../functions.js'
+import { TOTAL_CELLS } from '../../../data/constants.js'
+import { calcMoveDistance, canBreakout, } from '../../functions.js'
 
 
 export default class RollBtn extends Component {
@@ -15,21 +16,23 @@ export default class RollBtn extends Component {
 	}
 
 	componentDidUpdate() {
-		 
-		(function isMovable() {
+
+		const isMovable = () => {
 			let id = this.props.id;
-			let cell = players.this.props.id.cell;
-			let moveDistance = calcMoveDistance()
+			let cell = players[id].cell;
+
+			let moveDistance = calcMoveDistance(this.props.dice);
 
 			if (this.state.inMotion) {
 				return false;
 			}
-			else if (!canBreakout(cell) || cell + moveDistance > 51) {
+			else if (!canBreakout(cell) || cell + moveDistance > TOTAL_CELLS) {
 				return false;
 			} else {
 				return true
 			}
-		}());
+		}
+		isMovable();
     }
 
 	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
@@ -213,27 +216,6 @@ export default class RollBtn extends Component {
 			}
 		}
 		initMove(this.state.players[`${id}`].cell);
-	}
-
-
-	isMovable = (e) => {
-		alert('yes');
-		console.log(e);
-		return true;
-		let id = e.target.id;
-
-		if (this.state.inMotion) {
-			return false;
-		}
-
-		let cell = players.id.cell;
-		let moveDistance = calcMoveDistance();
-
-		if (!canBreakout(cell) || (cell + moveDistance)) {
-			return false;
-		} else {
-			return true;
-		}
 	}
 
 	render() {

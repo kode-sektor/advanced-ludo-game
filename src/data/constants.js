@@ -1,6 +1,7 @@
 export const TURNING_POINTS = [0, 4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49, 50];
 export const DIAGONALS = [4, 17, 30, 43];
 export const CELL_SPEED = 0.2;
+export const TOTAL_CELLS = 51;
 const northward = [
 		...[...Array(4)].map((_, i) => 0 + i),
 		...[...Array(12 - 10)].map((_, i) => 10 + i),
