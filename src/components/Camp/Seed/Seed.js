@@ -25,8 +25,7 @@ export default class RollBtn extends Component {
 
 			if (this.state.inMotion) {
 				return false;
-			}
-			else if (!canBreakout(cell) || cell + moveDistance > TOTAL_CELLS) {
+			} else if (!canBreakout(cell, this.props.dice) || (cell + moveDistance > TOTAL_CELLS + 6)) {
 				return false;
 			} else {
 				return true

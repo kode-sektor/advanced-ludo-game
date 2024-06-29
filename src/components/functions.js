@@ -303,6 +303,15 @@ export const calcMoveDistance = (dice) => {
 	return totalDiceOneAsst + totalDiceTwoAsst;
 }
 
-export const canBreakout = () => {
-	
+export const canBreakout = (cell, dice) => {
+	let inCamp = cell === null;	// Check token is home
+
+	if (inCamp) {	// If not in home, check that either die is a 6. If so, token can move
+		let sixExists = false;
+		sixExists = dice[1].asst.some(({selected, disabled, value}) => selected === true && disabled === false && value === 6) ||
+			dice[2].asst.some(({selected, disabled, value}) => selected === true && disabled === false && value === 6);
+		return sixExists;
+	} else {
+		return true;
+	}
 }

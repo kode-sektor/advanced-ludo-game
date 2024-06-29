@@ -122,7 +122,8 @@ button {
     outline: none;
     touch-action: manipulation; 
 	transition: 1s ease;
-}.roll:disabled {
+}
+.roll:disabled, .seed:disabled {
 	cursor: not-allowed;
 }
 .roll:hover, .roll:focus {
