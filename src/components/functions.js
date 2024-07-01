@@ -317,9 +317,14 @@ export const canBreakAway = (cell, dice) => {
 	if (inCamp) {	// If not in home, check that either die is a 6. If so, token can move
 		let sixExists = false;
 		sixExists = dice[1].asst.some(({selected, disabled, value}) => selected === true && disabled === false && value === 6) ||
-			dice[2].asst.some(({selected, disabled, value}) => selected === true && disabled === false && value === 6);
+			dice[2].asst.some(({ selected, disabled, value }) => selected === true && disabled === false && value === 6);
 		return sixExists;
 	} else {
 		return true;
 	}
+}
+
+export const calculateStack = (seeds, destination) => {
+	const stackedCells = seeds.filter(({ cell }) => cell === destination);
+	return stackedCells.length;
 }
