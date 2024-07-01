@@ -30,4 +30,4 @@ export const CARDINAL_POINTS = {
 	east: eastward,
 	west: westward,
 };
-
+export const SIX_THROW = true;

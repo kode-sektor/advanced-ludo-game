@@ -1,4 +1,4 @@
-
+import { SIX_THROW } from '../data/constants.js';
 
 export const getRandomWithinRange = (min, max, int = false) => {
 	let result = 0;
@@ -16,14 +16,22 @@ export const getRandomWithinRange = (min, max, int = false) => {
 
 export const randomDice = (diceValues = []) => {
 	for (let dicethrow = 0; dicethrow < 2; dicethrow++) {
-		diceValues.push(getRandomWithinRange(1, 6, true));	// Between 1 and 6
-		
-		// Check for double-six (You will do this for the Ludo-bot)
-		/* if (dicethrow === 1) {
-			if (diceValues.slice(-2)[0] === 6 && diceValues.slice(-2)[1] === 6) {
-				this.randomDice(diceValues)
+		if (SIX_THROW) {	// Guarantee a six on either die
+			let cycle = getRandomWithinRange(0, 1, true);
+			if (dicethrow === cycle) {
+				diceValues.push(6);
+			} else {
+				diceValues.push(getRandomWithinRange(1, 6, true));	// Between 1 and 6
 			}
-		} */
+		} else {
+			diceValues.push(getRandomWithinRange(1, 6, true));	// Between 1 and 6
+			// Check for double-six (You will do this for the Ludo-bot)
+			/* if (dicethrow === 1) {
+				if (diceValues.slice(-2)[0] === 6 && diceValues.slice(-2)[1] === 6) {
+					this.randomDice(diceValues)
+				}
+			} */
+		}
 	}
 	return diceValues;
 }
@@ -303,7 +311,7 @@ export const calcMoveDistance = (dice) => {
 	return totalDiceOneAsst + totalDiceTwoAsst;
 }
 
-export const canBreakout = (cell, dice) => {
+export const canBreakAway = (cell, dice) => {
 	let inCamp = cell === null;	// Check token is home
 
 	if (inCamp) {	// If not in home, check that either die is a 6. If so, token can move

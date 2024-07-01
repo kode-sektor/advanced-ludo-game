@@ -3,36 +3,51 @@ import React, { Component } from 'react';
 import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../../data/constants.js"
 import { players } from "../../../data/players.js";
 import { TOTAL_CELLS } from '../../../data/constants.js'
-import { calcMoveDistance, canBreakout, } from '../../functions.js'
+import { calcMoveDistance, canBreakAway, } from '../../functions.js'
 
 
 export default class RollBtn extends Component {
 
 	state = {
 		absCell: 0,
-		movable: true,
+		movable: false,
 		inMotion: false,
 		transitionDuration: 0,
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate = () => {
+		this.isMovable();
+    }
 
-		const isMovable = () => {
-			let id = this.props.id;
-			let cell = players[id].cell;
+	isMovable = () => {
+		let id = this.props.id;
+		let cell = players[id].cell;
 
-			let moveDistance = calcMoveDistance(this.props.dice);
-
-			if (this.state.inMotion) {
-				return false;
-			} else if (!canBreakout(cell, this.props.dice) || (cell + moveDistance > TOTAL_CELLS + 6)) {
-				return false;
-			} else {
-				return true
+		let moveDistance = calcMoveDistance(this.props.dice);
+		
+		if (this.state.inMotion) {
+			if (this.state.movable === true) {
+				this.setState({
+					...this.state,
+					movable: false
+				})
+			}			
+		} else if (!canBreakAway(cell, this.props.dice) || (cell + moveDistance > TOTAL_CELLS + 6)) {
+			if (this.state.movable === true) {
+				this.setState({
+					...this.state,
+					movable: false
+				})
+			}			
+		} else {
+			if (this.state.movable === false) {
+				this.setState({
+					...this.state,
+					movable: true
+				})
 			}
 		}
-		isMovable();
-    }
+	}
 
 	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
 		/*
@@ -222,7 +237,7 @@ export default class RollBtn extends Component {
 		const { inMotion, coords, move, dur, id } = this.props;
 
 		return (
-			<button disabled={this.state.movable}
+			<button disabled={!this.state.movable}
 				className={inMotion ? "moving seed" : "seed"}
 				id={id}
 				style={{
