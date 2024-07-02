@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import "./App.css";
-import { players } from "../data/players.js";
+import { seeds } from "../data/seeds.js";
 
 import Dice from '../components/Dice/Dice.js'
 import Camp from '../components/Camp/Camp.js'
@@ -16,7 +16,7 @@ export default class App extends Component {
     }
 
 	state = {
-		players : players,
+		seeds : seeds,
 		activeId: "",
 		inMotion: false,
 		dice: {
@@ -100,7 +100,7 @@ export default class App extends Component {
 								min={6}
 							/>
 							<Camp 
-								seeds={["One", "Two", "Three", "Four"]}
+								base={["One", "Two", "Three", "Four"]}
 								dice={dice}
 							/>
 							<Exit 
@@ -116,7 +116,7 @@ export default class App extends Component {
 								min={19}
 							/>
 							<Camp 
-								seeds={["Five", "Six", "Seven", "Eight"]}
+								base={["Five", "Six", "Seven", "Eight"]}
 								dice={dice}
 							/>
 							<Exit 
@@ -132,7 +132,7 @@ export default class App extends Component {
 								min={32}
 							/>
 							<Camp 
-								seeds={["Nine", "Ten", "Eleven", "Twelve"]}
+								base={["Nine", "Ten", "Eleven", "Twelve"]}
 								dice={dice}
 							/>
 							<Exit 
@@ -148,7 +148,7 @@ export default class App extends Component {
 								min={45}
 							/>
 							<Camp 
-								seeds={["Thirteen", "Fourteen", "Fifteen", "Sixteen"]}
+								base={["Thirteen", "Fourteen", "Fifteen", "Sixteen"]}
 								dice={dice}
 							/>
 							<Exit 

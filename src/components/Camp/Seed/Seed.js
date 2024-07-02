@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 
 import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../../data/constants.js"
-import { players } from "../../../data/players.js";
+import { seeds } from "../../../data/seeds.js";
 import { TOTAL_CELLS } from '../../../data/constants.js'
-import { calcMoveDistance, canBreakAway, } from '../../functions.js'
+import { calcMoveDistance, canBreakAway, isOpponentToken } from '../../functions.js'
 
 
 export default class RollBtn extends Component {
 
 	state = {
+		seeds: seeds,
 		absCell: 0,
 		movable: false,
 		inMotion: false,
@@ -21,24 +22,29 @@ export default class RollBtn extends Component {
 
 	isMovable = () => {
 		let id = this.props.id;
-		let cell = players[id].cell;
+		let cell = seeds[id].cell;
 
 		let moveDistance = calcMoveDistance(this.props.dice);
 		
+		// Disable all tokens if any token is in motion
 		if (this.state.inMotion) {
 			if (this.state.movable === true) {
 				this.setState({
 					...this.state,
 					movable: false
 				})
-			}			
+			}		
+		// Disable token if no '6' or if prospective move takes token out beyond portal
 		} else if (!canBreakAway(cell, this.props.dice) || (cell + moveDistance > TOTAL_CELLS + 6)) {
 			if (this.state.movable === true) {
 				this.setState({
 					...this.state,
 					movable: false
 				})
-			}			
+			}	
+		// Prevent selection of opponent token
+		} else if (isOpponentToken()) {
+			// console.log()
 		} else {
 			if (this.state.movable === false) {
 				this.setState({
@@ -57,12 +63,12 @@ export default class RollBtn extends Component {
 		*/
 		this.setState({
 			...this.state,
-			players: {
-				...this.state.players,
+			seeds: {
+				...this.state.seeds,
 				[`${id}`]: {
-					...this.state.players[`${id}`],
+					...this.state.seeds[`${id}`],
 					coordinates: [{ x: coordinates.x, y: coordinates.y }],
-					cell: this.state.players[`${id}`].cell === null ? diceVal : this.state.players[`${id}`].cell + diceVal
+					cell: this.state.seeds[`${id}`].cell === null ? diceVal : this.state.seeds[`${id}`].cell + diceVal
 				}
 			},
 			activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
@@ -108,8 +114,8 @@ export default class RollBtn extends Component {
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
 		// Only fragment total moves when not breaking away
-		this.state.players[`${id}`].cell !== null && (
-			this.fragmentMove(id, this.state.players[`${id}`].cell, this.state.players[`${id}`].cell + totalDiceValues, cellPaths)
+		this.state.seeds[`${id}`].cell !== null && (
+			this.fragmentMove(id, this.state.seeds[`${id}`].cell, this.state.seeds[`${id}`].cell + totalDiceValues, cellPaths)
 		);
 
 		let cellPath = 0;	// counter for modified setTimeout loop
@@ -135,30 +141,30 @@ export default class RollBtn extends Component {
 					if (breakout === null) {	// Tackle breakout move on '6' roll
 						if (cellPath === 0) {	// First move seed on y-axis
 							x = 0;
-							y = this.state.players[`${id}`].breakout[0].y;
+							y = this.state.seeds[`${id}`].breakout[0].y;
 							timer = y * CELL_SPEED;
 						} else {	// then move on x-axis to 6-0 position
-							x = this.state.players[`${id}`].breakout[0].x;
-							y = this.state.players[`${id}`].breakout[0].y;
+							x = this.state.seeds[`${id}`].breakout[0].x;
+							y = this.state.seeds[`${id}`].breakout[0].y;
 							timer = x * CELL_SPEED;
 						}
 						console.log(timer);
 					} else {
 						fragmentedMove = cellPaths[cellPath + 1];
 						// console.log("fragmentedMove :", fragmentedMove);
-						// console.log("cell : ", this.state.players[`${id}`].cell)
-						if (CARDINAL_POINTS.north.includes(this.state.players[`${id}`].cell)) {
-							x = this.state.players[`${id}`].coordinates[0].x;
-							y = this.state.players[`${id}`].coordinates[0].y - fragmentedMove;
-						} else if (CARDINAL_POINTS.south.includes(this.state.players[`${id}`].cell)) {
-							x = this.state.players[`${id}`].coordinates[0].x;
-							y = this.state.players[`${id}`].coordinates[0].y + fragmentedMove;
-						} else if (CARDINAL_POINTS.east.includes(this.state.players[`${id}`].cell)) {
-							x = this.state.players[`${id}`].coordinates[0].x + fragmentedMove;
-							y = this.state.players[`${id}`].coordinates[0].y;
-						} else if (CARDINAL_POINTS.west.includes(this.state.players[`${id}`].cell)) {
-							x = this.state.players[`${id}`].coordinates[0].x - fragmentedMove;
-							y = this.state.players[`${id}`].coordinates[0].y;
+						// console.log("cell : ", this.state.seeds[`${id}`].cell)
+						if (CARDINAL_POINTS.north.includes(this.state.seeds[`${id}`].cell)) {
+							x = this.state.seeds[`${id}`].coordinates[0].x;
+							y = this.state.seeds[`${id}`].coordinates[0].y - fragmentedMove;
+						} else if (CARDINAL_POINTS.south.includes(this.state.seeds[`${id}`].cell)) {
+							x = this.state.seeds[`${id}`].coordinates[0].x;
+							y = this.state.seeds[`${id}`].coordinates[0].y + fragmentedMove;
+						} else if (CARDINAL_POINTS.east.includes(this.state.seeds[`${id}`].cell)) {
+							x = this.state.seeds[`${id}`].coordinates[0].x + fragmentedMove;
+							y = this.state.seeds[`${id}`].coordinates[0].y;
+						} else if (CARDINAL_POINTS.west.includes(this.state.seeds[`${id}`].cell)) {
+							x = this.state.seeds[`${id}`].coordinates[0].x - fragmentedMove;
+							y = this.state.seeds[`${id}`].coordinates[0].y;
 						} else {
 							/*
 								When approaching diagonals, both x and y will advance 1 cell each
@@ -174,26 +180,26 @@ export default class RollBtn extends Component {
 								
 								If it is on the fly while looping, a check will be made for these diagonals
 								which are 4, 17, 30 and 43 and the cell paths array 
-								console.log("this.state.players[`${id}`].cell + fragmentedMove :", this.state.players[`${id}`].cell + fragmentedMove);
+								console.log("this.state.seeds[`${id}`].cell + fragmentedMove :", this.state.seeds[`${id}`].cell + fragmentedMove);
 							*/
 							if (cellPaths[cellPath + 1] > 1) {	// Next fragmented move must exist to set diagonal
 								cellPaths[cellPath + 1] = cellPaths[cellPath + 1] - 1	// Subtract 1 from next 
-								if (this.state.players[`${id}`].cell === 4) {
+								if (this.state.seeds[`${id}`].cell === 4) {
 									cellPaths.splice(cellPath + 1, 0, [-1, -1]);	// [4, 6, 2, 3] to [4, [1,1], 5, 2, 3]
-									x = this.state.players[`${id}`].coordinates[0].x - 1;
-									y = this.state.players[`${id}`].coordinates[0].y - 1;
-								} else if (this.state.players[`${id}`].cell === 17) {
+									x = this.state.seeds[`${id}`].coordinates[0].x - 1;
+									y = this.state.seeds[`${id}`].coordinates[0].y - 1;
+								} else if (this.state.seeds[`${id}`].cell === 17) {
 									cellPaths.splice(cellPath + 1, 0, [1, -1]);
-									x = this.state.players[`${id}`].coordinates[0].x + 1;
-									y = this.state.players[`${id}`].coordinates[0].y - 1;
-								} else if (this.state.players[`${id}`].cell === 30) {
+									x = this.state.seeds[`${id}`].coordinates[0].x + 1;
+									y = this.state.seeds[`${id}`].coordinates[0].y - 1;
+								} else if (this.state.seeds[`${id}`].cell === 30) {
 									cellPaths.splice(cellPath + 1, 0, [1, 1]);
-									x = this.state.players[`${id}`].coordinates[0].x + 1;
-									y = this.state.players[`${id}`].coordinates[0].y + 1;
-								} else if (this.state.players[`${id}`].cell === 43) {
+									x = this.state.seeds[`${id}`].coordinates[0].x + 1;
+									y = this.state.seeds[`${id}`].coordinates[0].y + 1;
+								} else if (this.state.seeds[`${id}`].cell === 43) {
 									cellPaths.splice(cellPath + 1, 0, [-1, 1]);
-									x = this.state.players[`${id}`].coordinates[0].x - 1;
-									y = this.state.players[`${id}`].coordinates[0].y + 1;
+									x = this.state.seeds[`${id}`].coordinates[0].x - 1;
+									y = this.state.seeds[`${id}`].coordinates[0].y + 1;
 								}
 							} else {
 								// If next turn after diagonal is 1
@@ -210,7 +216,7 @@ export default class RollBtn extends Component {
 					this.updatePosition(id, fragmentedMove, { x, y }, cellPath, timer);	// Update cell position
 					// console.log("cellPaths : ", JSON.stringify(cellPaths));
 					cellPath++;
-					initMove(this.state.players[`${id}`].cell);
+					initMove(this.state.seeds[`${id}`].cell);
 				}, timer * 1000)
 			} else {
 				/*
@@ -229,7 +235,7 @@ export default class RollBtn extends Component {
 				}, timer * 1000)
 			}
 		}
-		initMove(this.state.players[`${id}`].cell);
+		initMove(this.state.seeds[`${id}`].cell);
 	}
 
 	render() {

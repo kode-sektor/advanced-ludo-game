@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 
-import { players } from "../../data/players.js";
+import { seeds } from "../../data/seeds.js";
 import Seed from './Seed/Seed.js';
 
 
 export default class Camp extends Component {
 
 	state = {
-		players : players
+		seeds : seeds
 	}
 
 	render() {
 
-		const { seeds, dice } = this.props;
+		const { base, dice } = this.props;
 
 		return (
 			<section className="camp">
@@ -21,11 +21,11 @@ export default class Camp extends Component {
 						<Seed 
 							coords={
 								{
-									x: this.state.players[`seed${seeds[0]}`].coordinates[0].x,
-									y: this.state.players[`seed${seeds[0]}`].coordinates[0].y
+									x: this.state.seeds[`seed${base[0]}`].coordinates[0].x,
+									y: this.state.seeds[`seed${base[0]}`].coordinates[0].y
 								}
 							}
-							id={`seed${seeds[0]}`}
+							id={`seed${base[0]}`}
 							dice={dice}
 						/>
 					</div>
@@ -33,11 +33,11 @@ export default class Camp extends Component {
 						<Seed 
 							coords={
 								{
-									x: this.state.players[`seed${seeds[1]}`].coordinates[0].x,
-									y: this.state.players[`seed${seeds[1]}`].coordinates[0].y
+									x: this.state.seeds[`seed${base[1]}`].coordinates[0].x,
+									y: this.state.seeds[`seed${base[1]}`].coordinates[0].y
 								}
 							}
-							id={`seed${seeds[1]}`}
+							id={`seed${base[1]}`}
 							dice={dice}
 						/>
 					</div>
@@ -45,11 +45,11 @@ export default class Camp extends Component {
 						<Seed 
 							coords={
 								{
-									x: this.state.players[`seed${seeds[2]}`].coordinates[0].x,
-									y: this.state.players[`seed${seeds[2]}`].coordinates[0].y
+									x: this.state.seeds[`seed${base[2]}`].coordinates[0].x,
+									y: this.state.seeds[`seed${base[2]}`].coordinates[0].y
 								}
 							}
-							id={`seed${seeds[2]}`}
+							id={`seed${base[2]}`}
 							dice={dice}
 						/>
 					</div>
@@ -57,11 +57,11 @@ export default class Camp extends Component {
 						<Seed 
 							coords={
 								{
-									x: this.state.players[`seed${seeds[3]}`].coordinates[0].x,
-									y: this.state.players[`seed${seeds[3]}`].coordinates[0].y
+									x: this.state.seeds[`seed${base[3]}`].coordinates[0].x,
+									y: this.state.seeds[`seed${base[3]}`].coordinates[0].y
 								}
 							}
-							id={`seed${seeds[3]}`}
+							id={`seed${base[3]}`}
 							dice={dice}
 						/>
 					</div>

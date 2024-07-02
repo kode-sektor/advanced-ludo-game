@@ -1,4 +1,4 @@
-export const players = {
+export const seeds = {
 	player: {
 		childBase: ["baseOne", "baseTwo"]
 	},

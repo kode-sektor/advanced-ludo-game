@@ -328,3 +328,7 @@ export const calculateStack = (seeds, destination) => {
 	const stackedCells = seeds.filter(({ cell }) => cell === destination);
 	return stackedCells.length;
 }
+
+export const isOpponentToken = () => {
+	
+}
