@@ -4,6 +4,7 @@ import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../..
 import { seeds } from "../../../data/seeds.js";
 import { TOTAL_CELLS } from '../../../data/constants.js'
 import { calcMoveDistance, canBreakAway, isOpponentToken } from '../../functions.js'
+import { settings } from '../../settings.js'
 
 
 export default class RollBtn extends Component {
@@ -23,6 +24,7 @@ export default class RollBtn extends Component {
 	isMovable = () => {
 		let id = this.props.id;
 		let cell = seeds[id].cell;
+
 
 		let moveDistance = calcMoveDistance(this.props.dice);
 		

@@ -1,22 +1,32 @@
 
-const defaultSettings = {
-	players: ["PLAYER_ONE", "PLAYER_TWO", "PLAYER_THREE", "PLAYER_FOUR"],
+let defaultSettings = {};
+
+const players = ["PLAYER_ONE", "PLAYER_TWO", "PLAYER_THREE", "PLAYER_FOUR"];
+
+const playerOneBase = {
+	base: [0, 1],
+	COM: false
+};
+const playerTwoBase = {
+	base: [2, 3],
+	COM: true
+};
+const playerThreeBase = {
+	base: [],
+	COM: false
+};
+const playerFourBase = {
+	base: [],
+	COM: false
+};
+
+defaultSettings = {
 	numberOfPlayers: 2,
 	playerSelection: "ONE_PLAYER_WITH_COM",
-	playerOneBase: {
-		base: [0, 1],
-		COM: false
-	},
-	playerTwoBase: {
-		base: [2, 3],
-		COM: true
-	},
-	playerThreeBase: {},
-	playerFourBase: {},
 	playerSelections: {
 		ONE_PLAYER_WITH_COM: {
 			[players[0]]: playerOneBase,
-			[players[1]]: playerTwoBase
+			[players[1]]: playerTwoBase,
 		},
 		TWO_PLAYERS: {
 			[players[0]]: playerOneBase,
@@ -45,4 +55,10 @@ const defaultSettings = {
 			[players[3]]: playerFourBase
 		}
 	}
+}
+
+const userSettings = {};
+
+export const settings = {
+	...defaultSettings, ...userSettings
 }
