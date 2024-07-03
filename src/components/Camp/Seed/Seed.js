@@ -26,6 +26,9 @@ export default class RollBtn extends Component {
 		let cell = seeds[id].cell;
 
 
+
+		console.log(isOpponentToken());
+
 		let moveDistance = calcMoveDistance(this.props.dice);
 		
 		// Disable all tokens if any token is in motion

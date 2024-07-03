@@ -1,4 +1,6 @@
 import { SIX_THROW } from '../data/constants.js';
+import { settings } from './settings.js'
+ 
 
 export const getRandomWithinRange = (min, max, int = false) => {
 	let result = 0;
@@ -329,6 +331,37 @@ export const calculateStack = (seeds, destination) => {
 	return stackedCells.length;
 }
 
+const getSelection = () => {
+	const selections = settings.playerSelections;
+	const selection = selections[settings.playerSelection];
+	return selection;	
+	/*{
+		PLAYER_ONE: playerOneBase,
+		PLAYER_TWO: playerTwoBase,
+	}*/
+}
+
+const getNoOfPlayers = (abs=false) => {
+	const key = settings.key;	// "PLAYER_"
+	const noOfPlayers = settings.numberOfPlayers;
+	if (abs) {
+		return noOfPlayers;
+	} else {
+		if (noOfPlayers === 2) {
+			return key + "TWO";	// PLAYER_TWO
+		} else if (noOfPlayers === 3) {
+			return key + "THREE";	// PLAYER_THREE	
+		} else {
+			return key + "FOUR";	// PLAYER_FOUR
+		}
+	}
+}
+
 export const isOpponentToken = () => {
-	
+	const selection = getSelection();
+	const noOfPlayers = getNoOfPlayers();	// PLAYER_TWO
+	const playerBase = selection[noOfPlayers];
+	const opponent = Object.keys(playerBase).find(COM => playerBase[COM] === true);
+
+	console.log(opponent);
 }

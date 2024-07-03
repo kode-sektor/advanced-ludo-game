@@ -21,6 +21,7 @@ const playerFourBase = {
 };
 
 defaultSettings = {
+	key: "PLAYER_",
 	numberOfPlayers: 2,
 	playerSelection: "ONE_PLAYER_WITH_COM",
 	playerSelections: {
