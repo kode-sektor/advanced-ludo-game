@@ -365,3 +365,27 @@ export const isOpponentToken = () => {
 
 	console.log(opponent);
 }
+
+const bases = [
+	["seedOne", "seedTwo", "seedThree", "seedFour"],
+	["seedFive", "seedSix", "seedSeven", "seedEight"],
+	["seedNine", "seedTen", "seedEleven", "seedTwelve"],
+	["seedThirteen", "seedFourteen", "seedFifteen", "seedSixteen"]
+]
+
+export const getBase = (base) => {
+	const result = [];
+
+	if (Array.isArray(base)) {
+		for (let baseIndex = 0; baseIndex < base.length; base++) {
+			result.push([...bases[baseIndex]]);
+		}
+	} else if (typeof base === 'number') {
+		result.push([...bases[base]]);
+	} 
+	return result;
+}
+
+export const getActivePlayers = () => {
+	settings.players.slice(0, settings.numberOfPlayers])
+}

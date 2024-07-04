@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../../data/constants.js"
 import { seeds } from "../../../data/seeds.js";
 import { TOTAL_CELLS } from '../../../data/constants.js'
-import { calcMoveDistance, canBreakAway, isOpponentToken } from '../../functions.js'
+import { calcMoveDistance, canBreakAway, getRandomWithinRange, getActivePlayers, isOpponentToken } from '../../functions.js'
 import { settings } from '../../settings.js'
 
 
@@ -16,6 +16,10 @@ export default class RollBtn extends Component {
 		inMotion: false,
 		transitionDuration: 0,
 	}
+
+	activePlayers = getActivePlayers();
+
+	turn = getRandomWithinRange(0, (this.activePlayers.length - 10));	// 0, 1
 
 	componentDidUpdate = () => {
 		this.isMovable();
