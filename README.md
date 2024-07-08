@@ -161,7 +161,10 @@ CALCULATING MOVE DISTANCE
 <img src="/public/images/calculating-move-distance.jpg">
 
 DISABLING SELECTED DICE
-<img src="/public/images/displaying-selected-dice">
+<img src="/public/images/displaying-selected-dice.jpg">
+
+SETTINGS
+<img src="/public/images/settings.jpg">
 
 
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)

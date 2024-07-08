@@ -31,3 +31,10 @@ export const CARDINAL_POINTS = {
 	west: westward,
 };
 export const SIX_THROW = true;
+
+export const bases = [
+	["seedOne", "seedTwo", "seedThree", "seedFour"],
+	["seedFive", "seedSix", "seedSeven", "seedEight"],
+	["seedNine", "seedTen", "seedEleven", "seedTwelve"],
+	["seedThirteen", "seedFourteen", "seedFifteen", "seedSixteen"]
+]

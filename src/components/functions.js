@@ -366,12 +366,6 @@ export const isOpponentToken = () => {
 	console.log(opponent);
 }
 
-const bases = [
-	["seedOne", "seedTwo", "seedThree", "seedFour"],
-	["seedFive", "seedSix", "seedSeven", "seedEight"],
-	["seedNine", "seedTen", "seedEleven", "seedTwelve"],
-	["seedThirteen", "seedFourteen", "seedFifteen", "seedSixteen"]
-]
 
 export const getBase = (base) => {
 	const result = [];
@@ -387,5 +381,5 @@ export const getBase = (base) => {
 }
 
 export const getActivePlayers = () => {
-	settings.players.slice(0, settings.numberOfPlayers])
+	settings.players.slice(0, settings.numberOfPlayers);
 }
