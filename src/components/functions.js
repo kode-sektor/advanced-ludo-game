@@ -1,5 +1,5 @@
-import { SIX_THROW } from '../data/constants.js';
-import { settings } from './settings.js'
+import { SIX_THROW, bases } from '../data/constants.js';
+import { settings, bases as baseSettings, players } from './settings.js'
  
 
 export const getRandomWithinRange = (min, max, int = false) => {
@@ -317,10 +317,10 @@ export const canBreakAway = (cell, dice) => {
 	let inCamp = cell === null;	// Check token is home
 
 	if (inCamp) {	// If not in home, check that either die is a 6. If so, token can move
-		let sixExists = false;
-		sixExists = dice[1].asst.some(({selected, disabled, value}) => selected === true && disabled === false && value === 6) ||
+		let sixThrow = false;
+		sixThrow = dice[1].asst.some(({selected, disabled, value}) => selected === true && disabled === false && value === 6) ||
 			dice[2].asst.some(({ selected, disabled, value }) => selected === true && disabled === false && value === 6);
-		return sixExists;
+		return sixThrow;
 	} else {
 		return true;
 	}
@@ -345,7 +345,7 @@ const getNoOfPlayers = (abs=false) => {
 	const key = settings.key;	// "PLAYER_"
 	const noOfPlayers = settings.numberOfPlayers;
 	if (abs) {
-		return noOfPlayers;
+		return noOfPlayers;	// Return int 2, 3 or 4
 	} else {
 		if (noOfPlayers === 2) {
 			return key + "TWO";	// PLAYER_TWO
@@ -357,15 +357,25 @@ const getNoOfPlayers = (abs=false) => {
 	}
 }
 
-export const isOpponentToken = () => {
-	const selection = getSelection();
-	const noOfPlayers = getNoOfPlayers();	// PLAYER_TWO
-	const playerBase = selection[noOfPlayers];
-	const opponent = Object.keys(playerBase).find(COM => playerBase[COM] === true);
+const getTurn = () => settings.turn;
 
-	console.log(opponent);
+export const isActiveToken = (token) => {
+	const turn = getTurn();	// 0, 1
+	const playerTurn = players[turn];
+
+	// Get the turn of player and enable current player's seeds but if 
+	// current player is COM, disable all seeds
+	let base = baseSettings[playerTurn].base;	// get current player base
+	base = Array.isArray(base) ? base : [base];
+	
+	for (let baseItem = 0; baseItem < base.length; baseItem++) {
+		let currBase = base[baseItem];	// [0, 1]
+		if (bases[currBase].indexOf(token) !== -1) {
+			return true;
+		};
+	}
+	return false;
 }
-
 
 export const getBase = (base) => {
 	const result = [];
@@ -380,6 +390,4 @@ export const getBase = (base) => {
 	return result;
 }
 
-export const getActivePlayers = () => {
-	settings.players.slice(0, settings.numberOfPlayers);
-}
+export const getActivePlayers = () => players.slice(0, settings.numberOfPlayers);

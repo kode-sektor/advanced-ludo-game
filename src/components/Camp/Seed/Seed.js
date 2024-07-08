@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../../data/constants.js"
 import { seeds } from "../../../data/seeds.js";
 import { TOTAL_CELLS } from '../../../data/constants.js'
-import { calcMoveDistance, canBreakAway, getRandomWithinRange, getActivePlayers, isOpponentToken } from '../../functions.js'
+import { calcMoveDistance, canBreakAway, getRandomWithinRange, getActivePlayers, isActiveToken } from '../../functions.js'
 import { settings } from '../../settings.js'
 
 
@@ -19,7 +19,7 @@ export default class RollBtn extends Component {
 
 	activePlayers = getActivePlayers();
 
-	turn = getRandomWithinRange(0, (this.activePlayers.length - 10));	// 0, 1
+	// turn = getRandomWithinRange(0, (this.activePlayers.length - 10));	// 0, 1
 
 	componentDidUpdate = () => {
 		this.isMovable();
@@ -28,10 +28,6 @@ export default class RollBtn extends Component {
 	isMovable = () => {
 		let id = this.props.id;
 		let cell = seeds[id].cell;
-
-
-
-		console.log(isOpponentToken());
 
 		let moveDistance = calcMoveDistance(this.props.dice);
 		
@@ -42,7 +38,7 @@ export default class RollBtn extends Component {
 					...this.state,
 					movable: false
 				})
-			}		
+			}	
 		// Disable token if no '6' or if prospective move takes token out beyond portal
 		} else if (!canBreakAway(cell, this.props.dice) || (cell + moveDistance > TOTAL_CELLS + 6)) {
 			if (this.state.movable === true) {
@@ -52,14 +48,14 @@ export default class RollBtn extends Component {
 				})
 			}	
 		// Prevent selection of opponent token
-		} else if (isOpponentToken()) {
-			// console.log()
 		} else {
-			if (this.state.movable === false) {
-				this.setState({
-					...this.state,
-					movable: true
-				})
+			if (isActiveToken(id)) {	// 
+				if (this.state.movable === false) {
+					this.setState({
+						...this.state,
+						movable: true
+					})
+				}
 			}
 		}
 	}
