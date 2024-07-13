@@ -19,8 +19,6 @@ export default class RollBtn extends Component {
 
 	activePlayers = getActivePlayers();
 
-	// turn = getRandomWithinRange(0, (this.activePlayers.length - 10));	// 0, 1
-
 	componentDidUpdate = () => {
 		this.isMovable();
     }
@@ -49,7 +47,8 @@ export default class RollBtn extends Component {
 			}	
 		// Prevent selection of opponent token
 		} else {
-			if (isActiveToken(id)) {	// 
+			console.log(this.turn);
+			if (isActiveToken(id, this.props.turn)) {	// 
 				if (this.state.movable === false) {
 					this.setState({
 						...this.state,

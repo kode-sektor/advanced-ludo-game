@@ -357,10 +357,13 @@ const getNoOfPlayers = (abs=false) => {
 	}
 }
 
-const getTurn = () => settings.turn;
+// const getInitTurn = () => settings.turn;
 
-export const isActiveToken = (token) => {
-	const turn = getTurn();	// 0, 1
+const setTurn = (turn) => turn < (settings.numberOfPlayers - 1) ? turn++ : 0;
+
+export const isActiveToken = (token, turn) => {
+	// const turn = getTurn();	// 0, 1
+	console.log(turn);
 	const playerTurn = players[turn];
 
 	// Get the turn of player and enable current player's seeds but if 
