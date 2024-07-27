@@ -8,7 +8,7 @@ import Camp from '../components/Camp/Camp.js'
 import OutpostLane from '../components/OutpostLane/OutpostLane.js'
 import Exit from '../components/Exit/Exit.js'
 import DiceWidget from "./DiceWidget/DiceWidget.js";
-import { getRandomWithinRange } from '../../functions.js'
+import { getRandomWithinRange } from './functions.js'
 
 export default class App extends Component {
 
@@ -80,7 +80,7 @@ export default class App extends Component {
 		})
 	}
 
-	turn = getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0, 1
+	turn = () => getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0, 1
 
 	render() {
 		let state = this.state;
@@ -104,7 +104,7 @@ export default class App extends Component {
 							<Camp 
 								base={["One", "Two", "Three", "Four"]}
 								dice={dice}
-								turn={turn}
+								turn={this.turn}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -121,7 +121,7 @@ export default class App extends Component {
 							<Camp 
 								base={["Five", "Six", "Seven", "Eight"]}
 								dice={dice}
-								turn={turn}
+								turn={this.turn}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -138,7 +138,7 @@ export default class App extends Component {
 							<Camp 
 								base={["Nine", "Ten", "Eleven", "Twelve"]}
 								dice={dice}
-								turn={turn}
+								turn={this.turn}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -155,7 +155,7 @@ export default class App extends Component {
 							<Camp 
 								base={["Thirteen", "Fourteen", "Fifteen", "Sixteen"]}
 								dice={dice}
-								turn={turn}
+								turn={this.turn}
 							/>
 							<Exit 
 								base={"home-four"}
