@@ -1,3 +1,5 @@
+import { seeds } from "./seeds.js";
+
 export const TURNING_POINTS = [0, 4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49, 50];
 export const DIAGONALS = [4, 17, 30, 43];
 export const CELL_SPEED = 0.2;
@@ -30,10 +32,9 @@ export const CARDINAL_POINTS = {
 	west: westward,
 };
 export const SIX_THROW = true;
-
-export const bases = [
-	["seedOne", "seedTwo", "seedThree", "seedFour"],
-	["seedFive", "seedSix", "seedSeven", "seedEight"],
-	["seedNine", "seedTen", "seedEleven", "seedTwelve"],
-	["seedThirteen", "seedFourteen", "seedFifteen", "seedSixteen"]
-];
+export const PLAYER_BASES = {
+	PLAYER_ONE: {},
+	PLAYER_TWO: {},
+	PLAYER_THREE: {},
+	PLAYER_FOUR: {}
+}

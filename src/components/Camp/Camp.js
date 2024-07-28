@@ -27,7 +27,7 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[0]}`}
 							dice={dice}
-							turn={turn}
+							turn={this.turn}
 						/>
 					</div>
 					<div className="cell">
@@ -40,7 +40,7 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[1]}`}
 							dice={dice}
-							turn={turn}
+							turn={this.turn}
 						/>
 					</div>
 					<div className="cell">
@@ -53,7 +53,7 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[2]}`}
 							dice={dice}
-							turn={turn}
+							turn={this.turn}
 						/>
 					</div>
 					<div className="cell">
@@ -66,7 +66,7 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[3]}`}
 							dice={dice}
-							turn={turn}
+							turn={this.turn}
 						/>
 					</div>
 				</section>

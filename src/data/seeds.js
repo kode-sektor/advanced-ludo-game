@@ -5,18 +5,6 @@ export const seeds = {
 	com: {
 		childBase: ["baseThree", "baseFour"]
 	},
-	baseOne: {
-		seeds: ["seedOne", "seedTwo", "seedThree", "seedFour"]
-	},
-	baseTwo: {
-		seeds: ["seedFive", "seedSix", "seedSeven", "seedEight"]
-	},
-	baseThree: {
-		seeds: ["seedNine", "seedTen", "seedEleven", "seedTwelve"]
-	},
-	baseFour: {
-		seeds: ["seedThirteen", "seedFourteen", "seedFifteen", "seedSixteen"]
-	},
 	seedOne: {
 		breakout: [{ x: 3, y: 3}],
 		coordinates: [{ x: 0, y: 0}],

@@ -383,13 +383,19 @@ export const isActiveToken = (token, turn) => {
 export const getBase = (base) => {
 	const result = [];
 
-	if (Array.isArray(base)) {
+	if (Array.isArray(base)) {	// [0, 1]
 		for (let baseIndex = 0; baseIndex < base.length; base++) {
 			result.push([...bases[baseIndex]]);
 		}
-	} else if (typeof base === 'number') {
+	} else if (typeof base === 'number') {	// 0
 		result.push([...bases[base]]);
-	} 
+	} else if (base === "COM") {	
+		const COM = Object.values(base).find(COM === true);
+		const COMbase = COM.base;
+		getBase(COMbase);
+	} else {	// // "PLAYER_ONE"
+
+	}
 	return result;
 }
 
