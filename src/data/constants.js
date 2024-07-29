@@ -34,10 +34,10 @@ export const CARDINAL_POINTS = {
 export const SIX_THROW = true;
 
 export const bases = [
-	[seeds.seedOne, seeds.seedTwo, seeds.seedThree, seeds.seedFour],
-	[seeds.seedFive, seeds.seedSix, seeds.seedSeven, seeds.seedEight],
-	[seeds.seedNine, seeds.seedTen, seeds.seedEleven, seeds.seedTwelve],
-	[seeds.seedThirteen, seeds.seedFourteen, seeds.seedFifteen, seeds.seedSixteen]
+	["seedOne", "seedTwo", "seedThree", "seedFour"],
+	["seedFive", "seedSix", "seedSeven", "seedEight"],
+	["seedNine", "seedTen", "seedEleven", "seedTwelve"],
+	["seedThirteen", "seedFourteen", "seedFifteen", "seedSixteen"]
 ];
 
 export const baseOne = bases[0];

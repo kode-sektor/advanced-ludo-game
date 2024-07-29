@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import "./App.css";
-import settings from './settings.js'
+import { settings } from './settings.js'
 import { seeds } from "../data/seeds.js";
 
 import Dice from '../components/Dice/Dice.js'
@@ -86,7 +86,8 @@ export default class App extends Component {
 
 	render() {
 		let state = this.state;
-		let dice = this.state.dice;
+		let dice = state.dice;
+		let turn = state.turn;
 
 		return (
 			<div className="board-game">
@@ -106,7 +107,7 @@ export default class App extends Component {
 							<Camp 
 								base={["One", "Two", "Three", "Four"]}
 								dice={dice}
-								turn={this.turn}
+								turn={turn}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -123,7 +124,7 @@ export default class App extends Component {
 							<Camp 
 								base={["Five", "Six", "Seven", "Eight"]}
 								dice={dice}
-								turn={this.turn}
+								turn={turn}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -140,7 +141,7 @@ export default class App extends Component {
 							<Camp 
 								base={["Nine", "Ten", "Eleven", "Twelve"]}
 								dice={dice}
-								turn={this.turn}
+								turn={turn}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -157,7 +158,7 @@ export default class App extends Component {
 							<Camp 
 								base={["Thirteen", "Fourteen", "Fifteen", "Sixteen"]}
 								dice={dice}
-								turn={this.turn}
+								turn={turn}
 							/>
 							<Exit 
 								base={"home-four"}
@@ -169,7 +170,7 @@ export default class App extends Component {
 						{/* The centre cellbox of the Ludo */}
 						<section className="home"></section>
 						<Dice
-							dice={this.state.dice}
+							dice={dice}
 						/>
 					</section>
 				</section>

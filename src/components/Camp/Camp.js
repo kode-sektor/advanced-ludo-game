@@ -12,7 +12,8 @@ export default class Camp extends Component {
 
 	render() {
 
-		const { base, dice } = this.props;
+		const { base, dice, turn } = this.props;
+		console.log(this.props);
 
 		return (
 			<section className="camp">
@@ -27,7 +28,7 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[0]}`}
 							dice={dice}
-							turn={this.turn}
+							turn={turn}
 						/>
 					</div>
 					<div className="cell">
@@ -40,7 +41,7 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[1]}`}
 							dice={dice}
-							turn={this.turn}
+							turn={turn}
 						/>
 					</div>
 					<div className="cell">
@@ -53,7 +54,7 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[2]}`}
 							dice={dice}
-							turn={this.turn}
+							turn={turn}
 						/>
 					</div>
 					<div className="cell">
@@ -66,7 +67,7 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[3]}`}
 							dice={dice}
-							turn={this.turn}
+							turn={turn}
 						/>
 					</div>
 				</section>

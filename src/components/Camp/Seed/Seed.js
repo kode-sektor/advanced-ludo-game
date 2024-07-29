@@ -28,6 +28,7 @@ export default class RollBtn extends Component {
 		let cell = seeds[id].cell;
 
 		let moveDistance = calcMoveDistance(this.props.dice);
+		console.log(this.props);
 		
 		// Disable all tokens if any token is in motion
 		if (this.state.inMotion) {
@@ -37,6 +38,7 @@ export default class RollBtn extends Component {
 					movable: false
 				})
 			}	
+			console.log('okay-0');
 		// Disable token if no '6' or if prospective move takes token out beyond portal
 		} else if (!canBreakAway(cell, this.props.dice) || (cell + moveDistance > TOTAL_CELLS + 6)) {
 			if (this.state.movable === true) {
@@ -45,9 +47,10 @@ export default class RollBtn extends Component {
 					movable: false
 				})
 			}	
+			console.log('okay-1');
 		// Prevent selection of opponent token
 		} else {
-			console.log(this.turn);
+			console.log(this.props.turn);
 			if (isActiveToken(id, this.props.turn)) {	// 
 				if (this.state.movable === false) {
 					this.setState({

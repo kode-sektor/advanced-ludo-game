@@ -382,18 +382,21 @@ export const setTurn = (turn) => turn < (settings.numberOfPlayers - 1) ? turn++ 
 export const getActivePlayers = () => players.slice(0, settings.numberOfPlayers);
 
 // Make tokens active of whose turn it is to play
-export const isActiveToken = (base, token, turn) => {
+export const isActiveToken = (token, turn) => {
 
 	const playerTurn = players[turn];	// "PLAYER_ONE"
+	console.log(playerTurn);
 
 	// Get the turn of player and enable current player's seeds but if 
 	// current player is COM, disable all seeds
 	let currBase = baseSettings[playerTurn].base;	// get current player base : [0, 1]
-	currBase = Array.isArray(base) ? base : [base];
+	currBase = Array.isArray(currBase) ? currBase : [currBase];
 	
-	for (let baseItem = 0; baseItem < base.length; baseItem++) {
-		let currBaseItem = currBase[baseItem];	// [0, 1]
-		if (bases[currBaseItem].indexOf(token) !== -1) {
+	// Check if token id e.g. 'SeedOne' is in active player's base array
+	for (let baseItem = 0; baseItem < currBase.length; baseItem++) {
+		let currBaseItem = bases[baseItem];	// ["seedOne", "seedTwo", "seedThree", "seedFour"]
+		
+		if (currBaseItem.indexOf(token) !== -1) {
 			return true;
 		};
 	}
