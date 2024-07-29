@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import "./App.css";
+import settings from './settings.js'
 import { seeds } from "../data/seeds.js";
 
 import Dice from '../components/Dice/Dice.js'
@@ -32,20 +33,9 @@ export default class App extends Component {
 				rollDuration: 0
 			}
 		},
-		doubleSix: false
+		doubleSix: false,
+		turn: settings.turn	// 0
 	}
-
-	bases = [
-		[seeds.seedOne, seeds.seedTwo, seeds.seedThree, seeds.seedFour],
-		[seeds.seedFive, seeds.seedSix, seeds.seedSeven, seeds.seedEight],
-		[seeds.seedNine, seeds.seedTen, seeds.seedEleven, seeds.seedTwelve],
-		[seeds.seedThirteen, seeds.seedFourteen, seeds.seedFifteen, seeds.seedSixteen]
-	];
-
-	baseOne = this.bases[0];
-	baseTwo = this.bases[1];
-	baseThree = this.bases[2];
-	baseFour = this.bases[3];
 
 	setDice = (diceObj) => {
 		this.setState({

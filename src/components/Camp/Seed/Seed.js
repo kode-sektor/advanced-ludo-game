@@ -17,7 +17,7 @@ export default class RollBtn extends Component {
 		transitionDuration: 0,
 	}
 
-	activePlayers = getActivePlayers();
+	activePlayers = getActivePlayers();	// 1, 2, 3 or 4
 
 	componentDidUpdate = () => {
 		this.isMovable();

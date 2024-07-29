@@ -32,9 +32,15 @@ export const CARDINAL_POINTS = {
 	west: westward,
 };
 export const SIX_THROW = true;
-export const PLAYER_BASES = {
-	PLAYER_ONE: {},
-	PLAYER_TWO: {},
-	PLAYER_THREE: {},
-	PLAYER_FOUR: {}
-}
+
+export const bases = [
+	[seeds.seedOne, seeds.seedTwo, seeds.seedThree, seeds.seedFour],
+	[seeds.seedFive, seeds.seedSix, seeds.seedSeven, seeds.seedEight],
+	[seeds.seedNine, seeds.seedTen, seeds.seedEleven, seeds.seedTwelve],
+	[seeds.seedThirteen, seeds.seedFourteen, seeds.seedFifteen, seeds.seedSixteen]
+];
+
+export const baseOne = bases[0];
+export const baseTwo = bases[1];
+export const baseThree = bases[2];
+export const baseFour = bases[3];
