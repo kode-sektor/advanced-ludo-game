@@ -13,7 +13,6 @@ export default class Camp extends Component {
 	render() {
 
 		const { base, dice, turn } = this.props;
-		console.log(this.props);
 
 		return (
 			<section className="camp">

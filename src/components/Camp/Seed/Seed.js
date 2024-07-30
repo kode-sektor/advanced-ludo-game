@@ -38,7 +38,7 @@ export default class RollBtn extends Component {
 					movable: false
 				})
 			}	
-			console.log('okay-0');
+			console.log('inMotion');
 		// Disable token if no '6' or if prospective move takes token out beyond portal
 		} else if (!canBreakAway(cell, this.props.dice) || (cell + moveDistance > TOTAL_CELLS + 6)) {
 			if (this.state.movable === true) {
@@ -47,10 +47,10 @@ export default class RollBtn extends Component {
 					movable: false
 				})
 			}	
-			console.log('okay-1');
+			console.log('!canBreakAway');
 		// Prevent selection of opponent token
 		} else {
-			console.log(this.props.turn);
+			console.log('can break away');
 			if (isActiveToken(id, this.props.turn)) {	// 
 				if (this.state.movable === false) {
 					this.setState({

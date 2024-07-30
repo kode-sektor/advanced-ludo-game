@@ -40,7 +40,21 @@ export const bases = [
 	["seedThirteen", "seedFourteen", "seedFifteen", "seedSixteen"]
 ];
 
-export const baseOne = bases[0];
-export const baseTwo = bases[1];
-export const baseThree = bases[2];
-export const baseFour = bases[3];
+export const baseStartPositions = [1, 13, 26, 39];
+
+export const baseOne = {
+	seeds: bases[0],
+	absStartCell: 0
+}
+export const baseTwo = {
+	seeds: bases[1],
+	absStartCell: 13
+}
+export const baseThree = {
+	seeds: bases[2],
+	absStartCell: 26
+}
+export const baseFour = {
+	seeds: bases[3],
+	absStartCell: 39
+}

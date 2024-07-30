@@ -1,4 +1,4 @@
-import { SIX_THROW, bases } from '../data/constants.js';
+import { SIX_THROW, bases, baseStartPositions } from '../data/constants.js';
 import { settings, bases as baseSettings, players } from './settings.js'
  
 
@@ -373,7 +373,7 @@ export const getBase = (base) => {
 	} else {	// "PLAYER_ONE"
 
 	}
-	return result;
+	return result;	// ["seedOne", "seedTwo", "seedThree", "seedFour"]
 }
 
 // 0 -> 1 -> 2 -> 3 -> 0
@@ -401,4 +401,20 @@ export const isActiveToken = (token, turn) => {
 		};
 	}
 	return false;
+}
+
+export const isUnderSiege = (base) => {
+	let currBase = Array.isArray(base) ? base : Array(base);	// [0, 1]
+	const siegeZone = [];
+
+	for (let baseItem = 0; baseItem < currBase.length - 1; baseItem++) {
+		let currBaseItem = getBase(currBase[baseItem]);	// ["seedOne", "seedTwo", "seedThree", "seedFour"]
+		let currBasePoint = baseStartPositions[currBase[baseItem]];
+		currBasePoint = (currBasePoint === 1) ? 52 : currBasePoint;
+
+		for (let currStartCell = currBasePoint; currBasePoint < currBasePoint - 6; currBasePoint--) {
+			siegeZone.push(currStartCell);
+		}
+	}
+	return siegeZone;
 }
