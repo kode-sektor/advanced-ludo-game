@@ -331,7 +331,7 @@ export const calculateStack = (seeds, destination) => {
 	return stackedCells.length;
 }
 
-const getSelection = () => {
+export const getSelection = () => {
 	const selections = settings.playerSelections;
 	const selection = selections[settings.playerSelection];
 	return selection;	
@@ -341,7 +341,7 @@ const getSelection = () => {
 	}*/
 }
 
-const getNoOfPlayers = (abs=false) => {
+export const getNoOfPlayers = (abs=false) => {
 	const key = settings.key;	// "PLAYER_"
 	const noOfPlayers = settings.numberOfPlayers;
 	if (abs) {
@@ -417,4 +417,23 @@ export const isUnderSiege = (base) => {
 		}
 	}
 	return siegeZone;
+}
+
+export const getAttackBaseIndex = (base) => Array.isArray(base) ? Math.max(...base) : null;
+
+export const getDefenceBaseIndex = (base) => Array.isArray(base) ? Math.min(...base) : null;
+
+export const getAttackBase = (base) => {
+	let attackBaseIndex = getAttackBaseIndex(base);
+}
+
+export const getDefenceBase = (base) => {
+	let defenceBaseIndex = getDefenceBaseIndex(base);
+}
+
+export const getCOM = () => Object.values(baseSettings).find(COM === true);
+
+export const getCOMBaseIndex = () => {
+	const COM = getCOM;
+	return COM.base;
 }

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { bases } from '../settings.js'
+import { getCOMBaseIndex } from '../functions.js'
 
 import { seeds } from "../../data/seeds.js";
 import Seed from './Seed/Seed.js';
@@ -9,6 +11,15 @@ export default class Camp extends Component {
 	state = {
 		seeds : seeds
 	}
+
+	isCOMCamp = () => {
+		let id = this.props.id;
+		let COMbase = getCOMBaseIndex();
+		return COMbase.includes(id);
+	}
+
+	
+
 
 	render() {
 

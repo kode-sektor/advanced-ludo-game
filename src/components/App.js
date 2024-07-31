@@ -108,6 +108,7 @@ export default class App extends Component {
 								base={["One", "Two", "Three", "Four"]}
 								dice={dice}
 								turn={turn}
+								id={0}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -125,6 +126,7 @@ export default class App extends Component {
 								base={["Five", "Six", "Seven", "Eight"]}
 								dice={dice}
 								turn={turn}
+								id={1}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -142,6 +144,7 @@ export default class App extends Component {
 								base={["Nine", "Ten", "Eleven", "Twelve"]}
 								dice={dice}
 								turn={turn}
+								id={2}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -159,6 +162,7 @@ export default class App extends Component {
 								base={["Thirteen", "Fourteen", "Fifteen", "Sixteen"]}
 								dice={dice}
 								turn={turn}
+								id={3}
 							/>
 							<Exit 
 								base={"home-four"}
