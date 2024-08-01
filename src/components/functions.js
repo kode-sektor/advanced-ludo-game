@@ -424,11 +424,15 @@ export const getAttackBaseIndex = (base) => Array.isArray(base) ? Math.max(...ba
 export const getDefenceBaseIndex = (base) => Array.isArray(base) ? Math.min(...base) : null;
 
 export const getAttackBase = (base) => {
-	let attackBaseIndex = getAttackBaseIndex(base);
+	const attackBaseIndex = getAttackBaseIndex(base);
+	const attackBase = getBase(attackBaseIndex);
+	return attackBase;
 }
 
 export const getDefenceBase = (base) => {
-	let defenceBaseIndex = getDefenceBaseIndex(base);
+	const defenceBaseIndex = getDefenceBaseIndex(base);
+	const defenceBase = getBase(defenceBaseIndex);
+	return defenceBase;
 }
 
 export const getCOM = () => Object.values(baseSettings).find(COM === true);
