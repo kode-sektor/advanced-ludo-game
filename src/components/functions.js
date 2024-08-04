@@ -438,7 +438,7 @@ export const getDefenceBase = (base) => {
 
 export const getCOM = () => Object.values(baseSettings).find(COM === true);
 
-export const getCOMopponents = () => Object.values(baseSettings).find(COM === false && base.length !== 0);
+export const getCOMopponents = () => Object.keys(bases).filter(item => bases[item].COM === false && bases[item].base.length !== 0);
 
 export const getCOMBaseIndex = () => {
 	const COM = getCOM;
