@@ -416,7 +416,8 @@ export const isUnderSiege = (base) => {
 			siegeZone.push(currStartCell);
 		}
 	}
-	return siegeZone;
+	
+	
 }
 
 export const getAttackBaseIndex = (base) => Array.isArray(base) ? Math.max(...base) : null;
@@ -436,6 +437,8 @@ export const getDefenceBase = (base) => {
 }
 
 export const getCOM = () => Object.values(baseSettings).find(COM === true);
+
+export const getCOMopponents = () => Object.values(baseSettings).find(COM === false && base.length !== 0);
 
 export const getCOMBaseIndex = () => {
 	const COM = getCOM;
