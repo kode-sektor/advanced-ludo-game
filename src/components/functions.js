@@ -1,6 +1,6 @@
 import { SIX_THROW, bases, baseStartPositions } from '../data/constants.js';
 import { settings, bases as baseSettings, players } from './settings.js'
- 
+import { seeds } from '../data/seeds.js'
 
 export const getRandomWithinRange = (min, max, int = false) => {
 	let result = 0;
@@ -409,14 +409,30 @@ export const isUnderSiege = (base) => {
 
 	for (let baseItem = 0; baseItem < currBase.length - 1; baseItem++) {
 		let currBaseItem = getBase(currBase[baseItem]);	// ["seedOne", "seedTwo", "seedThree", "seedFour"]
-		let currBasePoint = baseStartPositions[currBase[baseItem]];
+		let currBasePoint = baseStartPositions[currBase[baseItem]];	// baseStartPositions[0], baseStartPositions[1]
 		currBasePoint = (currBasePoint === 1) ? 52 : currBasePoint;
 
+		// Generate the 6 cells behind portal starting cell
 		for (let currStartCell = currBasePoint; currBasePoint < currBasePoint - 6; currBasePoint--) {
-			siegeZone.push(currStartCell);
+			siegeZone.push(currStartCell);	// 12, 11, 10, 9, 8, 7
 		}
 	}
 	
+	const opp = getCOMopponents();
+	let oppBase = opp.base;	// [0, 1]
+	oppBase = Array.isArray(oppBase) ? oppBase : [oppBase];
+	let baseCollection = [];
+
+	for (let oppBaseEntry = 0; base < oppBase.length; oppBaseEntry++) {
+		let oppBaseItem = bases[oppBase[oppBaseEntry]];	// bases[0, 1][0] => ["seedOne", "seedTwo", "seedThree", "seedFour"]
+
+		// Filter base from all tokens
+		const filteredOppInSiege = Object.fromEntries(Object.entries(seeds).filter(([k]) => oppBaseItem.includes(k)));
+
+		// Filter seeds whose values fall in range within 6 cells of COM starting cell
+		const oppInSiege = Object.values(filteredOppInSiege).filter(siegeZone.includes(cell));
+
+	}
 	
 }
 
@@ -438,7 +454,7 @@ export const getDefenceBase = (base) => {
 
 export const getCOM = () => Object.values(baseSettings).find(COM === true);
 
-export const getCOMopponents = () => Object.keys(bases).filter(item => bases[item].COM === false && bases[item].base.length !== 0);
+export const getCOMopponents = () => Object.keys(bases).filter(item => bases[item].COM === false && bases[item].base.length !== 0);	// ["PLAYER_ONE"]
 
 export const getCOMBaseIndex = () => {
 	const COM = getCOM;

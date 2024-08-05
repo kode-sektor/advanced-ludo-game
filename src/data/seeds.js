@@ -1,10 +1,10 @@
 export const seeds = {
-	player: {
-		childBase: ["baseOne", "baseTwo"]
-	},
-	com: {
-		childBase: ["baseThree", "baseFour"]
-	},
+	// player: {
+	// 	childBase: ["baseOne", "baseTwo"]
+	// },
+	// com: {
+	// 	childBase: ["baseThree", "baseFour"]
+	// },
 	seedOne: {
 		breakout: [{ x: 3, y: 3}],
 		coordinates: [{ x: 0, y: 0}],

@@ -21,10 +21,9 @@ export default class Camp extends Component {
 	isCOMAttackBaseSieged = () => {
 		if (this.isCOMBase()) {
 			const COMBaseIndex = getCOMBaseIndex();	// [1, 2]
-			let attackBaseInde
-			x = getAttackBaseIndex(COMBaseIndex);
+			let attackBaseIndex = getAttackBaseIndex(COMBaseIndex);
 
-			isUnderSiege(attackBaseIndex)
+			isUnderSiege(attackBaseIndex);
 
 		}
 	}
