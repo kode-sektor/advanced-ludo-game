@@ -421,7 +421,7 @@ export const isUnderSiege = (base) => {
 	const opp = getCOMopponents();
 	let oppBase = opp.base;	// [0, 1]
 	oppBase = Array.isArray(oppBase) ? oppBase : [oppBase];
-	let baseCollection = [];
+	let oppBaseCollection = [];
 
 	for (let oppBaseEntry = 0; base < oppBase.length; oppBaseEntry++) {
 		let oppBaseItem = bases[oppBase[oppBaseEntry]];	// bases[0, 1][0] => ["seedOne", "seedTwo", "seedThree", "seedFour"]
@@ -431,9 +431,9 @@ export const isUnderSiege = (base) => {
 
 		// Filter seeds whose values fall in range within 6 cells of COM starting cell
 		const oppInSiege = Object.values(filteredOppInSiege).filter(siegeZone.includes(cell));
-
+		oppBaseCollection.push(...oppInSiege);
 	}
-	
+	return oppBaseCollection;
 }
 
 export const getAttackBaseIndex = (base) => Array.isArray(base) ? Math.max(...base) : null;
@@ -459,4 +459,32 @@ export const getCOMopponents = () => Object.keys(bases).filter(item => bases[ite
 export const getCOMBaseIndex = () => {
 	const COM = getCOM;
 	return COM.base;
+}
+
+export const calcWeightedOdds = (limits, series=2) => {
+	const {
+		upperOddsLimit,
+		lowerOddsLimit,
+		upperAbsCellLimit,
+		lowerAbsCellLimit,
+		absCellDiff
+	} = limits;
+	const weightedOdds = [];
+	const odds = lowerOddsLimit + ((absCellDiff - lowerAbsCellLimit) / (upperAbsCellLimit - lowerAbsCellLimit)) * (upperOddsLimit - lowerOddsLimit);
+	const remOdds = 100 - odds;
+	const factor = odds > remOdds ? Math.round((odds / remOdds), 2) : Math.round((remOdds / odds), 2);
+	const progression = getProgression(factor, series);
+
+	for (let count = 0; count < series; count++) {
+		weightedOdds.push(progression * factor ^ count);
+	}
+	return weightedOdds;
+}
+
+export const getProgression = (factor, series) => {
+	let sum = 0;
+	for (let count = 0; count < series; count++) {
+		sum += factor^count;
+	}
+	return 100 / sum;	// 7.692
 }
