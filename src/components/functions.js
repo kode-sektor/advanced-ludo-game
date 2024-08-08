@@ -1,6 +1,7 @@
 import { SIX_THROW, bases, baseStartPositions } from '../data/constants.js';
 import { settings, bases as baseSettings, players } from './settings.js'
 import { seeds } from '../data/seeds.js'
+import { computeHeadingLevel } from '@testing-library/react';
 
 export const getRandomWithinRange = (min, max, int = false) => {
 	let result = 0;
@@ -461,6 +462,18 @@ export const getCOMBaseIndex = () => {
 	return COM.base;
 }
 
+export const getCOMAttackBase = () => {
+	const COMBaseIndex = getCOMBaseIndex();
+	const attackBase = getAttackBase(COMBaseIndex);
+	return attackBase;
+}
+
+export const getCOMDefenceBase = () => {
+	const COMBaseIndex = getCOMBaseIndex();
+	const defenceBase = getDefenceBase(COMBaseIndex);
+	return defenceBase;
+}
+
 export const calcWeightedOdds = (limits, series=2) => {
 	const {
 		upperOddsLimit,
@@ -487,4 +500,57 @@ export const getProgression = (factor, series) => {
 		sum += factor^count;
 	}
 	return 100 / sum;	// 7.692
+}
+
+const calcThreatLevel = (dice) => {
+	const COMBase = getBase(COM);
+
+	// Check for active COM seeds
+	const COMActiveSeeds = COMBase.filter((active === true));
+
+	// Ensure no active COM seed has crossed opponent base
+	if (COMActiveSeeds) {
+		const COMIndex = getCOMBaseIndex();
+		const COMAttackBase = getAttackBase(COMIndex);
+		const crossed = COMActiveSeeds.filter(({absCell}) => absCell > baseStartPositions[COMAttackBase]);
+
+		if (!crossed) {
+			// Filter 3 most advanced seeds
+			let seedSelection = crossed.slice().sort((seedA, seedB) => seedA.absCell - seedB.absCell).slice(0, 3);
+			let firstSeed = seedSelection[0];
+			let secondSeed = seedSelection[1] ? seedSelection[1] : "";
+			let thirdSeed = seedSelection[2] ? seedSelection[2] : "";
+
+			let firstSeedID = firstSeed.id;
+			let secondSeedID = secondSeed.id;
+			let thirdSeedID = thirdSeed.id;
+
+			if (secondSeed) {	
+				let upperOddsLimit = 0;
+				let lowerOddsLimit = 0;
+				let upperAbsCellLimit = 0;
+				let lowerAbsCellLimit = 0;
+
+				// Right part of the illustration (13 is midpoint)
+				if ((firstSeed.absCell - secondSeed.absCell) < 13) {
+					upperOddsLimit = 25;
+					lowerOddsLimit = 0;
+					upperAbsCellLimit = 13;
+					lowerAbsCellLimit = -12;
+				} else {	// Left part of illustration
+					upperOddsLimit = 100;
+					lowerOddsLimit = 25;
+					upperAbsCellLimit = 25;
+					lowerAbsCellLimit = 13;
+				}
+			} else {	// If only 1 token, allot all dice values to sole token
+				dice[1].asst.val.map((die, index) => {
+					moves.push({
+						firstSeedID: die.value,
+						firstSeedID: dice[2].asst.value
+					})
+				})
+			}
+		}
+	}
 }
