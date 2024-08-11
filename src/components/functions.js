@@ -502,7 +502,7 @@ export const getProgression = (factor, series) => {
 	return 100 / sum;	// 7.692
 }
 
-const calcThreatLevel = (dice) => {
+export const calcThreatLevel = (dice) => {
 	const COMBase = getBase(COM);
 
 	// Check for active COM seeds
@@ -543,6 +543,11 @@ const calcThreatLevel = (dice) => {
 					upperAbsCellLimit = 25;
 					lowerAbsCellLimit = 13;
 				}
+				const absCellDiff = firstSeed.absCell - secondSeed.absCell;
+				const oddArgs = { upperOddsLimit, lowerOddsLimit, upperAbsCellLimit, lowerAbsCellLimit, absCellDiff };
+				const weightedOdds = calcWeightedOdds(oddArgs, thirdSeed ? 3 : 2);
+				const randomisedWeightedOdds = randomiseWeightedOdds(weightedOdds);
+
 			} else {	// If only 1 token, allot all dice values to sole token
 				dice[1].asst.val.map((die, index) => {
 					moves.push({
@@ -552,5 +557,23 @@ const calcThreatLevel = (dice) => {
 				})
 			}
 		}
+	}
+}
+const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffledOdds=[]) => {
+	if (weightedOdds) {
+		let randomOddsPcnt = getRandomWithinRange(0, totOddsPcnt);	// Get random value between 0 and 100
+		for (let odd = 0; odd < weightedOdds.length - 1; odd++) {
+			let weightedOdd = weightedOdds[odd];	// Cache each cycle
+			oddsSum += weightedOdd;	// Turn [69.228, 23.077, 7.692]
+
+			if (randomOddsPcnt < oddsSum) {	// Check if random number is less than oddsSum
+				shuffledOdds.push(weightedOdd);	// If so, store the odd in new array
+				weightedOdds.slice(odd, 1);	// Delete same odd from weightedOdds
+				totOddsPcnt -= weightedOdd;	
+				randomiseWeightedOdds(weightedOdds, totOddsPcnt, oddsSum, shuffledOdds);
+			}
+		}
+	} else {
+		return shuffledOdds;
 	}
 }
