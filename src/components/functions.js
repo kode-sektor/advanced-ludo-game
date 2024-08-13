@@ -505,16 +505,22 @@ export const getProgression = (factor, series) => {
 export const calcThreatLevel = (dice) => {
 	const COMBase = getBase(COM);
 
+	// Get minimum die value 
+	const minDieOne = Math.min(...(dice[1].asst).map(value => item.value));
+	const minDieTwo = Math.min(...(dice[2].asst).map(value => item.value));
+
+	const minDie = Math.min(minDieOne, minDieTwo)
+
 	// Check for active COM seeds
 	const COMActiveSeeds = COMBase.filter((active === true));
 
-	// Ensure no active COM seed has crossed opponent base
+	// Ensure no active COM seed can cross opponent base with minimum single die value
 	if (COMActiveSeeds) {
 		const COMIndex = getCOMBaseIndex();
 		const COMAttackBase = getAttackBase(COMIndex);
-		const crossed = COMActiveSeeds.filter(({absCell}) => absCell > baseStartPositions[COMAttackBase]);
+		const crossedMin = COMActiveSeeds.filter(({absCell}) => absCell + minDie > baseStartPositions[COMAttackBase]);
 
-		if (!crossed) {
+		if (!crossedMin) {
 			// Filter 3 most advanced seeds
 			let seedSelection = crossed.slice().sort((seedA, seedB) => seedA.absCell - seedB.absCell).slice(0, 3);
 			let firstSeed = seedSelection[0];
@@ -524,6 +530,8 @@ export const calcThreatLevel = (dice) => {
 			let firstSeedID = firstSeed.id;
 			let secondSeedID = secondSeed.id;
 			let thirdSeedID = thirdSeed.id;
+
+			// Next is to ensure that a combination of moves on the least possible dice values do not cross oppponent base
 
 			if (secondSeed) {	
 				let upperOddsLimit = 0;
@@ -564,13 +572,13 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 		let randomOddsPcnt = getRandomWithinRange(0, totOddsPcnt);	// Get random value between 0 and 100
 		for (let odd = 0; odd < weightedOdds.length - 1; odd++) {
 			let weightedOdd = weightedOdds[odd];	// Cache each cycle
-			oddsSum += weightedOdd;	// Turn [69.228, 23.077, 7.692]
+			oddSum += weightedOdd;	// Turn [69.228, 23.077, 7.692]
 
-			if (randomOddsPcnt < oddsSum) {	// Check if random number is less than oddsSum
+			if (randomOddsPcnt < oddSum) {	// Check if random number is less than oddsSum
 				shuffledOdds.push(weightedOdd);	// If so, store the odd in new array
 				weightedOdds.slice(odd, 1);	// Delete same odd from weightedOdds
 				totOddsPcnt -= weightedOdd;	
-				randomiseWeightedOdds(weightedOdds, totOddsPcnt, oddsSum, shuffledOdds);
+				randomiseWeightedOdds(weightedOdds, totOddsPcnt, oddSum, shuffledOdds);
 			}
 		}
 	} else {
