@@ -588,7 +588,7 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 
 
 // Function to fill the vector currDice while maintaining the indices visited in the array num
-function permuteSeedDuplicates(dice, currDice, permutedDice, visited) {
+function permuteDuplicates(dice, currDice, permutedDice, visited) {
 	// If current permutation is complete
 	if (currDice.length === dice.length) {
 	    permutedDice.push(currDice);
@@ -601,13 +601,13 @@ function permuteSeedDuplicates(dice, currDice, permutedDice, visited) {
 
         visited[i] = true; 
         currSeed.push(dice[i]); 
-        permuteSeedDuplicates(dice, currDice, permutedDice, visited);
+        permuteuplicates(dice, currDice, permutedDice, visited);
 
         visited[i] = false;
         currDice.pop(); 
 	}
 }
-export const permuteSeeds  = (dice, currDice=[], permutedDice=[], visited=[]) => {
+export const permute  = (dice, currDice=[], permutedDice=[], visited=[]) => {
 
 	let dice = [6, 6, 4, 3];
 
@@ -617,6 +617,6 @@ export const permuteSeeds  = (dice, currDice=[], permutedDice=[], visited=[]) =>
 	for(let i = 0; i < dice.length; i++) {
 	    visited.push(false);    // [false, false, false]
 	}
-	permuteSeedDuplicates(dice, currDice, permutedDice, visited);    // Find the distinct permutations of num
+	permuteDuplicates(dice, currDice, permutedDice, visited);    // Find the distinct permutations of num
 	return permutedDice;
 }
