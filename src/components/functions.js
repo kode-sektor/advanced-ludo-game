@@ -585,3 +585,38 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 		return shuffledOdds;
 	}
 }
+
+
+// Function to fill the vector currDice while maintaining the indices visited in the array num
+function permuteSeedDuplicates(dice, currDice, permutedDice, visited) {
+	// If current permutation is complete
+	if (currDice.length === dice.length) {
+	    permutedDice.push(currDice);
+	}
+
+	for (let i = 0; i < dice.length; i++) {
+
+        if (visited[i]) { continue; }	 // If index is already visited
+        if (i > 0 && (dice[i] == dice[i - 1]) && !visited[i - 1]) { continue; }
+
+        visited[i] = true; 
+        currSeed.push(dice[i]); 
+        permuteSeedDuplicates(dice, currDice, permutedDice, visited);
+
+        visited[i] = false;
+        currDice.pop(); 
+	}
+}
+export const permuteSeeds  = (dice, currDice=[], permutedDice=[], visited=[]) => {
+
+	let dice = [6, 6, 4, 3];
+
+	(dice).sort(function(a, b)
+        {return a - b}
+    );
+	for(let i = 0; i < dice.length; i++) {
+	    visited.push(false);    // [false, false, false]
+	}
+	permuteSeedDuplicates(dice, currDice, permutedDice, visited);    // Find the distinct permutations of num
+	return permutedDice;
+}
