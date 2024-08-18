@@ -587,36 +587,34 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 }
 
 
-// Function to fill the vector currDice while maintaining the indices visited in the array num
-function permuteDuplicates(dice, currDice, permutedDice, visited) {
+function permuteDuplicates (sequence, curr, permuted, visited) {
 	// If current permutation is complete
-	if (currDice.length === dice.length) {
-	    permutedDice.push(currDice);
+	if (curr.length === sequence.length) {
+	    permuted.push(curr);
 	}
 
 	for (let i = 0; i < dice.length; i++) {
 
         if (visited[i]) { continue; }	 // If index is already visited
-        if (i > 0 && (dice[i] == dice[i - 1]) && !visited[i - 1]) { continue; }
+        if (i > 0 && (sequence[i] == sequence[i - 1]) && !visited[i - 1]) { continue; }
 
         visited[i] = true; 
-        currSeed.push(dice[i]); 
-        permuteuplicates(dice, currDice, permutedDice, visited);
+        curr.push(sequence[i]); 
+        permuteDuplicates(sequence, curr, permuted, visited);
 
         visited[i] = false;
-        currDice.pop(); 
+        curr.pop(); 
 	}
 }
-export const permute  = (dice, currDice=[], permutedDice=[], visited=[]) => {
+export const permute = (sequence, curr=[], permuted=[], visited=[]) => {
+	let sequence = [6, 6, 4, 3];
 
-	let dice = [6, 6, 4, 3];
-
-	(dice).sort(function(a, b)
+	(sequence).sort(function(a, b)
         {return a - b}
     );
-	for(let i = 0; i < dice.length; i++) {
+	for(let i = 0; i < sequence.length; i++) {
 	    visited.push(false);    // [false, false, false]
 	}
-	permuteDuplicates(dice, currDice, permutedDice, visited);    // Find the distinct permutations of num
-	return permutedDice;
+	permute(sequence, curr, permuted, visited);    // Find the distinct permutations of num
+	return permuted;
 }
