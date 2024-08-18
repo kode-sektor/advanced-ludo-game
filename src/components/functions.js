@@ -585,3 +585,13 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 		return shuffledOdds;
 	}
 }
+export const permuteSeeds  = () => {
+	(nums).sort(function(a, b)
+        {return a - b}
+    );
+	for(let i = 0; i < nums.length; i++) {
+	    visited.push(false);    // [false, false, false]
+	}
+	permuteSeedDuplicates();    // Find the distinct permutations of num
+	return ans;
+}
