@@ -474,6 +474,18 @@ export const getCOMDefenceBase = () => {
 	return defenceBase;
 }
 
+export const getCOMBase = () => [...getCOMAttackBase(), ...getCOMDefenceBase()];
+
+export const getCOMBaseActive = () => {
+	const COMBase = getCOMBase();
+	return COMBase.filter((cell) => cell !== null);
+}
+
+export const getCOMBaseActiveCount = () => {
+	const COMBaseActive = getCOMBaseActive();
+	return COMBaseActive.length;
+}
+
 export const calcWeightedOdds = (limits, series=2) => {
 	const {
 		upperOddsLimit,
@@ -586,8 +598,7 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 	}
 }
 
-
-function permuteDuplicates (sequence, curr, permuted, visited) {
+const permuteDuplicates = (sequence, curr, permuted, visited) => {
 	// If current permutation is complete
 	if (curr.length === sequence.length) {
 	    permuted.push(curr);
@@ -606,15 +617,16 @@ function permuteDuplicates (sequence, curr, permuted, visited) {
         curr.pop(); 
 	}
 }
+
 export const permute = (sequence, curr=[], permuted=[], visited=[]) => {
-	let sequence = [6, 6, 4, 3];
+	sequence = [6, 6, 4, 3];
 
 	(sequence).sort(function(a, b)
         {return a - b}
     );
-	for(let i = 0; i < sequence.length; i++) {
+	for (let i = 0; i < sequence.length; i++) {
 	    visited.push(false);    // [false, false, false]
 	}
-	permute(sequence, curr, permuted, visited);    // Find the distinct permutations of num
+	permuteDuplicates(sequence, curr, permuted, visited);    // Find the distinct permutations of num
 	return permuted;
 }
