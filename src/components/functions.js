@@ -604,9 +604,8 @@ const permuteDuplicates = (sequence, curr, permuted, visited) => {
 	    permuted.push(curr);
 	}
 
-	for (let i = 0; i < dice.length; i++) {
-
-        if (visited[i]) { continue; }	 // If index is already visited
+	for (let i = 0; i < sequence.length; i++) {
+        if (visited[i]) { continue; }
         if (i > 0 && (sequence[i] == sequence[i - 1]) && !visited[i - 1]) { continue; }
 
         visited[i] = true; 
@@ -618,9 +617,12 @@ const permuteDuplicates = (sequence, curr, permuted, visited) => {
 	}
 }
 
-export const permute = (sequence, curr=[], permuted=[], visited=[]) => {
-	sequence = [6, 6, 4, 3];
+// GENERATE PERMUTATIONS OF ARRAY ENTRY LENGTH WITHOUT REPEAT
+/*
+	[1, 2, 3, 4] => [1, 3, 2, 4], [1, 3, 4, 2], [1, 4, 2, 3]...
+*/
 
+export const permute = (sequence, curr=[], permuted=[], visited=[]) => {
 	(sequence).sort(function(a, b)
         {return a - b}
     );
@@ -630,3 +632,58 @@ export const permute = (sequence, curr=[], permuted=[], visited=[]) => {
 	permuteDuplicates(sequence, curr, permuted, visited);    // Find the distinct permutations of num
 	return permuted;
 }
+
+const generateCombinations = (arr, size, maxSize, start, temp, combinations) => {
+    if (temp.length === size) {
+        if (temp.length <= maxSize) {
+            combinations.push([...temp]);
+        } else {
+            return combinations;
+        }
+    }
+
+    for (let i = start; i < arr.length; i++) {
+        temp.push(arr[i]);  
+        generateCombinations(arr, size, maxSize, i + 1, temp, combinations);
+        temp.pop();
+    }
+    return combinations;
+}
+
+/*
+	[1, 2, 3, 4] => 
+	
+	[1], 
+	[2],
+	[3],
+	[4],
+	[1, 2],
+	[1, 3],
+	[1, 4]...,
+	[1, 2, 3],
+	[1, 2, 4]...
+	[1, 2, 3, 4]
+	[1, 2, 4, 3]
+	
+*/
+export const combine = (sequence, maxSize, start=0, temp=[], combinations=[]) => {
+    for (let i = 1; i <= sequence.length; i++) {
+        generateCombinations(sequence, i, maxSize, start, temp, combinations);
+    }
+    return combinations;
+}
+
+
+export const partitionInt = (target, maxVal, suffix, partitions) => {
+	if (target === 0) {
+		partitions.push(suffix);
+	} else {
+		if (maxVal > 1) {
+			partitionInt(target, target-1, suffix, partitions);
+		}
+		if (maxVal <= target) {
+			partitionInt(target-maxVal, maxVal, [maxVal, ...suffix], partitions);
+		}
+	}
+}
+
