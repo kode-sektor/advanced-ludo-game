@@ -601,7 +601,8 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 const permuteDuplicates = (sequence, curr, permuted, visited) => {
 	// If current permutation is complete
 	if (curr.length === sequence.length) {
-	    permuted.push(curr);
+		splinterPermutation(temp);
+	    // permuted.push([...curr]);
 	}
 
 	for (let i = 0; i < sequence.length; i++) {
@@ -615,6 +616,7 @@ const permuteDuplicates = (sequence, curr, permuted, visited) => {
         visited[i] = false;
         curr.pop(); 
 	}
+	return permuted;
 }
 
 // GENERATE PERMUTATIONS OF ARRAY ENTRY LENGTH WITHOUT REPEAT
@@ -685,5 +687,22 @@ export const partitionInt = (target, maxVal, suffix, partitions) => {
 			partitionInt(target-maxVal, maxVal, [maxVal, ...suffix], partitions);
 		}
 	}
+}
+
+export const splinterPermutation = (partitionedInt, diceLength, permutation) => {
+    const splintered = Array.from(Array(diceLength), () => []);
+    const temp = [];
+
+    // Loop across partitionedInt
+    for (partitionedIntEntry = 0; partitionedIntEntry < partitionedInt.length; partitionedIntEntry++) {
+        temp = [];
+        let currPartitionInt = partitionedInt[partitionedIntEntry];
+
+        // Loop across each PartionedInt entry
+        for (let currPartitionIntEntry = 0; currPartitionIntEntry < currPartitionInt.length; currPartitionIntEntry++) {
+            let childPartition = currPartitionInt[currPartitionIntEntry];
+            let prevChildPartition = currPartitionInt[currPartitionIntEntry - 1]
+        }
+    }
 }
 
