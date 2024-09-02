@@ -601,7 +601,7 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 const permuteDuplicates = (sequence, curr, permuted, visited) => {
 	// If current permutation is complete
 	if (curr.length === sequence.length) {
-		splinterPermutation(temp);
+		splinterPermutation(curr);
 	    // permuted.push([...curr]);
 	}
 
@@ -675,18 +675,39 @@ export const combine = (sequence, maxSize, start=0, temp=[], combinations=[]) =>
     return combinations;
 }
 
+/* 
 
-export const partitionInt = (target, maxVal, suffix, partitions) => {
+Integer Partition to 4 to prepare categorising array into chunks
+
+[1, 1, 1, 1] 
+[1, 1, 2] 
+[1, 2, 1] 
+[2, 1, 1] 
+[2, 2]
+[1, 3]
+[3, 1]
+[4]
+*/
+
+const partitionInt = (target, maxVal, suffix=[], partitions=[]) => {
 	if (target === 0) {
-		partitions.push(suffix);
+
+		// Function to permute [1, 1, 2] to [1, 2, 1] and [2, 1, 1]
+        const sameEntries = (suffix) => suffix.every(val => val === suffix[0]);
+        if (sameEntries(suffix) || suffix.length <= 1) {
+            partitions.push(suffix);
+        } else {
+            partitions.push(...permute(suffix));
+        }
 	} else {
 		if (maxVal > 1) {
-			partitionInt(target, target-1, suffix, partitions);
+			partitionInt(target, maxVal - 1, suffix, partitions);
 		}
 		if (maxVal <= target) {
-			partitionInt(target-maxVal, maxVal, [maxVal, ...suffix], partitions);
+			partitionInt(target - maxVal, maxVal, [maxVal, ...suffix], partitions);
 		}
 	}
+    return partitions;
 }
 
 export const splinterPermutation = (partitionedInt, diceLength, permutation) => {
@@ -694,14 +715,14 @@ export const splinterPermutation = (partitionedInt, diceLength, permutation) => 
     const temp = [];
 
     // Loop across partitionedInt
-    for (partitionedIntEntry = 0; partitionedIntEntry < partitionedInt.length; partitionedIntEntry++) {
+    for (let partitionedIntEntry = 0; partitionedIntEntry < partitionedInt.length; partitionedIntEntry++) {
         temp = [];
         let currPartitionInt = partitionedInt[partitionedIntEntry];
 
         // Loop across each PartionedInt entry
         for (let currPartitionIntEntry = 0; currPartitionIntEntry < currPartitionInt.length; currPartitionIntEntry++) {
             let childPartition = currPartitionInt[currPartitionIntEntry];
-            let prevChildPartition = currPartitionInt[currPartitionIntEntry - 1]
+            let prevChildPartition = currPartitionInt[currPartitionIntEntry - 1];
         }
     }
 }
