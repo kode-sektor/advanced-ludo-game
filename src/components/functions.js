@@ -676,9 +676,7 @@ export const combine = (sequence, maxSize, start=0, temp=[], combinations=[]) =>
 }
 
 /* 
-
 Integer Partition to 4 to prepare categorising array into chunks
-
 [1, 1, 1, 1] 
 [1, 1, 2] 
 [1, 2, 1] 
@@ -691,9 +689,9 @@ Integer Partition to 4 to prepare categorising array into chunks
 
 const partitionInt = (target, maxVal, suffix=[], partitions=[]) => {
 	if (target === 0) {
-
 		// Function to permute [1, 1, 2] to [1, 2, 1] and [2, 1, 1]
         const sameEntries = (suffix) => suffix.every(val => val === suffix[0]);
+		
         if (sameEntries(suffix) || suffix.length <= 1) {
             partitions.push(suffix);
         } else {
