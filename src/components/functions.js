@@ -598,11 +598,58 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 	}
 }
 
-const permuteDuplicates = (sequence, curr, permuted, visited) => {
+export const splinterPermutation = (partition, permutation, partitionedPermutation=[]) => {
+    let splinteredItem = Array.from(Array(permutation.length), () => []);  
+    let splinterTemp = []; 
+
+    // Loop across partition
+    for (let partitionEntry=0; partitionEntry < partition.length; partitionEntry++) {
+        let prevPartitionSum = 0;
+        let currPartitionSum = 0;
+
+        let currPartition = partition[partitionEntry];
+
+        // Loop across each partition entry
+        for (let currPartitionEntry = 0; currPartitionEntry < currPartition.length; currPartitionEntry++) {
+            let childPartition = currPartition[currPartitionEntry];
+            let prevChildPartition = currPartition[currPartitionEntry - 1] === undefined ? 0 : currPartition[currPartitionEntry - 1] ;
+
+            prevPartitionSum += prevChildPartition;
+            currPartitionSum += childPartition;
+
+            // Loop across permutation
+
+            // Now slice dice from previous partition to current partition
+            // ... and if no partition, make 0
+
+            splinterTemp.push(
+                permutation.slice(prevPartitionSum, currPartitionSum)
+            );
+            // console.log("currPartitionEntry : ", currPartitionEntry);
+            // console.log("currPartition Length : ", currPartition.length - 1);
+            if (currPartitionEntry === (currPartition.length - 1)) {
+                // console.log(splinterTemp.length - 1);
+                // console.log(splinterTemp);
+                splinteredItem[splinterTemp.length - 1].push(splinterTemp);
+
+                // console.log("SPLINTERED ITEM : ", splinteredItem);
+                splinterTemp = [];
+            }
+        }
+    }
+    partitionedPermutation.push(splinteredItem);
+    return partitionedPermutation;
+}
+
+export const permuteDuplicates = (sequence, partition, splintered, permuted, curr, visited) => {
 	// If current permutation is complete
 	if (curr.length === sequence.length) {
-		splinterPermutation(curr);
-	    // permuted.push([...curr]);
+        if (partition) {
+            splintered.push(splinterPermutation(partition, curr));
+            console.log("SPLINTERED : ", splintered);
+        } else {
+            permuted.push([...curr]);
+        }
 	}
 
 	for (let i = 0; i < sequence.length; i++) {
@@ -611,12 +658,11 @@ const permuteDuplicates = (sequence, curr, permuted, visited) => {
 
         visited[i] = true; 
         curr.push(sequence[i]); 
-        permuteDuplicates(sequence, curr, permuted, visited);
+        permuteDuplicates(sequence, partition, splintered, permuted, curr, visited);
 
         visited[i] = false;
         curr.pop(); 
 	}
-	return permuted;
 }
 
 // GENERATE PERMUTATIONS OF ARRAY ENTRY LENGTH WITHOUT REPEAT
@@ -624,21 +670,21 @@ const permuteDuplicates = (sequence, curr, permuted, visited) => {
 	[1, 2, 3, 4] => [1, 3, 2, 4], [1, 3, 4, 2], [1, 4, 2, 3]...
 */
 
-export const permute = (sequence, curr=[], permuted=[], visited=[]) => {
+export const permute = (sequence, partition, splintered=[], permuted=[], curr=[], visited=[]) => {
 	(sequence).sort(function(a, b)
         {return a - b}
     );
 	for (let i = 0; i < sequence.length; i++) {
 	    visited.push(false);    // [false, false, false]
 	}
-	permuteDuplicates(sequence, curr, permuted, visited);    // Find the distinct permutations of num
-	return permuted;
+	permuteDuplicates(sequence, partition, splintered, permuted, curr, visited);    // Find the distinct permutations of num
+	return partition ? splintered : permuted;
 }
 
-const generateCombinations = (arr, size, maxSize, start, temp, combinations) => {
+export const generateCombinations = (arr, size, maxSize, start, temp, combinations) => {
     if (temp.length === size) {
         if (temp.length <= maxSize) {
-            combinations.push([...temp]);
+            combinations[temp.length - 1].push([...temp]);
         } else {
             return combinations;
         }
@@ -668,12 +714,13 @@ const generateCombinations = (arr, size, maxSize, start, temp, combinations) => 
 	[1, 2, 4, 3]
 	
 */
-export const combine = (sequence, maxSize, start=0, temp=[], combinations=[]) => {
+export const combine = (sequence, maxSize, combinations=[], start=0, temp=[]) => {
     for (let i = 1; i <= sequence.length; i++) {
         generateCombinations(sequence, i, maxSize, start, temp, combinations);
     }
     return combinations;
 }
+
 
 /* 
 Integer Partition to 4 to prepare categorising array into chunks
@@ -706,22 +753,5 @@ const partitionInt = (target, maxVal, suffix=[], partitions=[]) => {
 		}
 	}
     return partitions;
-}
-
-export const splinterPermutation = (partitionedInt, diceLength, permutation) => {
-    const splintered = Array.from(Array(diceLength), () => []);
-    const temp = [];
-
-    // Loop across partitionedInt
-    for (let partitionedIntEntry = 0; partitionedIntEntry < partitionedInt.length; partitionedIntEntry++) {
-        temp = [];
-        let currPartitionInt = partitionedInt[partitionedIntEntry];
-
-        // Loop across each PartionedInt entry
-        for (let currPartitionIntEntry = 0; currPartitionIntEntry < currPartitionInt.length; currPartitionIntEntry++) {
-            let childPartition = currPartitionInt[currPartitionIntEntry];
-            let prevChildPartition = currPartitionInt[currPartitionIntEntry - 1];
-        }
-    }
 }
 
