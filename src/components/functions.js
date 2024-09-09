@@ -721,7 +721,6 @@ export const combine = (sequence, maxSize, combinations=[], start=0, temp=[]) =>
     return combinations;
 }
 
-
 /* 
 Integer Partition to 4 to prepare categorising array into chunks
 [1, 1, 1, 1] 
@@ -755,3 +754,36 @@ const partitionInt = (target, maxVal, suffix=[], partitions=[]) => {
     return partitions;
 }
 
+export const combineMoves = (permutedDice, permutedTokens) => {
+	const moves = [];
+
+	// Combine permuted tokens and dice.
+	// Loop across permuted tokens
+	for (let permutedToken = 0; permutedToken < permutedTokens.length; permutedToken++) {
+		let permutedTokenEntries = permutedTokens[permutedToken];
+		
+		for (let permutedTokenEntry = 0; permutedTokenEntry < permutedTokenEntries.length; permutedTokenEntry++) {
+			let permutedTokenItem = permutedTokenEntries[permutedTokenEntry];
+
+			// Match and cycle across corresponding array index in partitionPermutation (dice)
+			for (let permutedDiceEntry = 0; permutedDiceEntry < permutedDice.length; permutedDiceEntry++) {
+				let permutedDiceEntries = permutedDice[permutedDiceEntry];
+
+				for (let permutedDiceEntry = 0; permutedDiceEntry < permutedDiceEntries.length; permutedDiceEntry++) {
+					let permutedDiceItems = permutedDiceEntries[permutedDiceEntry];
+
+					for (let permutedDiceItem = 0; permutedDiceItem < permutedDiceItems[permutedToken].length; permutedDiceItem++) {
+						let permutedDiceChildren = permutedDiceItems[permutedToken][permutedDiceItem];
+						moves.push(
+							{
+								token : permutedTokenItem,
+								dice : permutedDiceChildren
+							}
+						)
+					}
+				}
+			}
+		}
+	}
+	return moves;
+}
