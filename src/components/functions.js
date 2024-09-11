@@ -1,4 +1,4 @@
-import { SIX_THROW, bases, baseStartPositions } from '../data/constants.js';
+import { SIX_THROW, CELLPATH, bases, baseStartPositions } from '../data/constants.js';
 import { settings, bases as baseSettings, players } from './settings.js'
 import { seeds } from '../data/seeds.js'
 import { computeHeadingLevel } from '@testing-library/react';
@@ -646,7 +646,7 @@ export const permuteDuplicates = (sequence, partition, splintered, permuted, cur
 	if (curr.length === sequence.length) {
         if (partition) {
             splintered.push(splinterPermutation(partition, curr));
-            console.log("SPLINTERED : ", splintered);
+            // console.log("SPLINTERED : ", splintered);
         } else {
             permuted.push([...curr]);
         }
@@ -786,4 +786,43 @@ export const combineMoves = (permutedDice, permutedTokens) => {
 		}
 	}
 	return moves;
+}
+
+/*
+	2 factors basically disqualify a move
+	
+	1. If possible total cell move distance (cell distance) exceeds total board cells (cellpath i.e 52)
+	2. If inactive seed is not attributed to a 6 die throw
+*/
+const filterMoves = (seeds, dice) => {
+	
+	// Loop across tokens & dice simultaneously (they have same length)
+
+	for (let seed = 0; seed < seeds.length, seed++) {
+		let seedItem = seeds[seed];
+		let diceItems = dice[seed];
+
+		let dieItem = 0;
+		seedCellDistance = 0;
+		
+		for (let diceItem = 0; diceItem < dice.length; diceItem++) {
+			dieItem += diceItems[diceItem];
+			let seedCell = seedItem.cell;
+			let seedActive = seedItem.breakout;
+			seedCellDistance += seedItem.breakout;
+			
+			if (diceItem === diceItems.length) {
+				if (seedCellDistance >= CELLPATH) {
+					return false;
+				} else {
+					if (!seedActive) {
+						if (!diceItems.includes(6)) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+	}
+	return true;
 }
