@@ -31,7 +31,8 @@ export default class Camp extends Component {
 
 	render() {
 
-		const { base, dice, turn } = this.props;
+		const { base, dice, turn, seeds, updatePosition } = this.props;
+		console.log(this.props);
 
 		return (
 			<section className="camp">
@@ -40,56 +41,60 @@ export default class Camp extends Component {
 						<Seed 
 							coords={
 								{
-									x: this.state.seeds[`seed${base[0]}`].coordinates[0].x,
-									y: this.state.seeds[`seed${base[0]}`].coordinates[0].y
+									x: seeds[`seed${base[0]}`].coordinates[0].x,
+									y: seeds[`seed${base[0]}`].coordinates[0].y
 								}
 							}
 							id={`seed${base[0]}`}
 							dice={dice}
 							turn={turn}
 							moveDistance={this.props.moveDistance}
+							updatePosition={updatePosition}
 						/>
 					</div>
 					<div className="cell">
 						<Seed 
 							coords={
 								{
-									x: this.state.seeds[`seed${base[1]}`].coordinates[0].x,
-									y: this.state.seeds[`seed${base[1]}`].coordinates[0].y
+									x: seeds[`seed${base[1]}`].coordinates[0].x,
+									y: seeds[`seed${base[1]}`].coordinates[0].y
 								}
 							}
 							id={`seed${base[1]}`}
 							dice={dice}
 							turn={turn}
 							moveDistance={this.props.moveDistance}
+							updatePosition={updatePosition}
 						/>
 					</div>
 					<div className="cell">
 						<Seed 
 							coords={
 								{
-									x: this.state.seeds[`seed${base[2]}`].coordinates[0].x,
-									y: this.state.seeds[`seed${base[2]}`].coordinates[0].y
+									x: seeds[`seed${base[2]}`].coordinates[0].x,
+									y: seeds[`seed${base[2]}`].coordinates[0].y
 								}
 							}
 							id={`seed${base[2]}`}
 							dice={dice}
 							turn={turn}
 							moveDistance={this.props.moveDistance}
+							updatePosition={updatePosition}
 						/>
 					</div>
 					<div className="cell">
 						<Seed 
 							coords={
 								{
-									x: this.state.seeds[`seed${base[3]}`].coordinates[0].x,
-									y: this.state.seeds[`seed${base[3]}`].coordinates[0].y
+									x: seeds[`seed${base[3]}`].coordinates[0].x,
+									y: seeds[`seed${base[3]}`].coordinates[0].y
 								}
 							}
 							id={`seed${base[3]}`}
 							dice={dice}
 							turn={turn}
 							moveDistance={this.props.moveDistance}
+							updatePosition={updatePosition}
 						/>
 					</div>
 				</section>

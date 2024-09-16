@@ -62,31 +62,31 @@ export default class RollBtn extends Component {
 		}
 	}
 
-	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
-		/*
-			Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
-			New dice value will add to previous seed position for each seed while taking care of error that may
-			arise from addition with null
-		*/
-		this.setState({
-			...this.state,
-			seeds: {
-				...this.state.seeds,
-				[`${id}`]: {
-					...this.state.seeds[`${id}`],
-					coordinates: [{ x: coordinates.x, y: coordinates.y }],
-					cell: this.state.seeds[`${id}`].cell === null ? diceVal : this.state.seeds[`${id}`].cell + diceVal
-				}
-			},
-			activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
-			inMotion: true,    // higher z-index when seed is in motion
-			transitionDuration : duration 
-		})
-	}
+	// updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
+	// 	console.log(id, diceVal, coordinates, cellPath, duration);
+	// 	/*
+	// 		Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
+	// 		New dice value will add to previous seed position for each seed while taking care of error that may
+	// 		arise from addition with null
+	// 	*/
+	// 	this.setState({
+	// 		...this.state,
+	// 		seeds: {
+	// 			...this.state.seeds,
+	// 			[`${id}`]: {
+	// 				...this.state.seeds[`${id}`],
+	// 				coordinates: [{ x: coordinates.x, y: coordinates.y }],
+	// 				cell: this.state.seeds[`${id}`].cell === null ? diceVal : this.state.seeds[`${id}`].cell + diceVal
+	// 			}
+	// 		},
+	// 		activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
+	// 		inMotion: true,    // higher z-index when seed is in motion
+	// 		transitionDuration : duration 
+	// 	})
+	// }
 
 	fragmentMove = (id, startCell, finalCell, cellPaths) => {
 
-		alert('ok');
 		console.log(startCell);
 		console.log(finalCell);
 
@@ -122,14 +122,15 @@ export default class RollBtn extends Component {
 		// this.randomDice(diceValues);
 		// const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
 		const moveDistance = this.props.moveDistance
-		console.log(moveDistance);
 
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
 		console.log(id);
 		// Only fragment total moves when not breaking away
+		let startCell = this.state.seeds[`${id}`].cell === null ? 0 : this.state.seeds[`${id}`].cell;
+
 		this.state.seeds[`${id}`].cell !== null && (
-			fragmentMove(id, this.state.seeds[`${id}`].cell, this.state.seeds[`${id}`].cell + moveDistance, cellPaths)
+			this.props.fragmentMove(id, startCell, startCell + moveDistance, cellPaths)
 		);
 
 		let cellPath = 0;	// counter for modified setTimeout loop
@@ -145,7 +146,7 @@ export default class RollBtn extends Component {
 				However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
 				
 			*/
-				const popCellPaths = (breakout === null) ? 0 : 1;
+			const popCellPaths = (breakout === null) ? 0 : 1;
 			let combinedPaths = (breakout === null) ? 2 : (cellPaths.length - 1)	
 			if (cellPath < combinedPaths) {
 				setTimeout(() => {
@@ -165,8 +166,8 @@ export default class RollBtn extends Component {
 						console.log(timer);
 					} else {
 						fragmentedMove = cellPaths[cellPath + 1];
-						// console.log("fragmentedMove :", fragmentedMove);
-						// console.log("cell : ", this.state.seeds[`${id}`].cell)
+						console.log("fragmentedMove :", fragmentedMove);
+						console.log("cell : ", this.state.seeds[`${id}`].cell)
 						if (CARDINAL_POINTS.north.includes(this.state.seeds[`${id}`].cell)) {
 							x = this.state.seeds[`${id}`].coordinates[0].x;
 							y = this.state.seeds[`${id}`].coordinates[0].y - fragmentedMove;
@@ -227,7 +228,7 @@ export default class RollBtn extends Component {
 						timer = fragmentedMove * CELL_SPEED
 					}
 					timer = timer.toFixed(2);
-					this.updatePosition(id, fragmentedMove, { x, y }, cellPath, timer);	// Update cell position
+					this.props.updatePosition(id, fragmentedMove, { x, y }, cellPath, timer);	// Update cell position
 					// console.log("cellPaths : ", JSON.stringify(cellPaths));
 					cellPath++;
 					initMove(this.state.seeds[`${id}`].cell);
@@ -254,7 +255,10 @@ export default class RollBtn extends Component {
 
 	render() {
 
+		console.log(this.state);
 		const { inMotion, coords, move, dur, id } = this.props;
+
+		console.log(this.props);
 
 		return (
 			<button 

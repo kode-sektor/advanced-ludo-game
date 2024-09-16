@@ -82,12 +82,37 @@ export default class App extends Component {
 		})
 	}
 
-	turn = () => getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0, 1
+	turn = () => getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0, 
+	
+	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
+		console.log(id, diceVal, coordinates, cellPath, duration);
+		/*
+			Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
+			New dice value will add to previous seed position for each seed while taking care of error that may
+			arise from addition with null
+		*/
+		this.setState({
+			...this.state,
+			seeds: {
+				...this.state.seeds,
+				[`${id}`]: {
+					...this.state.seeds[`${id}`],
+					coordinates: [{ x: coordinates.x, y: coordinates.y }],
+					cell: this.state.seeds[`${id}`].cell === null ? diceVal : this.state.seeds[`${id}`].cell + diceVal
+				}
+			},
+			activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
+			inMotion: true,    // higher z-index when seed is in motion
+			transitionDuration : duration 
+		})
+	}
 
 	render() {
 		let state = this.state;
 		let dice = state.dice;
 		let turn = state.turn;
+		let seeds = state.seeds;
+		let updatePosition = this.updatePosition;
 
 		return (
 			<div className="board-game">
@@ -111,6 +136,8 @@ export default class App extends Component {
 								turn={turn}
 								id={0}
 								moveDistance={calcMoveDistance(this.state.dice)}
+								seeds={seeds}
+								updatePosition={updatePosition}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -130,6 +157,8 @@ export default class App extends Component {
 								turn={turn}
 								id={1}
 								moveDistance={calcMoveDistance(this.state.dice)}
+								seeds={seeds}
+								updatePosition={updatePosition}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -149,6 +178,8 @@ export default class App extends Component {
 								turn={turn}
 								id={2}
 								moveDistance={calcMoveDistance(this.state.dice)}
+								seeds={seeds}
+								updatePosition={updatePosition}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -168,6 +199,8 @@ export default class App extends Component {
 								turn={turn}
 								id={3}
 								moveDistance={calcMoveDistance(this.state.dice)}
+								seeds={seeds}
+								updatePosition={updatePosition}
 							/>
 							<Exit 
 								base={"home-four"}
