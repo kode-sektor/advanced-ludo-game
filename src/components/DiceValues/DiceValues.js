@@ -29,7 +29,7 @@ const DiceValues = ({ dice, updateDiceAssistant }) => {
 				</thead>
 				<tbody>
 				{
-						dice[1].asst.map((diceList, index) => {
+					dice[1].asst.map((diceList, index) => {
 						console.log(dice);
 						console.log(diceList);
 						let dice2 = dice[2].asst;

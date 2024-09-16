@@ -9,13 +9,14 @@ export default class DiceWidget extends Component {
 
 	render() {
 
-		const { dice, setDice, updateDiceAssistant, setDiceAssistant } = this.props;
+		const { dice, setDice, updateDiceAssistant, setDiceAssistant, moveDistance } = this.props;
 
 		return (
 			<section className="dice-widget">
 				<section className="roll-series">
 					<DiceCount
 						dice={dice}
+						moveDistance={moveDistance}
 					/>
 					<DiceValues
 						dice={dice}

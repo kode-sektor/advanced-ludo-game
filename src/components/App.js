@@ -9,7 +9,7 @@ import Camp from '../components/Camp/Camp.js'
 import OutpostLane from '../components/OutpostLane/OutpostLane.js'
 import Exit from '../components/Exit/Exit.js'
 import DiceWidget from "./DiceWidget/DiceWidget.js";
-import { getRandomWithinRange } from './functions.js'
+import { getRandomWithinRange, calcMoveDistance } from './functions.js'
 
 export default class App extends Component {
 
@@ -96,6 +96,7 @@ export default class App extends Component {
 					setDice={this.setDice}
 					setDiceAssistant={this.setDiceAssistant}
 					updateDiceAssistant={this.updateDiceAssistant}
+					moveDistance={calcMoveDistance(this.state.dice)}
 				/>
 				<section className="board">
 					<section className="ludo">
@@ -109,6 +110,7 @@ export default class App extends Component {
 								dice={dice}
 								turn={turn}
 								id={0}
+								moveDistance={calcMoveDistance(this.state.dice)}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -127,6 +129,7 @@ export default class App extends Component {
 								dice={dice}
 								turn={turn}
 								id={1}
+								moveDistance={calcMoveDistance(this.state.dice)}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -145,6 +148,7 @@ export default class App extends Component {
 								dice={dice}
 								turn={turn}
 								id={2}
+								moveDistance={calcMoveDistance(this.state.dice)}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -163,6 +167,7 @@ export default class App extends Component {
 								dice={dice}
 								turn={turn}
 								id={3}
+								moveDistance={calcMoveDistance(this.state.dice)}
 							/>
 							<Exit 
 								base={"home-four"}

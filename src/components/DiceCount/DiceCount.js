@@ -6,10 +6,6 @@ import { calcMoveDistance } from '../functions.js';
 
 
 export default class RollBtn extends Component {
-
-	state = {
-	}
-
 	
 	render() {
 
@@ -20,7 +16,7 @@ export default class RollBtn extends Component {
 				</h3>
 				<span className="dice-bubble">
 					<FontAwesomeIcon icon={faDice} size='3x' inverse swapOpacity mask={['far', 'circle']}/>
-					<span className='dice-count'>{calcMoveDistance(this.props.dice)}</span>
+					<span className='dice-count'>{this.props.moveDistance}</span>
 				</span>
 			</section>
 		)

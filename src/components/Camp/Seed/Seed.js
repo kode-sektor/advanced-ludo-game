@@ -85,9 +85,11 @@ export default class RollBtn extends Component {
 	}
 
 	fragmentMove = (id, startCell, finalCell, cellPaths) => {
-		// let startCell = cell;	// 0
-		// let finalCell = cell + dieVal;	// 15 
-		// console.log("startCell: ", startCell);	console.log ("finalCell: ", finalCell)
+
+		alert('ok');
+		console.log(startCell);
+		console.log(finalCell);
+
 		finalCell > 56 && (finalCell = 56);
 		let filteredCellRange = [];
 
@@ -111,18 +113,23 @@ export default class RollBtn extends Component {
 				cellPaths.push(filteredCellRange[i] - filteredCellRange[i - 1]);	// 4 - 0, 10 - 4, 12 - 10
 			}
 		}
+		console.log(cellPaths);
 		return cellPaths;	// [0, 4, 6, 2, 3]
 	}
 
 	move = (e) => {
 		const diceValues = [];
-		this.randomDice(diceValues);
-		const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
+		// this.randomDice(diceValues);
+		// const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
+		const moveDistance = this.props.moveDistance
+		console.log(moveDistance);
+
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
+		console.log(id);
 		// Only fragment total moves when not breaking away
 		this.state.seeds[`${id}`].cell !== null && (
-			this.fragmentMove(id, this.state.seeds[`${id}`].cell, this.state.seeds[`${id}`].cell + totalDiceValues, cellPaths)
+			fragmentMove(id, this.state.seeds[`${id}`].cell, this.state.seeds[`${id}`].cell + moveDistance, cellPaths)
 		);
 
 		let cellPath = 0;	// counter for modified setTimeout loop
@@ -250,7 +257,8 @@ export default class RollBtn extends Component {
 		const { inMotion, coords, move, dur, id } = this.props;
 
 		return (
-			<button disabled={!this.state.movable}
+			<button 
+				disabled={!this.state.movable}
 				className={inMotion ? "moving seed" : "seed"}
 				id={id}
 				style={{
@@ -258,7 +266,7 @@ export default class RollBtn extends Component {
 							${coords.y * 6.6}vh)`,
 					transitionDuration: this.state.transitionDuration + "s"
 				}}
-				onClick={(e) => {move(e)}}
+				onClick={(e) => {this.move(e)}}
 				>
 			</button>
 		)

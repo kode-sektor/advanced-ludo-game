@@ -47,6 +47,7 @@ export default class Camp extends Component {
 							id={`seed${base[0]}`}
 							dice={dice}
 							turn={turn}
+							moveDistance={this.props.moveDistance}
 						/>
 					</div>
 					<div className="cell">
@@ -60,6 +61,7 @@ export default class Camp extends Component {
 							id={`seed${base[1]}`}
 							dice={dice}
 							turn={turn}
+							moveDistance={this.props.moveDistance}
 						/>
 					</div>
 					<div className="cell">
@@ -73,6 +75,7 @@ export default class Camp extends Component {
 							id={`seed${base[2]}`}
 							dice={dice}
 							turn={turn}
+							moveDistance={this.props.moveDistance}
 						/>
 					</div>
 					<div className="cell">
@@ -86,6 +89,7 @@ export default class Camp extends Component {
 							id={`seed${base[3]}`}
 							dice={dice}
 							turn={turn}
+							moveDistance={this.props.moveDistance}
 						/>
 					</div>
 				</section>

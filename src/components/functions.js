@@ -1,4 +1,4 @@
-import { SIX_THROW, CELLPATH, bases, baseStartPositions } from '../data/constants.js';
+import { SIX_THROW, TOTAL_CELLS, bases, baseStartPositions } from '../data/constants.js';
 import { settings, bases as baseSettings, players } from './settings.js'
 import { seeds } from '../data/seeds.js'
 import { computeHeadingLevel } from '@testing-library/react';
@@ -798,7 +798,7 @@ const filterMoves = (seeds, dice) => {
 	
 	// Loop across tokens & dice simultaneously (they have same length)
 
-	for (let seed = 0; seed < seeds.length, seed++) {
+	for (let seed = 0; seed < seeds.length, seed++;) {
 		let seedItem = seeds[seed];
 		let diceItems = dice[seed];
 
@@ -809,10 +809,11 @@ const filterMoves = (seeds, dice) => {
 			dieItem += diceItems[diceItem];
 			let seedCell = seedItem.cell;
 			let seedActive = seedItem.breakout;
-			seedCellDistance += seedItem.breakout;
+
+			seedCellDistance += seedCell;
 			
 			if (diceItem === diceItems.length) {
-				if (seedCellDistance >= CELLPATH) {
+				if (seedCellDistance >= TOTAL_CELLS) {
 					return false;
 				} else {
 					if (!seedActive) {
