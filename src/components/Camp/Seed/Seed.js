@@ -129,9 +129,13 @@ export default class RollBtn extends Component {
 		// Only fragment total moves when not breaking away
 		let startCell = this.state.seeds[`${id}`].cell === null ? 0 : this.state.seeds[`${id}`].cell;
 
-		this.state.seeds[`${id}`].cell !== null && (
-			this.props.fragmentMove(id, startCell, startCell + moveDistance, cellPaths)
-		);
+		// this.state.seeds[`${id}`].cell !== null && (
+		// this.props.fragmentMove(id, startCell, startCell + moveDistance, cellPaths)
+		// );
+
+		if (this.state.seeds[`${id}`].cell !== null) {
+			this.props.fragmentMove(id, startCell, startCell + moveDistance - 6, cellPaths)
+		}
 
 		let cellPath = 0;	// counter for modified setTimeout loop
 		let timer = 0;
@@ -147,13 +151,14 @@ export default class RollBtn extends Component {
 				
 			*/
 			const popCellPaths = (breakout === null) ? 0 : 1;
-			let combinedPaths = (breakout === null) ? 2 : (cellPaths.length - 1)	
+			let combinedPaths = (breakout === null) ? 2 + (cellPaths.length - 1) : (cellPaths.length - 1);	
 			if (cellPath < combinedPaths) {
 				setTimeout(() => {
 					let x = "";
 					let y = "";
 
-					if (breakout === null) {	// Tackle breakout move on '6' roll
+					// if (breakout === null) {	// Tackle breakout move on '6' roll
+					if (combinedPaths < 2) {
 						if (cellPath === 0) {	// First move seed on y-axis
 							x = 0;
 							y = this.state.seeds[`${id}`].breakout[0].y;

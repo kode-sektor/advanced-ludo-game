@@ -34,6 +34,7 @@ export default class App extends Component {
 			}
 		},
 		doubleSix: false,
+		absSix: false,
 		turn: settings.turn	// 0
 	}
 
@@ -80,6 +81,14 @@ export default class App extends Component {
 				}
 			}
 		})
+	}
+
+	checkForAbsoluteSix = () => {
+		let diceOneAsst = Object.values(this.state.dice[1])[0];
+		let diceTwoAsst = Object.values(this.state.dice[2])[0];
+
+		const filteredDiceOneAsst = diceOneAsst.some((die) => die.selected === true && die.disabled === false);
+
 	}
 
 	turn = () => getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0, 
