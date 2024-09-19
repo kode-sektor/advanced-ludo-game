@@ -83,12 +83,17 @@ export default class App extends Component {
 		})
 	}
 
-	checkForAbsoluteSix = () => {
-		let diceOneAsst = Object.values(this.state.dice[1])[0];
-		let diceTwoAsst = Object.values(this.state.dice[2])[0];
+	checkSix = () => {
+		// let diceOneAsst = Object.values(this.state.dice[1])[0];
+		// let diceTwoAsst = Object.values(this.state.dice[2])[0];
 
-		const filteredDiceOneAsst = diceOneAsst.some((die) => die.selected === true && die.disabled === false);
+		let diceOneAsst = this.state.dice[1].asst;
+		let diceTwoAsst = this.state.dice[2].asst;
 
+		return (
+			diceOneAsst.some((die) => die.selected === true && die.disabled === false && value === 6) ||
+			diceTwoAsst.some((die) => die.selected === true && die.disabled === false && value === 6) 
+		)
 	}
 
 	turn = () => getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0, 
