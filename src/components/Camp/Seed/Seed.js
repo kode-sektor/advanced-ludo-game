@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../../data/constants.js"
 import { seeds } from "../../../data/seeds.js";
 import { TOTAL_CELLS } from '../../../data/constants.js'
-import { calcMoveDistance, canBreakAway, getRandomWithinRange, getActivePlayers, isActiveToken } from '../../functions.js'
+import { calcMoveDistance, canBreakAway, getRandomWithinRange, getActivePlayers, isActiveToken, checkSix } from '../../functions.js'
 import { settings } from '../../settings.js'
 
 
@@ -132,6 +132,8 @@ export default class RollBtn extends Component {
 		// this.state.seeds[`${id}`].cell !== null && (
 		// this.props.fragmentMove(id, startCell, startCell + moveDistance, cellPaths)
 		// );
+
+		console.log(checkSix());
 
 		if (this.state.seeds[`${id}`].cell !== null) {
 			this.props.fragmentMove(id, startCell, startCell + moveDistance - 6, cellPaths)

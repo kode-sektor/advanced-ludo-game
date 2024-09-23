@@ -301,6 +301,19 @@ export const getDiceVals = (index) => {
 	return diceVals[index];
 }
 
+export const checkSix = () => {
+	// let diceOneAsst = Object.values(this.state.dice[1])[0];
+	// let diceTwoAsst = Object.values(this.state.dice[2])[0];
+
+	let diceOneAsst = this.state.dice[1].asst;
+	let diceTwoAsst = this.state.dice[2].asst;
+
+	return (
+		diceOneAsst.some((die) => die.selected === true && die.disabled === false && value === 6) ||
+		diceTwoAsst.some((die) => die.selected === true && die.disabled === false && value === 6) 
+	)
+}
+
 export const calcMoveDistance = (dice) => {
 	let diceOneAsst = Object.values(dice[1])[0];
 	let diceTwoAsst = Object.values(dice[2])[0];
