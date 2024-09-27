@@ -119,25 +119,33 @@ export default class RollBtn extends Component {
 
 	move = (e) => {
 		const diceValues = [];
-		// this.randomDice(diceValues);
-		// const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
-		const moveDistance = this.props.moveDistance
-
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
 		console.log(id);
-		// Only fragment total moves when not breaking away
-		let startCell = this.state.seeds[`${id}`].cell === null ? 0 : this.state.seeds[`${id}`].cell;
 
-		// this.state.seeds[`${id}`].cell !== null && (
-		// this.props.fragmentMove(id, startCell, startCell + moveDistance, cellPaths)
-		// );
+		// this.randomDice(diceValues);
+		// const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
 
-		console.log(checkSix());
+		// Imagine dice values of [6, 6, 2, 3]. To move seed from camped position, a '6' is needed.
+		// This code accounts for that '6' to break out seed
+		let moveDistance = this.props.moveDistance;
+		let startCell = 0;
 
-		if (this.state.seeds[`${id}`].cell !== null) {
-			this.props.fragmentMove(id, startCell, startCell + moveDistance - 6, cellPaths)
+		if (this.state.seeds[`${id}`].cell === null) {
+			moveDistance = moveDistance - 6;
+			startCell = 0;	// null cannot work with numbers. Make it 0 if null
+
+			// The move to push inactive token to 6-0 spot requires 2 moves (loops). The 3rd loop, thus, would have
+			// skipped the first 2 null elements. This ensures the array shapeshifts correctly if the token to be
+			// moved is a camped one.
+			cellPaths.unshift(null, null);
+		} else {
+			startCell = this.state.seeds[`${id}`].cell;
 		}
+	
+		this.props.fragmentMove(id, startCell, startCell + moveDistance, cellPaths);
+
+		// console.log(checkSix());
 
 		let cellPath = 0;	// counter for modified setTimeout loop
 		let timer = 0;
