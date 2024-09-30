@@ -70,7 +70,6 @@ export default class RollBtn extends Component {
 			arise from addition with null
 		*/
 		if (this.state.seeds[`${id}`].cell === null) {
-			alert (cellPath);
 			this.setState({
 				...this.state,
 				seeds: {
@@ -181,9 +180,9 @@ export default class RollBtn extends Component {
 				
 			*/
 			const popCellPaths = (breakout === null) ? 0 : 1;
-			let combinedPaths = (breakout === null) ? 2 + (cellPaths.length - 1) : (cellPaths.length - 1);	
+			let combinedPaths = (breakout === null) ? 2 : (cellPaths.length - 1);	
 
-			if (cellPath < cellPaths.length - 1) {
+			if (cellPath < combinedPaths) {
 
 				setTimeout(() => {
 					let x = "";
@@ -294,17 +293,17 @@ export default class RollBtn extends Component {
 
 		console.log(this.state);
 		const { inMotion, coords, move, dur, id } = this.props;
+		const seeds = this.state.seeds;
 
 		console.log(this.props);
-
 		return (
 			<button 
 				disabled={!this.state.movable}
 				className={inMotion ? "moving seed" : "seed"}
 				id={id}
 				style={{
-					transform: `translate(${coords.x * 6.6}vh, 
-							${coords.y * 6.6}vh)`,
+					transform: `translate(${seeds[id].coordinates[0].x * 6.6}vh, 
+							${seeds[id].coordinates[0].y * 6.6}vh)`,
 					transitionDuration: this.state.transitionDuration + "s"
 				}}
 				onClick={(e) => {this.move(e)}}
