@@ -61,7 +61,7 @@ export default class RollBtn extends Component {
 			}
 		}
 	}
-
+ 
 	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
 		console.log(id, diceVal, coordinates, cellPath, duration);
 		/*
@@ -69,8 +69,8 @@ export default class RollBtn extends Component {
 			New dice value will add to previous seed position for each seed while taking care of error that may
 			arise from addition with null
 		*/
-
 		if (this.state.seeds[`${id}`].cell === null) {
+			alert (cellPath);
 			this.setState({
 				...this.state,
 				seeds: {
@@ -116,19 +116,21 @@ export default class RollBtn extends Component {
 				return item > startCell && item < finalCell;
 			}); // [4, 10, 12]
 		})()
-		// console.log(filteredCellRange);
+		console.log(filteredCellRange);
 
-		for (let i = 0; i <= filteredCellRange.length; i++) {
-			if (i === 0) {
-				cellPaths.unshift(startCell);	// 0
-				cellPaths.push(filteredCellRange[i] - startCell);	// 4 - 0
-			} else if (i === filteredCellRange.length) {	
-				cellPaths.push(finalCell - filteredCellRange[i - 1]);	// 15 - 12
-			} else {
-				// console.log(filteredCellRange[i])
-				// console.log(filteredCellRange[i - 1])
-				// console.log(filteredCellRange[i] - filteredCellRange[i - 1])
-				cellPaths.push(filteredCellRange[i] - filteredCellRange[i - 1]);	// 4 - 0, 10 - 4, 12 - 10
+		if (filteredCellRange && filteredCellRange.length) {
+			for (let i = 0; i <= filteredCellRange.length; i++) {
+				if (i === 0) {
+					cellPaths.unshift(startCell);	// 0
+					cellPaths.push(filteredCellRange[i] - startCell);	// 4 - 0
+				} else if (i === filteredCellRange.length) {	
+					cellPaths.push(finalCell - filteredCellRange[i - 1]);	// 15 - 12
+				} else {
+					// console.log(filteredCellRange[i])
+					// console.log(filteredCellRange[i - 1])
+					// console.log(filteredCellRange[i] - filteredCellRange[i - 1])
+					cellPaths.push(filteredCellRange[i] - filteredCellRange[i - 1]);	// 4 - 0, 10 - 4, 12 - 10
+				}
 			}
 		}
 		console.log(cellPaths);
@@ -152,6 +154,7 @@ export default class RollBtn extends Component {
 		if (this.state.seeds[`${id}`].cell === null) {
 			moveDistance = moveDistance - 6;
 			startCell = 0;	// null cannot work with numbers. Make it 0 if null
+			this.fragmentMove(id, startCell, startCell + moveDistance, cellPaths);
 
 			// The move to push inactive token to 6-0 spot requires 2 moves (loops). The 3rd loop, thus, would have
 			// skipped the first 2 null elements. This ensures the array shapeshifts correctly if the token to be
@@ -159,10 +162,9 @@ export default class RollBtn extends Component {
 			cellPaths.unshift(null, null);
 		} else {
 			startCell = this.state.seeds[`${id}`].cell;
+			this.fragmentMove(id, startCell, startCell + moveDistance, cellPaths);
 		}
-	
-		this.fragmentMove(id, startCell, startCell + moveDistance, cellPaths);
-
+		console.log(cellPaths);
 		// console.log(checkSix());
 
 		let cellPath = 0;	// counter for modified setTimeout loop
@@ -180,14 +182,15 @@ export default class RollBtn extends Component {
 			*/
 			const popCellPaths = (breakout === null) ? 0 : 1;
 			let combinedPaths = (breakout === null) ? 2 + (cellPaths.length - 1) : (cellPaths.length - 1);	
-			
-			if (cellPath < combinedPaths) {
+
+			if (cellPath < cellPaths.length - 1) {
+
 				setTimeout(() => {
 					let x = "";
 					let y = "";
 
 					// if (breakout === null) {	// Tackle breakout move on '6' roll
-					if (combinedPaths < 2) {
+					if (cellPaths[cellPath] === null) {
 						if (cellPath === 0) {	// First move seed on y-axis
 							x = 0;
 							y = this.state.seeds[`${id}`].breakout[0].y;
@@ -262,7 +265,7 @@ export default class RollBtn extends Component {
 						timer = fragmentedMove * CELL_SPEED
 					}
 					timer = timer.toFixed(2);
-					this.props.updatePosition(id, fragmentedMove, { x, y }, cellPath, timer);	// Update cell position
+					this.updatePosition(id, fragmentedMove, { x, y }, cellPath, timer);	// Update cell position
 					// console.log("cellPaths : ", JSON.stringify(cellPaths));
 					cellPath++;
 					initMove(this.state.seeds[`${id}`].cell);
