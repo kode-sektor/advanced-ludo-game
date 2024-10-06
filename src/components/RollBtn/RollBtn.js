@@ -264,6 +264,7 @@ export default class RollBtn extends Component {
 					// console.log("dieOneLastCycle, dieTwoLastCycle, step : ", dieOneLastCycle, dieTwoLastCycle, step);
 					this.props.setDice(diceObj);
 					step++;
+					console.log(step);
 					randomRoll(step)
 				}, step === 0 ? 0 : diceData[0][step] * 1000);	// 1, 2 or 3 (Condition to avoid delay on first run)
 			} else {	// Re-enable roll button after roll
@@ -283,7 +284,7 @@ export default class RollBtn extends Component {
 					// }
 					this.props.setDiceAssistant(diceObj);
 					this.checkForDoubleSix(firstDieObj, secondDieObj);
-				}, Array.isArray(diceData[1][diceData[1].length - 1]) ?
+				}, (diceData[1] && Array.isArray(diceData[1][diceData[1].length - 1])) ?
 					Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000 :
 					diceData[1][diceData[1].length - 1] * 1000
 				);

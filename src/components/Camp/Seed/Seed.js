@@ -69,6 +69,7 @@ export default class RollBtn extends Component {
 			New dice value will add to previous seed position for each seed while taking care of error that may
 			arise from addition with null
 		*/
+		alert(cellPath);
 		if (this.state.seeds[`${id}`].cell === null) {
 			this.setState({
 				...this.state,
@@ -179,6 +180,7 @@ export default class RollBtn extends Component {
 				However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
 				
 			*/
+			console.log(breakout);
 			const popCellPaths = (breakout === null) ? 0 : 1;
 			let combinedPaths = (breakout === null) ? 2 : (cellPaths.length - 1);	
 

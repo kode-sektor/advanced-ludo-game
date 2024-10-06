@@ -18,9 +18,9 @@ export const getRandomWithinRange = (min, max, int = false) => {
 }
 
 export const randomDice = (diceValues = []) => {
+	let cycle = getRandomWithinRange(0, 1, true);
 	for (let dicethrow = 0; dicethrow < 2; dicethrow++) {
 		if (SIX_THROW) {	// Guarantee a six on either die
-			let cycle = getRandomWithinRange(0, 1, true);
 			if (dicethrow === cycle) {
 				diceValues.push(6);
 			} else {
