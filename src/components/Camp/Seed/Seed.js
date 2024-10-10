@@ -63,13 +63,12 @@ export default class RollBtn extends Component {
 	}
  
 	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
-		console.log(id, diceVal, coordinates, cellPath, duration);
+		// console.log(id, diceVal, coordinates, cellPath, duration);
 		/*
 			Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
 			New dice value will add to previous seed position for each seed while taking care of error that may
 			arise from addition with null
 		*/
-		alert(cellPath);
 		if (this.state.seeds[`${id}`].cell === null) {
 			this.setState({
 				...this.state,
@@ -105,30 +104,27 @@ export default class RollBtn extends Component {
 
 	fragmentMove = (id, startCell, finalCell, cellPaths) => {
 
-		console.log(startCell);
-		console.log(finalCell);
+		// console.log(startCell);
+		// console.log(finalCell);
 
 		finalCell > 56 && (finalCell = 56);
 		let filteredCellRange = [];
 
 		((filterCellRange) => {
 			filteredCellRange = TURNING_POINTS.filter((item) => {
-				return item > startCell && item < finalCell;
+				return item >= startCell && item < finalCell;
 			}); // [4, 10, 12]
-		})()
-		console.log(filteredCellRange);
+		})();
+		filteredCellRange.unshift(startCell);
 
 		if (filteredCellRange && filteredCellRange.length) {
 			for (let i = 0; i <= filteredCellRange.length; i++) {
 				if (i === 0) {
-					cellPaths.unshift(startCell);	// 0
-					cellPaths.push(filteredCellRange[i] - startCell);	// 4 - 0
+					cellPaths.unshift(0);	// 0
 				} else if (i === filteredCellRange.length) {	
 					cellPaths.push(finalCell - filteredCellRange[i - 1]);	// 15 - 12
-				} else {
-					// console.log(filteredCellRange[i])
-					// console.log(filteredCellRange[i - 1])
-					// console.log(filteredCellRange[i] - filteredCellRange[i - 1])
+				} 
+				else {
 					cellPaths.push(filteredCellRange[i] - filteredCellRange[i - 1]);	// 4 - 0, 10 - 4, 12 - 10
 				}
 			}
@@ -141,13 +137,12 @@ export default class RollBtn extends Component {
 		const diceValues = [];
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
-		console.log(id);
 
 		// this.randomDice(diceValues);
 		// const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
 
 		// Imagine dice values of [6, 6, 2, 3]. To move seed from camped position, a '6' is needed.
-		// This code accounts for that '6' to break out seed
+		// This code accounts for that '6' to break away seed
 		let moveDistance = this.props.moveDistance;
 		let startCell = 0;
 
@@ -165,47 +160,53 @@ export default class RollBtn extends Component {
 			this.fragmentMove(id, startCell, startCell + moveDistance, cellPaths);
 		}
 		console.log(cellPaths);
-		// console.log(checkSix());
 
 		let cellPath = 0;	// counter for modified setTimeout loop
 		let timer = 0;
 		let fragmentedMove = 0;
+		let combinedPaths = 0
 
-		const initMove = (breakout) => {
+		const initMove = (breakaway) => {
 			/*
 				Determine direction of travel. For diagonal travel, x & y must update in state at the same time
 
-				Breakout loop has to be looped over by 1 length less than array length because
+				breakaway loop has to be looped over by 1 length less than array length because
 				the method in the loop works with both the current and next loop
-				However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
+				However for a simple breakaway move, loop across array length which is 2 [{x: 3}, {y: 3}]
 				
 			*/
-			console.log(breakout);
-			const popCellPaths = (breakout === null) ? 0 : 1;
-			let combinedPaths = (breakout === null) ? 2 : (cellPaths.length - 1);	
+			// console.log(breakaway);
+				
+			// If seed is just breaking away (and breakaway leads token to move beyond starting (6 - 0) position) 
+			// or seed has broken away (already active), loop fragmentedMove times
+			if ((breakaway === null && cellPath > 1) || (breakaway !== null)) {
+				combinedPaths = cellPaths.length - 1;
+			} else if (breakaway === null) {	// If seed is yet to breakaway and will land on 6-0 position, loop 2ce to move seed to 6-0 position
+				combinedPaths = 2;
+			}
 
 			if (cellPath < combinedPaths) {
-
+				
 				setTimeout(() => {
 					let x = "";
 					let y = "";
 
-					// if (breakout === null) {	// Tackle breakout move on '6' roll
+					// if (breakaway === null) {	// Tackle breakaway move on '6' roll
 					if (cellPaths[cellPath] === null) {
 						if (cellPath === 0) {	// First move seed on y-axis
 							x = 0;
-							y = this.state.seeds[`${id}`].breakout[0].y;
+							y = this.state.seeds[`${id}`].breakaway[0].y;
 							timer = y * CELL_SPEED;
 						} else {	// then move on x-axis to 6-0 position
-							x = this.state.seeds[`${id}`].breakout[0].x;
-							y = this.state.seeds[`${id}`].breakout[0].y;
+							x = this.state.seeds[`${id}`].breakaway[0].x;
+							y = this.state.seeds[`${id}`].breakaway[0].y;
 							timer = x * CELL_SPEED;
 						}
-						console.log(timer);
+						// console.log(timer);
 					} else {
 						fragmentedMove = cellPaths[cellPath + 1];
-						console.log("fragmentedMove :", fragmentedMove);
-						console.log("cell : ", this.state.seeds[`${id}`].cell)
+						// console.log("fragmentedMove :", fragmentedMove);
+						// console.log("cell : ", this.state.seeds[`${id}`].cell)
 						if (CARDINAL_POINTS.north.includes(this.state.seeds[`${id}`].cell)) {
 							x = this.state.seeds[`${id}`].coordinates[0].x;
 							y = this.state.seeds[`${id}`].coordinates[0].y - fragmentedMove;
@@ -235,7 +236,8 @@ export default class RollBtn extends Component {
 								which are 4, 17, 30 and 43 and the cell paths array 
 								console.log("this.state.seeds[`${id}`].cell + fragmentedMove :", this.state.seeds[`${id}`].cell + fragmentedMove);
 							*/
-							if (cellPaths[cellPath + 1] > 1) {	// Next fragmented move must exist to set diagonal
+							// console.log(cellPaths, cellPath)
+							if (cellPaths[cellPath + 1] > 0) {	// Next fragmented move must exist to set diagonal
 								cellPaths[cellPath + 1] = cellPaths[cellPath + 1] - 1	// Subtract 1 from next 
 								if (this.state.seeds[`${id}`].cell === 4) {
 									cellPaths.splice(cellPath + 1, 0, [-1, -1]);	// [4, 6, 2, 3] to [4, [1,1], 5, 2, 3]
@@ -293,11 +295,11 @@ export default class RollBtn extends Component {
 
 	render() {
 
-		console.log(this.state);
+		// console.log(this.state);
 		const { inMotion, coords, move, dur, id } = this.props;
 		const seeds = this.state.seeds;
 
-		console.log(this.props);
+		// console.log(this.props);
 		return (
 			<button 
 				disabled={!this.state.movable}
