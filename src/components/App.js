@@ -65,9 +65,9 @@ export default class App extends Component {
 		})
 	}
 
-	updateDiceAssistant = (die, index, diceObj) => {
+	updateDieAssistant = (die, index, diceObj) => {
 		let asst = this.state.dice[die].asst;    // [{selected: false, disabled: false, value: 6}...]
-		let currAsst = asst[index];    // [{selected: false, disabled: false, value: 6}]
+		let currAsst = asst[index];    // Choose the single die (1 or 2) [{selected: false, disabled: false, value: 6}]
 		let obj = { ...currAsst, ...diceObj };    // [{selected: false, disabled: true, value: 6}]
 		asst[index] = obj;
 
@@ -80,6 +80,13 @@ export default class App extends Component {
 					asst : asst 
 				}
 			}
+		})
+	}
+
+	updateDiceAssistant = (dice) => {
+		this.setState({
+			...this.state,
+			dice: dice
 		})
 	}
 
@@ -114,6 +121,7 @@ export default class App extends Component {
 		let turn = state.turn;
 		let seeds = state.seeds;
 		let updatePosition = this.updatePosition;
+		let updateDiceAssistant = this.updateDiceAssistant;
 
 		return (
 			<div className="board-game">
@@ -121,7 +129,7 @@ export default class App extends Component {
 					dice={dice}
 					setDice={this.setDice}
 					setDiceAssistant={this.setDiceAssistant}
-					updateDiceAssistant={this.updateDiceAssistant}
+					updateDieAssistant={this.updateDieAssistant}
 					moveDistance={calcMoveDistance(this.state.dice)}
 				/>
 				<section className="board">
@@ -139,6 +147,7 @@ export default class App extends Component {
 								moveDistance={calcMoveDistance(this.state.dice)}
 								seeds={seeds}
 								updatePosition={updatePosition}
+								updateDiceAssistant={updateDiceAssistant}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -160,6 +169,7 @@ export default class App extends Component {
 								moveDistance={calcMoveDistance(this.state.dice)}
 								seeds={seeds}
 								updatePosition={updatePosition}
+								updateDiceAssistant={updateDiceAssistant}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -181,6 +191,7 @@ export default class App extends Component {
 								moveDistance={calcMoveDistance(this.state.dice)}
 								seeds={seeds}
 								updatePosition={updatePosition}
+								updateDiceAssistant={updateDiceAssistant}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -202,6 +213,7 @@ export default class App extends Component {
 								moveDistance={calcMoveDistance(this.state.dice)}
 								seeds={seeds}
 								updatePosition={updatePosition}
+								updateDiceAssistant={updateDiceAssistant}
 							/>
 							<Exit 
 								base={"home-four"}

@@ -102,6 +102,23 @@ export default class RollBtn extends Component {
 		}
 	}
 
+	endMove = () => {
+		const dice = this.props.dice;
+		let updateDiceAssistant = this.props.updateDiceAssistant;
+		
+		let i = 0;
+		Object.values(dice[1].asst).forEach((die1) => {	// die1 => {selected: true, disabled: false, value: 6}
+			if (die1.selected === true && die1.disabled === false) {
+				dice[1].asst.splice(i, 1);	// Delete dice entry
+			}
+			if (dice[2].asst[i].selected === true && dice[2].asst[i].disabled === false) {
+				dice[2].asst.splice(i, 1);	// Delete dice entry
+			}
+			i++;
+		})
+		updateDiceAssistant(dice);
+	}
+
 	fragmentMove = (id, startCell, finalCell, cellPaths) => {
 
 		// console.log(startCell);
@@ -283,6 +300,7 @@ export default class RollBtn extends Component {
 					For this reason, a setTimeout() must be set in this else case too.
 				*/
 				setTimeout(() => {
+					this.endMove();
 					this.setState({
 						...this.state,
 						inMotion : false

@@ -9,7 +9,7 @@ export default class DiceWidget extends Component {
 
 	render() {
 
-		const { dice, setDice, updateDiceAssistant, setDiceAssistant, moveDistance } = this.props;
+		const { dice, setDice, updateDieAssistant, setDiceAssistant, moveDistance } = this.props;
 
 		return (
 			<section className="dice-widget">
@@ -20,7 +20,7 @@ export default class DiceWidget extends Component {
 					/>
 					<DiceValues
 						dice={dice}
-						updateDiceAssistant={updateDiceAssistant}
+						updateDieAssistant={updateDieAssistant}
 					/>
 				</section>
 				<RollBtn

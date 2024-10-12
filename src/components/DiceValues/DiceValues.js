@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DiceValues = ({ dice, updateDiceAssistant }) => {
+const DiceValues = ({ dice, updateDieAssistant }) => {
 	
 	const selectDieAsst = e => {
 		let button = e.target.parentElement;
@@ -15,7 +15,7 @@ const DiceValues = ({ dice, updateDiceAssistant }) => {
 			selected: !dice[`${die}`].asst[index].selected,    // toggle selected: true / false
 			value: dieVal
 		}
-		updateDiceAssistant(die, index, diceObj);
+		updateDieAssistant(die, index, diceObj);
 	}
 
 	return (

@@ -31,7 +31,7 @@ export default class Camp extends Component {
 
 	render() {
 
-		const { base, dice, turn, seeds, updatePosition } = this.props;
+		const { base, dice, turn, seeds, updatePosition, updateDiceAssistant } = this.props;
 		console.log(this.props);
 
 		return (
@@ -50,6 +50,7 @@ export default class Camp extends Component {
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
+							updateDiceAssistant={updateDiceAssistant}
 						/>
 					</div>
 					<div className="cell">
@@ -65,6 +66,7 @@ export default class Camp extends Component {
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
+							updateDiceAssistant={updateDiceAssistant}
 						/>
 					</div>
 					<div className="cell">
@@ -80,6 +82,7 @@ export default class Camp extends Component {
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
+							updateDiceAssistant={updateDiceAssistant}
 						/>
 					</div>
 					<div className="cell">
@@ -95,6 +98,7 @@ export default class Camp extends Component {
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
+							updateDiceAssistant={updateDiceAssistant}
 						/>
 					</div>
 				</section>
