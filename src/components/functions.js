@@ -492,6 +492,8 @@ export const getCOMBaseActive = () => {
 	return COMBase.filter((cell) => cell !== null);
 }
 
+
+
 export const getCOMBaseActiveCount = () => {
 	const COMBaseActive = getCOMBaseActive();
 	return COMBaseActive.length;
@@ -837,4 +839,10 @@ const filterMoves = (seeds, dice) => {
 		}
 	}
 	return true;
+}
+
+export const calculateRisk = () => {
+	
+	const COMActive = getCOMBaseActive();	// Get active COM tokens
+
 }
