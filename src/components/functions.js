@@ -448,79 +448,109 @@ export const getBase = (base) => {
 	return result;	// ["seedOne", "seedTwo", "seedThree", "seedFour"]
 }
 
-export const getCOM = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === true && bases[item].base.length !==0);	// ["PLAYER_TWO"]
+export const getPlayer = (player="COM") => {
+	const COM = player === "COM" ? true : false;
+	return Object.keys(baseSettings).filter(item => baseSettings[item].COM === COM && bases[item].base.length !==0);
+}
 
-// Get opponents
-export const getOpp = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === false && bases[item].base.length !== 0);	// ["PLAYER_ONE"]
+// export const getCOM = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === true && bases[item].base.length !==0);	// ["PLAYER_TWO"]
+
+// // Get opponents
+// export const getOpp = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === false && bases[item].base.length !== 0);	// ["PLAYER_ONE"]
 
 export const getAttackBaseIndex = (base) => Array.isArray(base) ? Math.max(...base) : null;	// Choose 1 from [0, 1] or return null
 
 export const getDefenceBaseIndex = (base) => Array.isArray(base) ? Math.min(...base) : null;	// Choose 0 from [0, 1] or return null
 
-export const getAttackBase = (base) => {
-	const attackBaseIndex = getAttackBaseIndex(base);
+export const getBaseIndex = (player="COM") => {
+	const player = getPlayer(player);
+	return bases[player].base;
+}
+
+export const getBaseActive = (player="COM") => {
+	const playerBase = getBases(player);
+	return playerBase.filter((cell) => cell !== null);
+}
+
+export const getBaseActiveCount = (player="COM") => {
+	const baseActive = getCOMBaseActive(player);
+	return baseActive.length;
+}
+
+
+// export const getAttackBase = (base) => {
+// 	const attackBaseIndex = getAttackBaseIndex(base);
+// 	const attackBase = getBase(attackBaseIndex);
+// 	return attackBase;
+// }
+
+export const getAttackBase = (player="COM") => {
+	const playerBaseIndex = getBaseIndex(player);
+	const attackBaseIndex = getAttackBaseIndex(playerBaseIndex);
 	const attackBase = getBase(attackBaseIndex);
 	return attackBase;
 }
 
-export const getDefenceBase = (base) => {
-	const defenceBaseIndex = getDefenceBaseIndex(base);
+export const getDefenceBase = (player="COM") => {
+	const playerBaseIndex = getBaseIndex(player);
+	const defenceBaseIndex = getDefenceBaseIndex(playerBaseIndex);
 	const defenceBase = getBase(defenceBaseIndex);
 	return defenceBase;
 }
 
-export const getCOMBaseIndex = () => {
-	const COM = getCOM();
-	return bases[COM].base;
+// Get base(s) of player by combining attack and defence bases of player
+export const getBases = (player="COM") => {
+	return [...getAttackBase(player), ...getDefenceBase(player)];
 }
 
-export const getOppBaseIndex = () => {
-	const opp = getOpp();
-	return bases[opp].base;
-}
+// export const getDefenceBase = (base) => {
+// 	const defenceBaseIndex = getDefenceBaseIndex(base);
+// 	const defenceBase = getBase(defenceBaseIndex);
+// 	return defenceBase;
+// }
 
-export const getCOMAttackBase = () => {
-	const COMBaseIndex = getCOMBaseIndex();
-	const attackBase = getAttackBase(COMBaseIndex);
-	return attackBase;
-}
+// export const getCOMBaseIndex = () => {
+// 	const COM = getCOM();
+// 	return bases[COM].base;
+// }
 
-export const getOppAttackBase = () => {
-	const OppBaseIndex = getOppBaseIndex();
-	const attackBase = getAttackBase(OppBaseIndex);
-	return attackBase;
-}
+// export const getOppBaseIndex = () => {
+// 	const opp = getOpp();
+// 	return bases[opp].base;
+// }
 
-export const getCOMDefenceBase = () => {
-	const COMBaseIndex = getCOMBaseIndex();
-	const defenceBase = getDefenceBase(COMBaseIndex);
-	return defenceBase;
-}
+// export const getAttackBase = (player="COM") => {
+	
+// }
 
-export const getOppDefenceBase = () => {
-	const OppBaseIndex = getOppBaseIndex();
-	const defenceBase = getDefenceBase(OppBaseIndex);
-	return defenceBase;
-}
+// export const getCOMAttackBase = () => {
+// 	const COMBaseIndex = getCOMBaseIndex();
+// 	const attackBase = getAttackBase(COMBaseIndex);
+// 	return attackBase;
+// }
 
-export const getCOMBase = () => [...getCOMAttackBase(), ...getCOMDefenceBase()];
+// export const getOppAttackBase = () => {
+// 	const OppBaseIndex = getOppBaseIndex();
+// 	const attackBase = getAttackBase(OppBaseIndex);
+// 	return attackBase;
+// }
 
-export const getOppBase = () => [...getOppAttackBase(), ...getOppDefenceBase()];
+// export const getCOMDefenceBase = () => {
+// 	const COMBaseIndex = getCOMBaseIndex();
+// 	const defenceBase = getDefenceBase(COMBaseIndex);
+// 	return defenceBase;
+// }
 
-export const getCOMBaseActive = () => {
-	const COMBase = getCOMBase();
-	return COMBase.filter((cell) => cell !== null);
-}
+// export const getOppDefenceBase = () => {
+// 	const OppBaseIndex = getOppBaseIndex();
+// 	const defenceBase = getDefenceBase(OppBaseIndex);
+// 	return defenceBase;
+// }
 
-export const getOppBaseActive = () => {
-	const COMBase = getOppBase();
-	return COMBase.filter((cell) => cell!== null);
-}
+// export const getCOMBase = () => [...getCOMAttackBase(), ...getCOMDefenceBase()];
 
-export const getCOMBaseActiveCount = () => {
-	const COMBaseActive = getCOMBaseActive();
-	return COMBaseActive.length;
-}
+// export const getOppBase = () => [...getOppAttackBase(), ...getOppDefenceBase()];
+
 
 export const calcWeightedOdds = (limits, series=2) => {
 	const {
