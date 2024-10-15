@@ -369,25 +369,6 @@ export const getNoOfPlayers = (abs=false) => {
 	}
 }
 
-export const getBase = (base) => {
-	const result = [];
-
-	if (Array.isArray(base)) {	// [0, 1]
-		for (let baseIndex = 0; baseIndex < base.length; base++) {
-			result.push([...bases[baseIndex]]);
-		}
-	} else if (typeof base === 'number') {	// 0
-		result.push([...bases[base]]);
-	} else if (base === "COM") {	
-		const COM = Object.values(base).find(COM === true);
-		const COMbase = COM.base;
-		getBase(COMbase);
-	} else {	// "PLAYER_ONE"
-
-	}
-	return result;	// ["seedOne", "seedTwo", "seedThree", "seedFour"]
-}
-
 // 0 -> 1 -> 2 -> 3 -> 0
 export const setTurn = (turn) => turn < (settings.numberOfPlayers - 1) ? turn++ : 0;
 
@@ -430,7 +411,7 @@ export const isUnderSiege = (base) => {
 		}
 	}
 	
-	const opp = getCOMopponents();
+	const opp = getOpp();
 	let oppBase = opp.base;	// [0, 1]
 	oppBase = Array.isArray(oppBase) ? oppBase : [oppBase];
 	let oppBaseCollection = [];
@@ -448,9 +429,33 @@ export const isUnderSiege = (base) => {
 	return oppBaseCollection;
 }
 
-export const getAttackBaseIndex = (base) => Array.isArray(base) ? Math.max(...base) : null;
+export const getBase = (base) => {
+	const result = [];
 
-export const getDefenceBaseIndex = (base) => Array.isArray(base) ? Math.min(...base) : null;
+	if (Array.isArray(base)) {	// [0, 1]
+		for (let baseIndex = 0; baseIndex < base.length; base++) {
+			result.push([...bases[baseIndex]]);
+		}
+	} else if (typeof base === 'number') {	// 0
+		result.push([...bases[base]]);
+	} else if (base === "COM") {	
+		const COM = Object.values(base).find(COM === true);
+		const COMbase = COM.base;
+		getBase(COMbase);
+	} else {	// "PLAYER_ONE"
+
+	}
+	return result;	// ["seedOne", "seedTwo", "seedThree", "seedFour"]
+}
+
+export const getCOM = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === true && bases[item].base.length !==0);	// ["PLAYER_TWO"]
+
+// Get opponents
+export const getOpp = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === false && bases[item].base.length !== 0);	// ["PLAYER_ONE"]
+
+export const getAttackBaseIndex = (base) => Array.isArray(base) ? Math.max(...base) : null;	// Choose 1 from [0, 1] or return null
+
+export const getDefenceBaseIndex = (base) => Array.isArray(base) ? Math.min(...base) : null;	// Choose 0 from [0, 1] or return null
 
 export const getAttackBase = (base) => {
 	const attackBaseIndex = getAttackBaseIndex(base);
@@ -464,18 +469,25 @@ export const getDefenceBase = (base) => {
 	return defenceBase;
 }
 
-export const getCOM = () => Object.values(baseSettings).find(COM === true);
-
-export const getCOMopponents = () => Object.keys(bases).filter(item => bases[item].COM === false && bases[item].base.length !== 0);	// ["PLAYER_ONE"]
-
 export const getCOMBaseIndex = () => {
-	const COM = getCOM;
-	return COM.base;
+	const COM = getCOM();
+	return bases[COM].base;
+}
+
+export const getOppBaseIndex = () => {
+	const opp = getOpp();
+	return bases[opp].base;
 }
 
 export const getCOMAttackBase = () => {
 	const COMBaseIndex = getCOMBaseIndex();
 	const attackBase = getAttackBase(COMBaseIndex);
+	return attackBase;
+}
+
+export const getOppAttackBase = () => {
+	const OppBaseIndex = getOppBaseIndex();
+	const attackBase = getAttackBase(OppBaseIndex);
 	return attackBase;
 }
 
@@ -485,14 +497,25 @@ export const getCOMDefenceBase = () => {
 	return defenceBase;
 }
 
+export const getOppDefenceBase = () => {
+	const OppBaseIndex = getOppBaseIndex();
+	const defenceBase = getDefenceBase(OppBaseIndex);
+	return defenceBase;
+}
+
 export const getCOMBase = () => [...getCOMAttackBase(), ...getCOMDefenceBase()];
+
+export const getOppBase = () => [...getOppAttackBase(), ...getOppDefenceBase()];
 
 export const getCOMBaseActive = () => {
 	const COMBase = getCOMBase();
 	return COMBase.filter((cell) => cell !== null);
 }
 
-
+export const getOppBaseActive = () => {
+	const COMBase = getOppBase();
+	return COMBase.filter((cell) => cell!== null);
+}
 
 export const getCOMBaseActiveCount = () => {
 	const COMBaseActive = getCOMBaseActive();
