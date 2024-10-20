@@ -463,8 +463,8 @@ export const getAttackBaseIndex = (base) => Array.isArray(base) ? Math.max(...ba
 export const getDefenceBaseIndex = (base) => Array.isArray(base) ? Math.min(...base) : null;	// Choose 0 from [0, 1] or return null
 
 export const getBaseIndex = (player="COM") => {
-	const player = getPlayer(player);
-	return bases[player].base;
+	const selectedPlayer = getPlayer(player);
+	return bases[selectedPlayer].base;
 }
 
 export const getBaseActive = (player="COM") => {
@@ -473,7 +473,7 @@ export const getBaseActive = (player="COM") => {
 }
 
 export const getBaseActiveCount = (player="COM") => {
-	const baseActive = getCOMBaseActive(player);
+	const baseActive = getBaseActive(player);
 	return baseActive.length;
 }
 
@@ -594,7 +594,7 @@ export const calcThreatLevel = (dice) => {
 
 	// Ensure no active COM seed can cross opponent base with minimum single die value
 	if (COMActiveSeeds) {
-		const COMIndex = getCOMBaseIndex();
+		const COMIndex = getBaseIndex("COM");
 		const COMAttackBase = getAttackBase(COMIndex);
 		const crossedMin = COMActiveSeeds.filter(({absCell}) => absCell + minDie > baseStartPositions[COMAttackBase]);
 

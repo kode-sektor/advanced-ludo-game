@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { bases } from '../settings.js'
-import { getCOMBaseIndex, getAttackBase, getAttackBaseIndex, isUnderSiege } from '../functions.js'
+import { getBaseIndex, getAttackBase, getAttackBaseIndex, isUnderSiege } from '../functions.js'
 
 import { seeds } from "../../data/seeds.js";
 import Seed from './Seed/Seed.js';
@@ -14,13 +14,13 @@ export default class Camp extends Component {
 
 	isCOMBase = () => {
 		const id = this.props.id;	// 1
-		const COMbase = getCOMBaseIndex();	// [1, 2]
+		const COMbase = getBaseIndex("COM");	// [1, 2]
 		return COMbase.includes(id);
 	}
 
 	isCOMAttackBaseSieged = () => {
 		if (this.isCOMBase()) {
-			const COMBaseIndex = getCOMBaseIndex();	// [1, 2]
+			const COMBaseIndex = getBaseIndex("COM");	// [1, 2]
 			let attackBaseIndex = getAttackBaseIndex(COMBaseIndex);
 
 			isUnderSiege(attackBaseIndex);
