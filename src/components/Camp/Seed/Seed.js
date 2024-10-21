@@ -17,7 +17,16 @@ export default class RollBtn extends Component {
 		transitionDuration: 0,
 	}
 
-	activePlayers = getActivePlayers();	// 1, 2, 3 or 4
+	componentDidMount = () => {
+		const activePlayers = getActivePlayers();	// 1, 2, 3, or 4
+		// console.log(activePlayers);
+
+		this.setState({
+			...this.state,
+			activePlayers: activePlayers,
+			COMTurn: activePlayers.length - 1	// COM always the last; hence it's turn will be the last
+		})
+	}
 
 	componentDidUpdate = () => {
 		this.isMovable();
