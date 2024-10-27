@@ -292,7 +292,6 @@ export default class RollBtn extends Component {
 		}
 		randomRoll(0);
 	}
-
 	
 	render() {
 		// let diceVals = [this.props.dice[1].value, this.props.dice[2].value];

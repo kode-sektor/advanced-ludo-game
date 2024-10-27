@@ -112,6 +112,14 @@ export default class RollBtn extends Component {
 	}
 
 	endMove = () => {
+
+		// Determine COM's turn
+		/*
+			When player has rolled dice and used up all dice moves.
+			'Roll' Button -> Dice Assistant -> Token -> Delete Dice Assistant responsible for move (die.selected (true) && die.disabled(false -> true))
+		*/
+
+		// Remove dice assistant
 		const dice = this.props.dice;
 		let updateDiceAssistant = this.props.updateDiceAssistant;
 		
@@ -125,6 +133,18 @@ export default class RollBtn extends Component {
 			}
 			i++;
 		})
+
+		const remainingMove = dice[1].asst.length + dice[2].asst.length;
+		if (!remainingMove) {	// If no more dice assistants (dice moves all used up), its next player's turn
+			let turn = this.props.turn + 1;
+			if (turn === this.state.COMTurn) {
+				turn = 0;
+
+				// Simulate 'Roll' click
+				this.props.roll();
+			}
+		}
+
 		updateDiceAssistant(dice);
 	}
 
