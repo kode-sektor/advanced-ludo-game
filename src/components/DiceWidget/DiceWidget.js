@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
-import DiceCount from '../../components/DiceCount/DiceCount.js'
-import DiceValues from '../../components/DiceValues/DiceValues.js'
-import RollBtn from '../../components/RollBtn/RollBtn.js'
+import DiceCount from './DiceCount/DiceCount.js'
+import DiceValues from './DiceValues/DiceValues.js'
+import RollBtn from './RollBtn/RollBtn.js'
 
 
 export default class DiceWidget extends Component {

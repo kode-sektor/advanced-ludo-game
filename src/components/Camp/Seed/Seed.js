@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 
 import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../../data/constants.js"
-import { seeds } from "../../../data/seeds.js";
+import { seeds } from "../../../data/seeds.js"
 import { TOTAL_CELLS } from '../../../data/constants.js'
 import { calcMoveDistance, canBreakAway, getRandomWithinRange, getActivePlayers, isActiveToken, checkSix } from '../../functions.js'
 import { settings } from '../../settings.js'
 
-
 export default class RollBtn extends Component {
+
+	constructor(props) {
+        super(props);
+		this.COMRollDice = this.COMRollDice.bind(this);
+    }
 
 	state = {
 		seeds: seeds,
@@ -31,6 +35,10 @@ export default class RollBtn extends Component {
 	componentDidUpdate = () => {
 		this.isMovable();
     }
+
+	COMRollDice = () => {
+		this.rollDice.current.click();
+	}
 
 	isMovable = () => {
 		let id = this.props.id;
@@ -135,6 +143,7 @@ export default class RollBtn extends Component {
 		})
 
 		const remainingMove = dice[1].asst.length + dice[2].asst.length;
+		console.log(remainingMove);
 		if (!remainingMove) {	// If no more dice assistants (dice moves all used up), its next player's turn
 			let turn = this.props.turn + 1;
 			if (turn === this.state.COMTurn) {
@@ -144,6 +153,8 @@ export default class RollBtn extends Component {
 				this.props.roll();
 			}
 		}
+
+		this.COMRollDice();
 
 		updateDiceAssistant(dice);
 	}

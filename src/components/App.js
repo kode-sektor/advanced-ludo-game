@@ -1,20 +1,21 @@
-import React, { Component } from "react";
+import React, { Component } from "react"
 
-import "./App.css";
+import "./App.css"
 import { settings } from './settings.js'
-import { seeds } from "../data/seeds.js";
+import { seeds } from "../data/seeds.js"
 
 import Dice from '../components/Dice/Dice.js'
 import Camp from '../components/Camp/Camp.js'
 import OutpostLane from '../components/OutpostLane/OutpostLane.js'
 import Exit from '../components/Exit/Exit.js'
-import DiceWidget from "./DiceWidget/DiceWidget.js";
+import DiceWidget from "./DiceWidget/DiceWidget.js"
 import { getRandomWithinRange, calcMoveDistance } from './functions.js'
 
 export default class App extends Component {
 
-	constructor() {
-        super();
+	constructor(props) {
+        super(props);
+		this.rollDice = React.createRef();
     }
 
 	state = {

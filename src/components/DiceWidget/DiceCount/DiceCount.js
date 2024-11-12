@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSolid, faDice } from '@fortawesome/free-solid-svg-icons';
-import { calcMoveDistance } from '../functions.js';
+import { calcMoveDistance } from '../../functions.js';
 
 
 export default class RollBtn extends Component {
