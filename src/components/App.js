@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, {useRef, forwardRef, Component } from "react"
 
 import "./App.css"
 import { settings } from './settings.js'
@@ -11,10 +11,10 @@ import Exit from '../components/Exit/Exit.js'
 import DiceWidget from "./DiceWidget/DiceWidget.js"
 import { getRandomWithinRange, calcMoveDistance } from './functions.js'
 
-export default class App extends Component {
+export default class App extends React.PureComponent {
 
-	constructor(props) {
-        super(props);
+	constructor() {
+        super();
 		this.rollDice = React.createRef();
     }
 
@@ -50,7 +50,7 @@ export default class App extends Component {
 	}
 
 	setDiceAssistant = (diceObj) => {
-		console.log(diceObj)
+		// console.log(diceObj)
 		this.setState({
 			...this.state,
 			dice: {
@@ -93,28 +93,28 @@ export default class App extends Component {
 
 	turn = () => getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0, 
 	
-	// updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
-	// 	console.log(id, diceVal, coordinates, cellPath, duration);
-	// 	/*
-	// 		Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
-	// 		New dice value will add to previous seed position for each seed while taking care of error that may
-	// 		arise from addition with null
-	// 	*/
-	// 	this.setState({
-	// 		...this.state,
-	// 		seeds: {
-	// 			...this.state.seeds,
-	// 			[`${id}`]: {
-	// 				...this.state.seeds[`${id}`],
-	// 				coordinates: [{ x: coordinates.x, y: coordinates.y }],
-	// 				cell: this.state.seeds[`${id}`].cell === null ? diceVal : this.state.seeds[`${id}`].cell + diceVal
-	// 			}
-	// 		},
-	// 		activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
-	// 		inMotion: true,    // higher z-index when seed is in motion
-	// 		transitionDuration : duration 
-	// 	})
-	// }
+	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
+		console.log(id, diceVal, coordinates, cellPath, duration);
+		/*
+			Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
+			New dice value will add to previous seed position for each seed while taking care of error that may
+			arise from addition with null
+		*/
+		this.setState({
+			...this.state,
+			seeds: {
+				...this.state.seeds,
+				[`${id}`]: {
+					...this.state.seeds[`${id}`],
+					coordinates: [{ x: coordinates.x, y: coordinates.y }],
+					cell: this.state.seeds[`${id}`].cell === null ? diceVal : this.state.seeds[`${id}`].cell + diceVal
+				}
+			},
+			activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
+			inMotion: true,    // higher z-index when seed is in motion
+			transitionDuration : duration 
+		})
+	}
 
 	render() {
 		let state = this.state;
@@ -132,6 +132,7 @@ export default class App extends Component {
 					setDiceAssistant={this.setDiceAssistant}
 					updateDieAssistant={this.updateDieAssistant}
 					moveDistance={calcMoveDistance(this.state.dice)}
+					rollDice={this.rollDice}
 				/>
 				<section className="board">
 					<section className="ludo">
@@ -149,6 +150,7 @@ export default class App extends Component {
 								seeds={seeds}
 								updatePosition={updatePosition}
 								updateDiceAssistant={updateDiceAssistant}
+								rollDice={this.rollDice}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -171,6 +173,7 @@ export default class App extends Component {
 								seeds={seeds}
 								updatePosition={updatePosition}
 								updateDiceAssistant={updateDiceAssistant}
+								rollDice={this.rollDice}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -193,6 +196,7 @@ export default class App extends Component {
 								seeds={seeds}
 								updatePosition={updatePosition}
 								updateDiceAssistant={updateDiceAssistant}
+								rollDice={this.rollDice}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -215,6 +219,7 @@ export default class App extends Component {
 								seeds={seeds}
 								updatePosition={updatePosition}
 								updateDiceAssistant={updateDiceAssistant}
+								rollDice={this.rollDice}
 							/>
 							<Exit 
 								base={"home-four"}
@@ -235,3 +240,5 @@ export default class App extends Component {
 		);
 	}
 }
+
+

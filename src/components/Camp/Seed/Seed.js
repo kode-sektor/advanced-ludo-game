@@ -6,12 +6,7 @@ import { TOTAL_CELLS } from '../../../data/constants.js'
 import { calcMoveDistance, canBreakAway, getRandomWithinRange, getActivePlayers, isActiveToken, checkSix } from '../../functions.js'
 import { settings } from '../../settings.js'
 
-export default class RollBtn extends Component {
-
-	constructor(props) {
-        super(props);
-		this.COMRollDice = this.COMRollDice.bind(this);
-    }
+export default class Seed extends Component {
 
 	state = {
 		seeds: seeds,
@@ -37,7 +32,7 @@ export default class RollBtn extends Component {
     }
 
 	COMRollDice = () => {
-		this.rollDice.current.click();
+		// this.rollDice.current.click();
 	}
 
 	isMovable = () => {
@@ -150,7 +145,10 @@ export default class RollBtn extends Component {
 				turn = 0;
 
 				// Simulate 'Roll' click
-				this.props.roll();
+				alert("hoorah");
+				console.log(this.props);
+				console.log(this.props.rollDice);
+				this.props.rollDice.current.click();
 			}
 		}
 
@@ -339,6 +337,7 @@ export default class RollBtn extends Component {
 					logic that runs on the last loop. 
 					For this reason, a setTimeout() must be set in this else case too.
 				*/
+				
 				setTimeout(() => {
 					this.endMove();
 					this.setState({
@@ -357,7 +356,7 @@ export default class RollBtn extends Component {
 		const { inMotion, coords, move, dur, id } = this.props;
 		const seeds = this.state.seeds;
 
-		// console.log(this.props);
+		console.log(this.props);
 		return (
 			<button 
 				disabled={!this.state.movable}

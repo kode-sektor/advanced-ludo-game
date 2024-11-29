@@ -24,7 +24,6 @@ export default class Camp extends Component {
 			let attackBaseIndex = getAttackBaseIndex(COMBaseIndex);
 
 			isUnderSiege(attackBaseIndex);
-
 		}
 	}
 
@@ -51,6 +50,7 @@ export default class Camp extends Component {
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
+							rollDice={this.props.rollDice}
 						/>
 					</div>
 					<div className="cell">
@@ -67,6 +67,7 @@ export default class Camp extends Component {
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
+							rollDice={this.props.rollDice}
 						/>
 					</div>
 					<div className="cell">
@@ -83,6 +84,7 @@ export default class Camp extends Component {
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
+							rollDice={this.props.rollDice}
 						/>
 					</div>
 					<div className="cell">
@@ -99,6 +101,7 @@ export default class Camp extends Component {
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
+							rollDice={this.props.rollDice}
 						/>
 					</div>
 				</section>
