@@ -1,5 +1,7 @@
 
 let defaultSettings = {};
+let player_bases = {};
+const userSettings = {};
 
 export const players = ["PLAYER_ONE", "PLAYER_TWO", "PLAYER_THREE", "PLAYER_FOUR"];
 
@@ -20,6 +22,13 @@ export const bases = {
 		base: [],
 		COM: false
 	}
+}
+
+player_bases = {
+	PLAYER_ONE: {},
+	PLAYER_TWO: {},
+	PLAYER_THREE: {},
+	PLAYER_FOUR: {}
 }
 
 defaultSettings = {
@@ -61,7 +70,7 @@ defaultSettings = {
 	}
 }
 
-const userSettings = {};
+export default player_bases;
 
 export const settings = {
 	...defaultSettings, ...userSettings

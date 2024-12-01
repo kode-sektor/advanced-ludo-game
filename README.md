@@ -166,6 +166,15 @@ DISABLING SELECTED DICE
 SETTINGS
 <img src="/public/images/settings.jpg">
 
+Multiple active COM tokens while opponent tokens are camped
+<img src="/public/images/3-max-COM-active-tokens-opp-camped.jpg">
+
+COMBINING DICE AND TOKENS
+<img src="/public/images/permutating-dice-and-tokens-1.jpg">
+<img src="/public/images/permutating-dice-and-tokens-2.jpg">
+<img src="/public/images/permutating-dice-and-tokens-3.jpg">
+<img src="/public/images/permutating-dice-and-tokens-4.jpg">	
+
 
 - Developer: Code-Sector (Ibiyemi Olagoke Kayode)
 - Technology: HTML5, CSS3, React

@@ -1,19 +1,21 @@
-import React, { Component } from "react";
+import React, {useRef, forwardRef, Component } from "react"
 
-import "./App.css";
-import { seeds } from "../data/seeds.js";
+import "./App.css"
+import { settings } from './settings.js'
+import { seeds } from "../data/seeds.js"
 
 import Dice from '../components/Dice/Dice.js'
 import Camp from '../components/Camp/Camp.js'
 import OutpostLane from '../components/OutpostLane/OutpostLane.js'
 import Exit from '../components/Exit/Exit.js'
 import DiceWidget from "./DiceWidget/DiceWidget.js";
-import { getRandomWithinRange } from './functions.js'
+import { getRandomWithinRange } from '../../functions.js'
 
-export default class App extends Component {
+export default class App extends React.PureComponent {
 
 	constructor() {
         super();
+		this.rollDice = React.createRef();
     }
 
 	state = {
@@ -32,7 +34,9 @@ export default class App extends Component {
 				rollDuration: 0
 			}
 		},
-		doubleSix: false
+		doubleSix: false,
+		absSix: false,
+		turn: settings.turn	// 0
 	}
 
 	setDice = (diceObj) => {
@@ -46,7 +50,7 @@ export default class App extends Component {
 	}
 
 	setDiceAssistant = (diceObj) => {
-		console.log(diceObj)
+		// console.log(diceObj)
 		this.setState({
 			...this.state,
 			dice: {
@@ -62,9 +66,9 @@ export default class App extends Component {
 		})
 	}
 
-	updateDiceAssistant = (die, index, diceObj) => {
+	updateDieAssistant = (die, index, diceObj) => {
 		let asst = this.state.dice[die].asst;    // [{selected: false, disabled: false, value: 6}...]
-		let currAsst = asst[index];    // [{selected: false, disabled: false, value: 6}]
+		let currAsst = asst[index];    // Choose the single die (1 or 2) [{selected: false, disabled: false, value: 6}]
 		let obj = { ...currAsst, ...diceObj };    // [{selected: false, disabled: true, value: 6}]
 		asst[index] = obj;
 
@@ -80,11 +84,15 @@ export default class App extends Component {
 		})
 	}
 
-	turn = () => getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0, 1
+	turn = getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0, 1
 
 	render() {
 		let state = this.state;
-		let dice = this.state.dice;
+		let dice = state.dice;
+		let turn = state.turn;
+		let seeds = state.seeds;
+		let updatePosition = this.updatePosition;
+		let updateDiceAssistant = this.updateDiceAssistant;
 
 		return (
 			<div className="board-game">
@@ -92,7 +100,9 @@ export default class App extends Component {
 					dice={dice}
 					setDice={this.setDice}
 					setDiceAssistant={this.setDiceAssistant}
-					updateDiceAssistant={this.updateDiceAssistant}
+					updateDieAssistant={this.updateDieAssistant}
+					moveDistance={calcMoveDistance(this.state.dice)}
+					rollDice={this.rollDice}
 				/>
 				<section className="board">
 					<section className="ludo">
@@ -104,7 +114,7 @@ export default class App extends Component {
 							<Camp 
 								base={["One", "Two", "Three", "Four"]}
 								dice={dice}
-								turn={this.turn}
+								turn={turn}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -121,7 +131,7 @@ export default class App extends Component {
 							<Camp 
 								base={["Five", "Six", "Seven", "Eight"]}
 								dice={dice}
-								turn={this.turn}
+								turn={turn}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -138,7 +148,7 @@ export default class App extends Component {
 							<Camp 
 								base={["Nine", "Ten", "Eleven", "Twelve"]}
 								dice={dice}
-								turn={this.turn}
+								turn={turn}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -155,7 +165,7 @@ export default class App extends Component {
 							<Camp 
 								base={["Thirteen", "Fourteen", "Fifteen", "Sixteen"]}
 								dice={dice}
-								turn={this.turn}
+								turn={turn}
 							/>
 							<Exit 
 								base={"home-four"}
@@ -167,7 +177,7 @@ export default class App extends Component {
 						{/* The centre cellbox of the Ludo */}
 						<section className="home"></section>
 						<Dice
-							dice={this.state.dice}
+							dice={dice}
 						/>
 					</section>
 				</section>
@@ -176,3 +186,5 @@ export default class App extends Component {
 		);
 	}
 }
+
+

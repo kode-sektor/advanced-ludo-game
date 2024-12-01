@@ -1,3 +1,5 @@
+import { seeds } from "./seeds.js";
+
 export const TURNING_POINTS = [0, 4, 10, 12, 17, 23, 25, 30, 36, 38, 43, 49, 50];
 export const DIAGONALS = [4, 17, 30, 43];
 export const CELL_SPEED = 0.2;
@@ -37,3 +39,22 @@ export const bases = [
 	["seedNine", "seedTen", "seedEleven", "seedTwelve"],
 	["seedThirteen", "seedFourteen", "seedFifteen", "seedSixteen"]
 ];
+
+export const baseStartPositions = [1, 13, 26, 39];
+
+export const baseOne = {
+	seeds: bases[0],
+	absStartCell: 0
+}
+export const baseTwo = {
+	seeds: bases[1],
+	absStartCell: 13
+}
+export const baseThree = {
+	seeds: bases[2],
+	absStartCell: 26
+}
+export const baseFour = {
+	seeds: bases[3],
+	absStartCell: 39
+}

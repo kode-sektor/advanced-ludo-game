@@ -38,6 +38,10 @@ export default class RollBtn extends Component {
 	}
 
 	roll = () => {
+<<<<<<< HEAD
+=======
+		alert("Rolled");
+>>>>>>> afd3a9ee0eccd6ac088accafafcbbd3253e4aedd
 
 		this.setState({ disabled: true });
 		
@@ -304,7 +308,11 @@ export default class RollBtn extends Component {
 			<section className="roll-button-container">
 				<div id="roll-button" className="roll-button">
 					<button disabled={this.state.disabled} className="roll" role="button" onClick={this.roll}
+<<<<<<< HEAD
 						ref={this.props.rollDice.current}>
+=======
+						ref={this.props.rollDice}>
+>>>>>>> afd3a9ee0eccd6ac088accafafcbbd3253e4aedd
 						{this.state.doubleSix ? "Roll Again" : "Roll"}
 					</button>
 				</div>

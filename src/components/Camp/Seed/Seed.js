@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 
 import { TURNING_POINTS, DIAGONALS, CELL_SPEED, CARDINAL_POINTS } from "../../../data/constants.js"
-import { seeds } from "../../../data/seeds.js";
+import { seeds } from "../../../data/seeds.js"
 import { TOTAL_CELLS } from '../../../data/constants.js'
-import { calcMoveDistance, canBreakAway, getRandomWithinRange, getActivePlayers, isActiveToken } from '../../functions.js'
+import { calcMoveDistance, canBreakAway, getRandomWithinRange, getActivePlayers, isActiveToken, checkSix } from '../../functions.js'
 import { settings } from '../../settings.js'
 
-
-export default class RollBtn extends Component {
+export default class Seed extends Component {
 
 	state = {
 		seeds: seeds,
@@ -17,17 +16,31 @@ export default class RollBtn extends Component {
 		transitionDuration: 0,
 	}
 
-	activePlayers = getActivePlayers();
+	componentDidMount = () => {
+		const activePlayers = getActivePlayers();	// 1, 2, 3, or 4
+		// console.log(activePlayers);
+
+		this.setState({
+			...this.state,
+			activePlayers: activePlayers,
+			COMTurn: activePlayers.length - 1	// COM always the last; hence it's turn will be the last
+		})
+	}
 
 	componentDidUpdate = () => {
 		this.isMovable();
     }
+
+	COMRollDice = () => {
+		// this.rollDice.current.click();
+	}
 
 	isMovable = () => {
 		let id = this.props.id;
 		let cell = seeds[id].cell;
 
 		let moveDistance = calcMoveDistance(this.props.dice);
+		console.log(this.props);
 		
 		// Disable all tokens if any token is in motion
 		if (this.state.inMotion) {
@@ -37,6 +50,7 @@ export default class RollBtn extends Component {
 					movable: false
 				})
 			}	
+			console.log('inMotion');
 		// Disable token if no '6' or if prospective move takes token out beyond portal
 		} else if (!canBreakAway(cell, this.props.dice) || (cell + moveDistance > TOTAL_CELLS + 6)) {
 			if (this.state.movable === true) {
@@ -45,9 +59,10 @@ export default class RollBtn extends Component {
 					movable: false
 				})
 			}	
+			console.log('!canBreakAway');
 		// Prevent selection of opponent token
 		} else {
-			console.log(this.turn);
+			console.log('can break away');
 			if (isActiveToken(id, this.props.turn)) {	// 
 				if (this.state.movable === false) {
 					this.setState({
@@ -58,101 +73,191 @@ export default class RollBtn extends Component {
 			}
 		}
 	}
-
+ 
 	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
+		// console.log(id, diceVal, coordinates, cellPath, duration);
 		/*
 			Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
 			New dice value will add to previous seed position for each seed while taking care of error that may
 			arise from addition with null
 		*/
-		this.setState({
-			...this.state,
-			seeds: {
-				...this.state.seeds,
-				[`${id}`]: {
-					...this.state.seeds[`${id}`],
-					coordinates: [{ x: coordinates.x, y: coordinates.y }],
-					cell: this.state.seeds[`${id}`].cell === null ? diceVal : this.state.seeds[`${id}`].cell + diceVal
-				}
-			},
-			activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
-			inMotion: true,    // higher z-index when seed is in motion
-			transitionDuration : duration 
+		if (this.state.seeds[`${id}`].cell === null) {
+			this.setState({
+				...this.state,
+				seeds: {
+					...this.state.seeds,
+					[`${id}`]: {
+						...this.state.seeds[`${id}`],
+						coordinates: [{ x: coordinates.x, y: coordinates.y }],
+						cell: cellPath === 1 ? 0 : null
+					}
+				},
+				activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
+				inMotion: true,    // higher z-index when seed is in motion
+				transitionDuration : duration 
+			})
+		} else {
+			this.setState({
+				...this.state,
+				seeds: {
+					...this.state.seeds,
+					[`${id}`]: {
+						...this.state.seeds[`${id}`],
+						coordinates: [{ x: coordinates.x, y: coordinates.y }],
+						cell: this.state.seeds[`${id}`].cell + diceVal
+					}
+				},
+				activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
+				inMotion: true,    // higher z-index when seed is in motion
+				transitionDuration : duration 
+			})
+		}
+	}
+
+	endMove = () => {
+
+		// Determine COM's turn
+		/*
+			When player has rolled dice and used up all dice moves.
+			'Roll' Button -> Dice Assistant -> Token -> Delete Dice Assistant responsible for move (die.selected (true) && die.disabled(false -> true))
+		*/
+
+		// Remove dice assistant
+		const dice = this.props.dice;
+		let updateDiceAssistant = this.props.updateDiceAssistant;
+		
+		let i = 0;
+		Object.values(dice[1].asst).forEach((die1) => {	// die1 => {selected: true, disabled: false, value: 6}
+			if (die1.selected === true && die1.disabled === false) {
+				dice[1].asst.splice(i, 1);	// Delete dice entry
+			}
+			if (dice[2].asst[i].selected === true && dice[2].asst[i].disabled === false) {
+				dice[2].asst.splice(i, 1);	// Delete dice entry
+			}
+			i++;
 		})
+
+		const remainingMove = dice[1].asst.length + dice[2].asst.length;
+		console.log(remainingMove);
+		if (!remainingMove) {	// If no more dice assistants (dice moves all used up), its next player's turn
+			let turn = this.props.turn + 1;
+			if (turn === this.state.COMTurn) {
+				turn = 0;
+
+				// Simulate 'Roll' click
+				alert("hoorah");
+				console.log(this.props);
+				console.log(this.props.rollDice);
+				this.props.rollDice.current.click();
+			}
+		}
+
+		this.COMRollDice();
+
+		updateDiceAssistant(dice);
 	}
 
 	fragmentMove = (id, startCell, finalCell, cellPaths) => {
-		// let startCell = cell;	// 0
-		// let finalCell = cell + dieVal;	// 15 
-		// console.log("startCell: ", startCell);	console.log ("finalCell: ", finalCell)
+
+		// console.log(startCell);
+		// console.log(finalCell);
+
 		finalCell > 56 && (finalCell = 56);
 		let filteredCellRange = [];
 
 		((filterCellRange) => {
 			filteredCellRange = TURNING_POINTS.filter((item) => {
-				return item > startCell && item < finalCell;
+				return item >= startCell && item < finalCell;
 			}); // [4, 10, 12]
-		})()
-		// console.log(filteredCellRange);
+		})();
+		filteredCellRange.unshift(startCell);
 
-		for (let i = 0; i <= filteredCellRange.length; i++) {
-			if (i === 0) {
-				cellPaths.unshift(startCell);	// 0
-				cellPaths.push(filteredCellRange[i] - startCell);	// 4 - 0
-			} else if (i === filteredCellRange.length) {	
-				cellPaths.push(finalCell - filteredCellRange[i - 1]);	// 15 - 12
-			} else {
-				// console.log(filteredCellRange[i])
-				// console.log(filteredCellRange[i - 1])
-				// console.log(filteredCellRange[i] - filteredCellRange[i - 1])
-				cellPaths.push(filteredCellRange[i] - filteredCellRange[i - 1]);	// 4 - 0, 10 - 4, 12 - 10
+		if (filteredCellRange && filteredCellRange.length) {
+			for (let i = 0; i <= filteredCellRange.length; i++) {
+				if (i === 0) {
+					cellPaths.unshift(0);	// 0
+				} else if (i === filteredCellRange.length) {	
+					cellPaths.push(finalCell - filteredCellRange[i - 1]);	// 15 - 12
+				} 
+				else {
+					cellPaths.push(filteredCellRange[i] - filteredCellRange[i - 1]);	// 4 - 0, 10 - 4, 12 - 10
+				}
 			}
 		}
+		console.log(cellPaths);
 		return cellPaths;	// [0, 4, 6, 2, 3]
 	}
 
 	move = (e) => {
 		const diceValues = [];
-		this.randomDice(diceValues);
-		const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
 		const cellPaths = [];
 		const id = (e.currentTarget.id);
-		// Only fragment total moves when not breaking away
-		this.state.seeds[`${id}`].cell !== null && (
-			this.fragmentMove(id, this.state.seeds[`${id}`].cell, this.state.seeds[`${id}`].cell + totalDiceValues, cellPaths)
-		);
+
+		// this.randomDice(diceValues);
+		// const totalDiceValues = diceValues.reduce((diceVals, dieVal) => diceVals + dieVal, 0);
+
+		// Imagine dice values of [6, 6, 2, 3]. To move seed from camped position, a '6' is needed.
+		// This code accounts for that '6' to break away seed
+		let moveDistance = this.props.moveDistance;
+		let startCell = 0;
+
+		if (this.state.seeds[`${id}`].cell === null) {
+			moveDistance = moveDistance - 6;
+			startCell = 0;	// null cannot work with numbers. Make it 0 if null
+			this.fragmentMove(id, startCell, startCell + moveDistance, cellPaths);
+
+			// The move to push inactive token to 6-0 spot requires 2 moves (loops). The 3rd loop, thus, would have
+			// skipped the first 2 null elements. This ensures the array shapeshifts correctly if the token to be
+			// moved is a camped one.
+			cellPaths.unshift(null, null);
+		} else {
+			startCell = this.state.seeds[`${id}`].cell;
+			this.fragmentMove(id, startCell, startCell + moveDistance, cellPaths);
+		}
+		console.log(cellPaths);
 
 		let cellPath = 0;	// counter for modified setTimeout loop
 		let timer = 0;
 		let fragmentedMove = 0;
+		let combinedPaths = 0
 
-		const initMove = (breakout) => {
+		const initMove = (breakaway) => {
 			/*
 				Determine direction of travel. For diagonal travel, x & y must update in state at the same time
 
-				Breakout loop has to be looped over by 1 length less than array length because
+				breakaway loop has to be looped over by 1 length less than array length because
 				the method in the loop works with both the current and next loop
-				However for a simple breakout move, loop across array length which is 2 [{x: 3}, {y: 3}]
+				However for a simple breakaway move, loop across array length which is 2 [{x: 3}, {y: 3}]
 				
 			*/
-				const popCellPaths = (breakout === null) ? 0 : 1;
-			let combinedPaths = (breakout === null) ? 2 : (cellPaths.length - 1)	
+			// console.log(breakaway);
+				
+			// If seed is just breaking away (and breakaway leads token to move beyond starting (6 - 0) position) 
+			// or seed has broken away (already active), loop fragmentedMove times
+			if ((breakaway === null && cellPath > 1) || (breakaway !== null)) {
+				combinedPaths = cellPaths.length - 1;
+			} else if (breakaway === null) {	// If seed is yet to breakaway and will land on 6-0 position, loop 2ce to move seed to 6-0 position
+				combinedPaths = 2;
+			}
+
 			if (cellPath < combinedPaths) {
+				
 				setTimeout(() => {
 					let x = "";
 					let y = "";
 
-					if (breakout === null) {	// Tackle breakout move on '6' roll
+					// if (breakaway === null) {	// Tackle breakaway move on '6' roll
+					if (cellPaths[cellPath] === null) {
 						if (cellPath === 0) {	// First move seed on y-axis
 							x = 0;
-							y = this.state.seeds[`${id}`].breakout[0].y;
+							y = this.state.seeds[`${id}`].breakaway[0].y;
 							timer = y * CELL_SPEED;
 						} else {	// then move on x-axis to 6-0 position
-							x = this.state.seeds[`${id}`].breakout[0].x;
-							y = this.state.seeds[`${id}`].breakout[0].y;
+							x = this.state.seeds[`${id}`].breakaway[0].x;
+							y = this.state.seeds[`${id}`].breakaway[0].y;
 							timer = x * CELL_SPEED;
 						}
-						console.log(timer);
+						// console.log(timer);
 					} else {
 						fragmentedMove = cellPaths[cellPath + 1];
 						// console.log("fragmentedMove :", fragmentedMove);
@@ -186,7 +291,8 @@ export default class RollBtn extends Component {
 								which are 4, 17, 30 and 43 and the cell paths array 
 								console.log("this.state.seeds[`${id}`].cell + fragmentedMove :", this.state.seeds[`${id}`].cell + fragmentedMove);
 							*/
-							if (cellPaths[cellPath + 1] > 1) {	// Next fragmented move must exist to set diagonal
+							// console.log(cellPaths, cellPath)
+							if (cellPaths[cellPath + 1] > 0) {	// Next fragmented move must exist to set diagonal
 								cellPaths[cellPath + 1] = cellPaths[cellPath + 1] - 1	// Subtract 1 from next 
 								if (this.state.seeds[`${id}`].cell === 4) {
 									cellPaths.splice(cellPath + 1, 0, [-1, -1]);	// [4, 6, 2, 3] to [4, [1,1], 5, 2, 3]
@@ -231,7 +337,9 @@ export default class RollBtn extends Component {
 					logic that runs on the last loop. 
 					For this reason, a setTimeout() must be set in this else case too.
 				*/
+				
 				setTimeout(() => {
+					this.endMove();
 					this.setState({
 						...this.state,
 						inMotion : false
@@ -244,18 +352,22 @@ export default class RollBtn extends Component {
 
 	render() {
 
+		// console.log(this.state);
 		const { inMotion, coords, move, dur, id } = this.props;
+		const seeds = this.state.seeds;
 
+		console.log(this.props);
 		return (
-			<button disabled={!this.state.movable}
+			<button 
+				disabled={!this.state.movable}
 				className={inMotion ? "moving seed" : "seed"}
 				id={id}
 				style={{
-					transform: `translate(${coords.x * 6.6}vh, 
-							${coords.y * 6.6}vh)`,
+					transform: `translate(${seeds[id].coordinates[0].x * 6.6}vh, 
+							${seeds[id].coordinates[0].y * 6.6}vh)`,
 					transitionDuration: this.state.transitionDuration + "s"
 				}}
-				onClick={(e) => {move(e)}}
+				onClick={(e) => {this.move(e)}}
 				>
 			</button>
 		)
