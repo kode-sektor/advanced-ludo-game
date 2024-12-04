@@ -138,23 +138,27 @@ export default class Seed extends Component {
 		})
 
 		const remainingMove = dice[1].asst.length + dice[2].asst.length;
-		console.log(remainingMove);
-		if (!remainingMove) {	// If no more dice assistants (dice moves all used up), its next player's turn
+
+		if (remainingMove) {	// If dice assistants remain, player retains turn, hence update assistant & enable 'Roll' button
+			updateDiceAssistant(dice, true);
+		} else {	// If no more dice assistants (dice moves all used up), its next player's turn: increment turn
 			let turn = this.props.turn + 1;
-			if (turn === this.state.COMTurn) {
+			
+			if (turn === this.state.COMTurn) {	// Now check if next player is COM, reset turn because COM is set to last turn
 				turn = 0;
 
-				// Simulate 'Roll' click
-				alert("hoorah");
-				console.log(this.props);
-				console.log(this.props.rollDice);
-				this.props.rollDice.current.click();
+				// Update dice assistant & Simulate 'Roll' click for next player
+				updateDiceAssistant(dice, true, turn);
+
+				// Then simulate click
+				setTimeout(() => {
+					this.props.rollDice.current.click("COM");
+				}, getRandomWithinRange(0.5, 1.5) * 1000);
+			} else {
+				// Update dice assistant & Simulate 'Roll' click for next player
+				updateDiceAssistant(dice, true, turn);
 			}
 		}
-
-		this.COMRollDice();
-
-		updateDiceAssistant(dice);
 	}
 
 	fragmentMove = (id, startCell, finalCell, cellPaths) => {
@@ -339,11 +343,11 @@ export default class Seed extends Component {
 				*/
 				
 				setTimeout(() => {
-					this.endMove();
 					this.setState({
 						...this.state,
 						inMotion : false
-					})
+					});
+					this.endMove();
 				}, timer * 1000)
 			}
 		}

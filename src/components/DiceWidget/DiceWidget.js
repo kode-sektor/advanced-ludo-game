@@ -7,9 +7,13 @@ import RollBtn from './RollBtn/RollBtn.js'
 
 export default class DiceWidget extends Component {
 
+	constructor(props) {
+        super(props);
+    }
+
 	render() {
 
-		const { dice, setDice, updateDieAssistant, setDiceAssistant, moveDistance, rollDice } = this.props;
+		const { dice, setDice, updateDieAssistant, setDiceAssistant, moveDistance, rollButton, toggleRollButton } = this.props;
 
 		return (
 			<section className="dice-widget">
@@ -27,7 +31,9 @@ export default class DiceWidget extends Component {
 					setDice={setDice}
 					setDiceAssistant={setDiceAssistant}
 					dice={dice}
-					rollDice={rollDice}
+					rollDice={this.props.rollDice}
+					rollButton={rollButton}
+					toggleRollButton={toggleRollButton}
 				/>
 			</section>
 		)

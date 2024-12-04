@@ -8,10 +8,10 @@ import Dice from '../components/Dice/Dice.js'
 import Camp from '../components/Camp/Camp.js'
 import OutpostLane from '../components/OutpostLane/OutpostLane.js'
 import Exit from '../components/Exit/Exit.js'
-import DiceWidget from "./DiceWidget/DiceWidget.js";
-import { getRandomWithinRange } from '../../functions.js'
+import DiceWidget from "./DiceWidget/DiceWidget.js"
+import { getRandomWithinRange, calcMoveDistance } from './functions.js'
 
-export default class App extends React.PureComponent {
+export default class App extends Component {
 
 	constructor() {
         super();
@@ -36,7 +36,8 @@ export default class App extends React.PureComponent {
 		},
 		doubleSix: false,
 		absSix: false,
-		turn: settings.turn	// 0
+		turn: settings.turn,	// 0
+		rollButton: false,
 	}
 
 	setDice = (diceObj) => {
@@ -84,7 +85,42 @@ export default class App extends React.PureComponent {
 		})
 	}
 
-	turn = getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0, 1
+	
+	updateDiceAssistant = (dice, rollButton, turn) => {
+		this.setState({
+			...this.state,
+			dice: dice,
+			rollButton: rollButton ? !this.state.rollButton : this.state.rollButton 
+		})
+
+	}
+
+	turn = () => getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0
+
+	toggleRollButton = () => this.setState({...this.state, rollButton: !this.state.rollButton});
+	
+	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
+		console.log(id, diceVal, coordinates, cellPath, duration);
+		/*
+			Null set as initial position for each seed, not 0, because 0 represents the 6-0 starting position
+			New dice value will add to previous seed position for each seed while taking care of error that may
+			arise from addition with null
+		*/
+		this.setState({
+			...this.state,
+			seeds: {
+				...this.state.seeds,
+				[`${id}`]: {
+					...this.state.seeds[`${id}`],
+					coordinates: [{ x: coordinates.x, y: coordinates.y }],
+					cell: this.state.seeds[`${id}`].cell === null ? diceVal : this.state.seeds[`${id}`].cell + diceVal
+				}
+			},
+			activeId: cellPath === 0 ? id : this.state.activeId,	// select seed to move
+			inMotion: true,    // higher z-index when seed is in motion
+			transitionDuration : duration 
+		})
+	}
 
 	render() {
 		let state = this.state;
@@ -103,6 +139,8 @@ export default class App extends React.PureComponent {
 					updateDieAssistant={this.updateDieAssistant}
 					moveDistance={calcMoveDistance(this.state.dice)}
 					rollDice={this.rollDice}
+					rollButton={this.state.rollButton}
+					toggleRollButton={this.toggleRollButton}
 				/>
 				<section className="board">
 					<section className="ludo">
@@ -115,6 +153,13 @@ export default class App extends React.PureComponent {
 								base={["One", "Two", "Three", "Four"]}
 								dice={dice}
 								turn={turn}
+								id={0}
+								moveDistance={calcMoveDistance(this.state.dice)}
+								seeds={seeds}
+								updatePosition={updatePosition}
+								updateDiceAssistant={updateDiceAssistant}
+								rollDice={this.rollDice}
+								toggleRollButton={this.toggleRollButton}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -132,6 +177,13 @@ export default class App extends React.PureComponent {
 								base={["Five", "Six", "Seven", "Eight"]}
 								dice={dice}
 								turn={turn}
+								id={1}
+								moveDistance={calcMoveDistance(this.state.dice)}
+								seeds={seeds}
+								updatePosition={updatePosition}
+								updateDiceAssistant={updateDiceAssistant}
+								rollDice={this.rollDice}
+								toggleRollButton={this.toggleRollButton}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -149,6 +201,13 @@ export default class App extends React.PureComponent {
 								base={["Nine", "Ten", "Eleven", "Twelve"]}
 								dice={dice}
 								turn={turn}
+								id={2}
+								moveDistance={calcMoveDistance(this.state.dice)}
+								seeds={seeds}
+								updatePosition={updatePosition}
+								updateDiceAssistant={updateDiceAssistant}
+								rollDice={this.rollDice}
+								toggleRollButton={this.toggleRollButton}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -166,6 +225,13 @@ export default class App extends React.PureComponent {
 								base={["Thirteen", "Fourteen", "Fifteen", "Sixteen"]}
 								dice={dice}
 								turn={turn}
+								id={3}
+								moveDistance={calcMoveDistance(this.state.dice)}
+								seeds={seeds}
+								updatePosition={updatePosition}
+								updateDiceAssistant={updateDiceAssistant}
+								rollDice={this.rollDice}
+								toggleRollButton={this.toggleRollButton}
 							/>
 							<Exit 
 								base={"home-four"}
@@ -186,5 +252,3 @@ export default class App extends React.PureComponent {
 		);
 	}
 }
-
-

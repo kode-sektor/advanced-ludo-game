@@ -396,38 +396,38 @@ export const isActiveToken = (token, turn) => {
 	return false;
 }
 
-export const isUnderSiege = (base) => {
-	let currBase = Array.isArray(base) ? base : Array(base);	// [0, 1]
-	const siegeZone = [];
+// export const isUnderSiege = (base) => {
+// 	let currBase = Array.isArray(base) ? base : Array(base);	// [0, 1]
+// 	const siegeZone = [];
 
-	for (let baseItem = 0; baseItem < currBase.length - 1; baseItem++) {
-		let currBaseItem = getBase(currBase[baseItem]);	// ["seedOne", "seedTwo", "seedThree", "seedFour"]
-		let currBasePoint = baseStartPositions[currBase[baseItem]];	// baseStartPositions[0], baseStartPositions[1]
-		currBasePoint = (currBasePoint === 1) ? 52 : currBasePoint;
+// 	for (let baseItem = 0; baseItem < currBase.length - 1; baseItem++) {
+// 		let currBaseItem = getBase(currBase[baseItem]);	// ["seedOne", "seedTwo", "seedThree", "seedFour"]
+// 		let currBasePoint = baseStartPositions[currBase[baseItem]];	// baseStartPositions[0], baseStartPositions[1]
+// 		currBasePoint = (currBasePoint === 1) ? 52 : currBasePoint;
 
-		// Generate the 6 cells behind portal starting cell
-		for (let currStartCell = currBasePoint; currBasePoint < currBasePoint - 6; currBasePoint--) {
-			siegeZone.push(currStartCell);	// 12, 11, 10, 9, 8, 7
-		}
-	}
+// 		// Generate the 6 cells behind portal starting cell
+// 		for (let currStartCell = currBasePoint; currBasePoint < currBasePoint - 6; currBasePoint--) {
+// 			siegeZone.push(currStartCell);	// 12, 11, 10, 9, 8, 7
+// 		}
+// 	}
 	
-	const opp = getOpp();
-	let oppBase = opp.base;	// [0, 1]
-	oppBase = Array.isArray(oppBase) ? oppBase : [oppBase];
-	let oppBaseCollection = [];
+// 	const opp = getOpp();
+// 	let oppBase = opp.base;	// [0, 1]
+// 	oppBase = Array.isArray(oppBase) ? oppBase : [oppBase];
+// 	let oppBaseCollection = [];
 
-	for (let oppBaseEntry = 0; base < oppBase.length; oppBaseEntry++) {
-		let oppBaseItem = bases[oppBase[oppBaseEntry]];	// bases[0, 1][0] => ["seedOne", "seedTwo", "seedThree", "seedFour"]
+// 	for (let oppBaseEntry = 0; base < oppBase.length; oppBaseEntry++) {
+// 		let oppBaseItem = bases[oppBase[oppBaseEntry]];	// bases[0, 1][0] => ["seedOne", "seedTwo", "seedThree", "seedFour"]
 
-		// Filter base from all tokens
-		const filteredOppInSiege = Object.fromEntries(Object.entries(seeds).filter(([k]) => oppBaseItem.includes(k)));
+// 		// Filter base from all tokens
+// 		const filteredOppInSiege = Object.fromEntries(Object.entries(seeds).filter(([k]) => oppBaseItem.includes(k)));
 
-		// Filter seeds whose values fall in range within 6 cells of COM starting cell
-		const oppInSiege = Object.values(filteredOppInSiege).filter(siegeZone.includes(cell));
-		oppBaseCollection.push(...oppInSiege);
-	}
-	return oppBaseCollection;
-}
+// 		// Filter seeds whose values fall in range within 6 cells of COM starting cell
+// 		const oppInSiege = Object.values(filteredOppInSiege).filter(siegeZone.includes(cell));
+// 		oppBaseCollection.push(...oppInSiege);
+// 	}
+// 	return oppBaseCollection;
+// }
 
 export const getBase = (base) => {
 	const result = [];
@@ -453,10 +453,10 @@ export const getPlayer = (player="COM") => {
 	return Object.keys(baseSettings).filter(item => baseSettings[item].COM === COM && bases[item].base.length !==0);
 }
 
-// export const getCOM = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === true && bases[item].base.length !==0);	// ["PLAYER_TWO"]
+export const getCOM = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === true && bases[item].base.length !==0);	// ["PLAYER_TWO"]
 
-// // Get opponents
-// export const getOpp = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === false && bases[item].base.length !== 0);	// ["PLAYER_ONE"]
+// Get opponents
+export const getOpp = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === false && bases[item].base.length !== 0);	// ["PLAYER_ONE"]
 
 export const getAttackBaseIndex = (base) => Array.isArray(base) ? Math.max(...base) : null;	// Choose 1 from [0, 1] or return null
 
@@ -552,25 +552,25 @@ export const getBases = (player="COM") => {
 // export const getOppBase = () => [...getOppAttackBase(), ...getOppDefenceBase()];
 
 
-export const calcWeightedOdds = (limits, series=2) => {
-	const {
-		upperOddsLimit,
-		lowerOddsLimit,
-		upperAbsCellLimit,
-		lowerAbsCellLimit,
-		absCellDiff
-	} = limits;
-	const weightedOdds = [];
-	const odds = lowerOddsLimit + ((absCellDiff - lowerAbsCellLimit) / (upperAbsCellLimit - lowerAbsCellLimit)) * (upperOddsLimit - lowerOddsLimit);
-	const remOdds = 100 - odds;
-	const factor = odds > remOdds ? Math.round((odds / remOdds), 2) : Math.round((remOdds / odds), 2);
-	const progression = getProgression(factor, series);
+// export const calcWeightedOdds = (limits, series=2) => {
+// 	const {
+// 		upperOddsLimit,
+// 		lowerOddsLimit,
+// 		upperAbsCellLimit,
+// 		lowerAbsCellLimit,
+// 		absCellDiff
+// 	} = limits;
+// 	const weightedOdds = [];
+// 	const odds = lowerOddsLimit + ((absCellDiff - lowerAbsCellLimit) / (upperAbsCellLimit - lowerAbsCellLimit)) * (upperOddsLimit - lowerOddsLimit);
+// 	const remOdds = 100 - odds;
+// 	const factor = odds > remOdds ? Math.round((odds / remOdds), 2) : Math.round((remOdds / odds), 2);
+// 	const progression = getProgression(factor, series);
 
-	for (let count = 0; count < series; count++) {
-		weightedOdds.push(progression * factor ^ count);
-	}
-	return weightedOdds;
-}
+// 	for (let count = 0; count < series; count++) {
+// 		weightedOdds.push(progression * factor ^ count);
+// 	}
+// 	return weightedOdds;
+// }
 
 export const getProgression = (factor, series) => {
 	let sum = 0;
@@ -580,71 +580,71 @@ export const getProgression = (factor, series) => {
 	return 100 / sum;	// 7.692
 }
 
-export const calcThreatLevel = (dice) => {
-	const COMBase = getBase(COM);
+// export const calcThreatLevel = (dice) => {
+// 	const COMBase = getBase(COM);
 
-	// Get minimum die value 
-	const minDieOne = Math.min(...(dice[1].asst).map(value => item.value));
-	const minDieTwo = Math.min(...(dice[2].asst).map(value => item.value));
+// 	// Get minimum die value 
+// 	const minDieOne = Math.min(...(dice[1].asst).map(value => item.value));
+// 	const minDieTwo = Math.min(...(dice[2].asst).map(value => item.value));
 
-	const minDie = Math.min(minDieOne, minDieTwo)
+// 	const minDie = Math.min(minDieOne, minDieTwo)
 
-	// Check for active COM seeds
-	const COMActiveSeeds = COMBase.filter((active === true));
+// 	// Check for active COM seeds
+// 	const COMActiveSeeds = COMBase.filter((active === true));
 
-	// Ensure no active COM seed can cross opponent base with minimum single die value
-	if (COMActiveSeeds) {
-		const COMIndex = getBaseIndex("COM");
-		const COMAttackBase = getAttackBase(COMIndex);
-		const crossedMin = COMActiveSeeds.filter(({absCell}) => absCell + minDie > baseStartPositions[COMAttackBase]);
+// 	// Ensure no active COM seed can cross opponent base with minimum single die value
+// 	if (COMActiveSeeds) {
+// 		const COMIndex = getBaseIndex("COM");
+// 		const COMAttackBase = getAttackBase(COMIndex);
+// 		const crossedMin = COMActiveSeeds.filter(({absCell}) => absCell + minDie > baseStartPositions[COMAttackBase]);
 
-		if (!crossedMin) {
-			// Filter 3 most advanced seeds
-			let seedSelection = crossed.slice().sort((seedA, seedB) => seedA.absCell - seedB.absCell).slice(0, 3);
-			let firstSeed = seedSelection[0];
-			let secondSeed = seedSelection[1] ? seedSelection[1] : "";
-			let thirdSeed = seedSelection[2] ? seedSelection[2] : "";
+// 		if (!crossedMin) {
+// 			// Filter 3 most advanced seeds
+// 			let seedSelection = crossed.slice().sort((seedA, seedB) => seedA.absCell - seedB.absCell).slice(0, 3);
+// 			let firstSeed = seedSelection[0];
+// 			let secondSeed = seedSelection[1] ? seedSelection[1] : "";
+// 			let thirdSeed = seedSelection[2] ? seedSelection[2] : "";
 
-			let firstSeedID = firstSeed.id;
-			let secondSeedID = secondSeed.id;
-			let thirdSeedID = thirdSeed.id;
+// 			let firstSeedID = firstSeed.id;
+// 			let secondSeedID = secondSeed.id;
+// 			let thirdSeedID = thirdSeed.id;
 
-			// Next is to ensure that a combination of moves on the least possible dice values do not cross oppponent base
+// 			// Next is to ensure that a combination of moves on the least possible dice values do not cross oppponent base
 
-			if (secondSeed) {	
-				let upperOddsLimit = 0;
-				let lowerOddsLimit = 0;
-				let upperAbsCellLimit = 0;
-				let lowerAbsCellLimit = 0;
+// 			if (secondSeed) {	
+// 				let upperOddsLimit = 0;
+// 				let lowerOddsLimit = 0;
+// 				let upperAbsCellLimit = 0;
+// 				let lowerAbsCellLimit = 0;
 
-				// Right part of the illustration (13 is midpoint)
-				if ((firstSeed.absCell - secondSeed.absCell) < 13) {
-					upperOddsLimit = 25;
-					lowerOddsLimit = 0;
-					upperAbsCellLimit = 13;
-					lowerAbsCellLimit = -12;
-				} else {	// Left part of illustration
-					upperOddsLimit = 100;
-					lowerOddsLimit = 25;
-					upperAbsCellLimit = 25;
-					lowerAbsCellLimit = 13;
-				}
-				const absCellDiff = firstSeed.absCell - secondSeed.absCell;
-				const oddArgs = { upperOddsLimit, lowerOddsLimit, upperAbsCellLimit, lowerAbsCellLimit, absCellDiff };
-				const weightedOdds = calcWeightedOdds(oddArgs, thirdSeed ? 3 : 2);
-				const randomisedWeightedOdds = randomiseWeightedOdds(weightedOdds);
+// 				// Right part of the illustration (13 is midpoint)
+// 				if ((firstSeed.absCell - secondSeed.absCell) < 13) {
+// 					upperOddsLimit = 25;
+// 					lowerOddsLimit = 0;
+// 					upperAbsCellLimit = 13;
+// 					lowerAbsCellLimit = -12;
+// 				} else {	// Left part of illustration
+// 					upperOddsLimit = 100;
+// 					lowerOddsLimit = 25;
+// 					upperAbsCellLimit = 25;
+// 					lowerAbsCellLimit = 13;
+// 				}
+// 				const absCellDiff = firstSeed.absCell - secondSeed.absCell;
+// 				const oddArgs = { upperOddsLimit, lowerOddsLimit, upperAbsCellLimit, lowerAbsCellLimit, absCellDiff };
+// 				const weightedOdds = calcWeightedOdds(oddArgs, thirdSeed ? 3 : 2);
+// 				const randomisedWeightedOdds = randomiseWeightedOdds(weightedOdds);
 
-			} else {	// If only 1 token, allot all dice values to sole token
-				dice[1].asst.val.map((die, index) => {
-					moves.push({
-						firstSeedID: die.value,
-						firstSeedID: dice[2].asst.value
-					})
-				})
-			}
-		}
-	}
-}
+// 			} else {	// If only 1 token, allot all dice values to sole token
+// 				dice[1].asst.val.map((die, index) => {
+// 					moves.push({
+// 						firstSeedID: die.value,
+// 						firstSeedID: dice[2].asst.value
+// 					})
+// 				})
+// 			}
+// 		}
+// 	}
+// }
 const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffledOdds=[]) => {
 	if (weightedOdds) {
 		let randomOddsPcnt = getRandomWithinRange(0, totOddsPcnt);	// Get random value between 0 and 100
@@ -864,12 +864,12 @@ const filterMoves = (seeds, dice) => {
 	
 	// Loop across tokens & dice simultaneously (they have same length)
 
-	for (let seed = 0; seed < seeds.length, seed++;) {
+	for (let seed = 0; seed < seeds.length; seed++) {
 		let seedItem = seeds[seed];
 		let diceItems = dice[seed];
 
 		let dieItem = 0;
-		seedCellDistance = 0;
+		let seedCellDistance = 0;
 		
 		for (let diceItem = 0; diceItem < dice.length; diceItem++) {
 			dieItem += diceItems[diceItem];
@@ -894,8 +894,8 @@ const filterMoves = (seeds, dice) => {
 	return true;
 }
 
-export const calculateRisk = () => {
+// export const calculateRisk = () => {
 	
-	const COMActive = getCOMBaseActive();	// Get active COM tokens
+// 	const COMActive = getCOMBaseActive();	// Get active COM tokens
 
-}
+// }

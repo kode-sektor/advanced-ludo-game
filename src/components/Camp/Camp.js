@@ -18,19 +18,19 @@ export default class Camp extends Component {
 		return COMbase.includes(id);
 	}
 
-	isCOMAttackBaseSieged = () => {
-		if (this.isCOMBase()) {
-			const COMBaseIndex = getBaseIndex("COM");	// [1, 2]
-			let attackBaseIndex = getAttackBaseIndex(COMBaseIndex);
+	// isCOMAttackBaseSieged = () => {
+	// 	if (this.isCOMBase()) {
+	// 		const COMBaseIndex = getBaseIndex("COM");	// [1, 2]
+	// 		let attackBaseIndex = getAttackBaseIndex(COMBaseIndex);
 
-			isUnderSiege(attackBaseIndex);
-		}
-	}
+	// 		isUnderSiege(attackBaseIndex);
+	// 	}
+	// }
 
 
 	render() {
 
-		const { base, dice, turn, seeds, updatePosition, updateDiceAssistant } = this.props;
+		const { base, dice, turn, seeds, updatePosition, updateDiceAssistant, toggleRollButton } = this.props;
 		console.log(this.props);
 
 		return (
@@ -46,15 +46,12 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[0]}`}
 							dice={dice}
-<<<<<<< HEAD
-							turn={this.turn}
-=======
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
 							rollDice={this.props.rollDice}
->>>>>>> afd3a9ee0eccd6ac088accafafcbbd3253e4aedd
+							toggleRollButton={toggleRollButton}
 						/>
 					</div>
 					<div className="cell">
@@ -67,15 +64,12 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[1]}`}
 							dice={dice}
-<<<<<<< HEAD
-							turn={this.turn}
-=======
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
 							rollDice={this.props.rollDice}
->>>>>>> afd3a9ee0eccd6ac088accafafcbbd3253e4aedd
+							toggleRollButton={toggleRollButton}
 						/>
 					</div>
 					<div className="cell">
@@ -88,15 +82,12 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[2]}`}
 							dice={dice}
-<<<<<<< HEAD
-							turn={this.turn}
-=======
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
 							rollDice={this.props.rollDice}
->>>>>>> afd3a9ee0eccd6ac088accafafcbbd3253e4aedd
+							toggleRollButton={toggleRollButton}
 						/>
 					</div>
 					<div className="cell">
@@ -109,15 +100,12 @@ export default class Camp extends Component {
 							}
 							id={`seed${base[3]}`}
 							dice={dice}
-<<<<<<< HEAD
-							turn={this.turn}
-=======
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
 							rollDice={this.props.rollDice}
->>>>>>> afd3a9ee0eccd6ac088accafafcbbd3253e4aedd
+							toggleRollButton={toggleRollButton}
 						/>
 					</div>
 				</section>
