@@ -152,7 +152,7 @@ export default class Seed extends Component {
 
 				// Then simulate click
 				setTimeout(() => {
-					this.props.rollDice.current.click("COM");
+					this.props.rollButtonRef.current.click();
 				}, getRandomWithinRange(0.5, 1.5) * 1000);
 			} else {
 				// Update dice assistant & Simulate 'Roll' click for next player
@@ -357,7 +357,7 @@ export default class Seed extends Component {
 	render() {
 
 		// console.log(this.state);
-		const { inMotion, coords, move, dur, id } = this.props;
+		const { inMotion, coords, move, dur, id, seedRef } = this.props;
 		const seeds = this.state.seeds;
 
 		console.log(this.props);
@@ -366,6 +366,7 @@ export default class Seed extends Component {
 				disabled={!this.state.movable}
 				className={inMotion ? "moving seed" : "seed"}
 				id={id}
+				ref={seedRef}
 				style={{
 					transform: `translate(${seeds[id].coordinates[0].x * 6.6}vh, 
 							${seeds[id].coordinates[0].y * 6.6}vh)`,

@@ -39,7 +39,6 @@ export default class RollBtn extends React.Component {
 
 	roll = (player) => {
 
-		alert(player);
 		alert("Rolled");
 		
 		// this.setState({ disabled: true });
@@ -307,8 +306,8 @@ export default class RollBtn extends React.Component {
 		return (
 			<section className="roll-button-container">
 				<div id="roll-button" className="roll-button">
-					<button disabled={this.props.rollButton} className="roll" role="button" onClick={()=> this.roll("player")}
-						ref={this.props.rollDice}>
+					<button disabled={this.props.rollButton} className="roll" role="button" onClick={this.roll}
+						ref={this.props.rollButtonRef}>
 						{this.state.doubleSix ? "Roll Again" : "Roll"}
 					</button>
 				</div>

@@ -30,7 +30,7 @@ export default class Camp extends Component {
 
 	render() {
 
-		const { base, dice, turn, seeds, updatePosition, updateDiceAssistant, toggleRollButton } = this.props;
+		const { base, dice, turn, seeds, updatePosition, updateDiceAssistant, toggleRollButton, seedRef, rollButtonRef } = this.props;
 		console.log(this.props);
 
 		return (
@@ -45,12 +45,13 @@ export default class Camp extends Component {
 								}
 							}
 							id={`seed${base[0]}`}
+							seedRef={seedRef[0]}
 							dice={dice}
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
-							rollDice={this.props.rollDice}
+							rollButtonRef={rollButtonRef}
 							toggleRollButton={toggleRollButton}
 						/>
 					</div>
@@ -63,12 +64,13 @@ export default class Camp extends Component {
 								}
 							}
 							id={`seed${base[1]}`}
+							seedRef={seedRef[1]}
 							dice={dice}
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
-							rollDice={this.props.rollDice}
+							rollButtonRef={rollButtonRef}
 							toggleRollButton={toggleRollButton}
 						/>
 					</div>
@@ -81,12 +83,13 @@ export default class Camp extends Component {
 								}
 							}
 							id={`seed${base[2]}`}
+							seedRef={seedRef[2]}
 							dice={dice}
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
-							rollDice={this.props.rollDice}
+							rollButtonRef={rollButtonRef}
 							toggleRollButton={toggleRollButton}
 						/>
 					</div>
@@ -99,12 +102,13 @@ export default class Camp extends Component {
 								}
 							}
 							id={`seed${base[3]}`}
+							seedRef={seedRef[3]}
 							dice={dice}
 							turn={turn}
 							moveDistance={this.props.moveDistance}
 							updatePosition={updatePosition}
 							updateDiceAssistant={updateDiceAssistant}
-							rollDice={this.props.rollDice}
+							rollButtonRef={rollButtonRef}
 							toggleRollButton={toggleRollButton}
 						/>
 					</div>

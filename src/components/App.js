@@ -15,7 +15,23 @@ export default class App extends Component {
 
 	constructor() {
         super();
-		this.rollDice = React.createRef();
+		this.rollDice = React.createRef();	// Roll button
+		this.seedOne = React.createRef();	
+		this.seedTwo = React.createRef();
+		this.seedThree = React.createRef();
+		this.seedFour = React.createRef();
+		this.seedFive = React.createRef();
+		this.seedSix = React.createRef();
+		this.seedSeven = React.createRef();
+		this.seedEight = React.createRef();
+		this.seedNine = React.createRef();
+		this.seedTen = React.createRef();
+		this.seedEleven = React.createRef();
+		this.seedTwelve = React.createRef();
+		this.seedThirteen = React.createRef();
+		this.seedFourteen = React.createRef();
+		this.seedFifteen = React.createRef();
+		this.seedSixteen = React.createRef();
     }
 
 	state = {
@@ -85,7 +101,6 @@ export default class App extends Component {
 		})
 	}
 
-	
 	updateDiceAssistant = (dice, rollButton, turn) => {
 		this.setState({
 			...this.state,
@@ -138,7 +153,7 @@ export default class App extends Component {
 					setDiceAssistant={this.setDiceAssistant}
 					updateDieAssistant={this.updateDieAssistant}
 					moveDistance={calcMoveDistance(this.state.dice)}
-					rollDice={this.rollDice}
+					rollButtonRef={this.rollDice}
 					rollButton={this.state.rollButton}
 					toggleRollButton={this.toggleRollButton}
 				/>
@@ -158,8 +173,9 @@ export default class App extends Component {
 								seeds={seeds}
 								updatePosition={updatePosition}
 								updateDiceAssistant={updateDiceAssistant}
-								rollDice={this.rollDice}
+								rollButtonRef={this.rollDice}
 								toggleRollButton={this.toggleRollButton}
+								seedRef={[this.seedOne, this.seedTwo, this.seedThree, this.seedFour]}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -184,6 +200,7 @@ export default class App extends Component {
 								updateDiceAssistant={updateDiceAssistant}
 								rollDice={this.rollDice}
 								toggleRollButton={this.toggleRollButton}
+								seedRef={[this.seedFive, this.seedSix, this.seedSeven, this.seedEight]}
 							/>
 							<Exit 
 								base={"home-two"}
@@ -208,6 +225,7 @@ export default class App extends Component {
 								updateDiceAssistant={updateDiceAssistant}
 								rollDice={this.rollDice}
 								toggleRollButton={this.toggleRollButton}
+								seedRef={[this.seedNine, this.seedTen, this.seedEleven, this.seedTwelve]}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -232,6 +250,7 @@ export default class App extends Component {
 								updateDiceAssistant={updateDiceAssistant}
 								rollDice={this.rollDice}
 								toggleRollButton={this.toggleRollButton}
+								seedRef={[this.seedThirteen, this.seedFourteen, this.seedFifteen, this.seedSixteen]}
 							/>
 							<Exit 
 								base={"home-four"}
