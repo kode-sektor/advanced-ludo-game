@@ -32,6 +32,8 @@ export default class App extends Component {
 		this.seedFourteen = React.createRef();
 		this.seedFifteen = React.createRef();
 		this.seedSixteen = React.createRef();
+
+		this.diceRefs = React.createRef([]);
     }
 
 	state = {
@@ -156,6 +158,7 @@ export default class App extends Component {
 					rollButtonRef={this.rollDice}
 					rollButton={this.state.rollButton}
 					toggleRollButton={this.toggleRollButton}
+					diceRefs={this.diceRefs}
 				/>
 				<section className="board">
 					<section className="ludo">

@@ -283,7 +283,7 @@ export default class RollBtn extends React.Component {
 						asst: secondDieObj
 					}
 				}
-				setTimeout(() => {
+				setTimeout(() => {	// Die spin callback
 					// if (diceValues[0] === 6 && diceValues[1] === 6) {
 
 					// } else {
@@ -291,6 +291,11 @@ export default class RollBtn extends React.Component {
 					// }
 					this.props.setDiceAssistant(diceObj);
 					this.checkForDoubleSix(firstDieObj, secondDieObj);
+					
+					// Brief delay to trigger click on dice assistant (if COM)
+					setTimeout(() => {
+						
+					}, 1000);	// 1s for now
 				}, (diceData[1] && Array.isArray(diceData[1][diceData[1].length - 1])) ?
 					Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000 :
 					diceData[1][diceData[1].length - 1] * 1000

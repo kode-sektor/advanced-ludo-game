@@ -9,6 +9,7 @@ export default class DiceWidget extends Component {
 
 	constructor(props) {
         super(props);
+		
     }
 
 	render() {
