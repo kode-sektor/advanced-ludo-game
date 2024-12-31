@@ -58,6 +58,13 @@ export default class App extends Component {
 		rollButton: false,
 	}
 
+	// Get length of dice assistants on re-render in order to be able to deal 
+	// with dynamically adding refs
+	
+	componentDidUpdate = () => {
+		this.diceRefs = this.diceRefs.current.slice(0, this.state.dice[1].asst);
+	}
+
 	setDice = (diceObj) => {
 		this.setState({
 			...this.state,
