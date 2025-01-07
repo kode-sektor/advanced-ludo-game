@@ -14,7 +14,14 @@ export default class DiceWidget extends Component {
 
 	render() {
 
-		const { dice, setDice, updateDieAssistant, setDiceAssistant, moveDistance, rollButtonRef, rollButton, toggleRollButton } = this.props;
+		const { 
+			dice, setDice, updateDieAssistant, 
+			setDiceAssistant, moveDistance, rollButtonRef, 
+			rollButton, toggleRollButton, diceRef 
+		} = this.props;
+
+		console.log(diceRef);
+		console.log(diceRef[0]);
 
 		return (
 			<section className="dice-widget">
@@ -26,6 +33,7 @@ export default class DiceWidget extends Component {
 					<DiceValues
 						dice={dice}
 						updateDieAssistant={updateDieAssistant}
+						diceRef={diceRef}
 					/>
 				</section>
 				<RollBtn
@@ -35,6 +43,7 @@ export default class DiceWidget extends Component {
 					rollButton={rollButton}
 					rollButtonRef={rollButtonRef}
 					toggleRollButton={toggleRollButton}
+					diceRef={diceRef}
 				/>
 			</section>
 		)

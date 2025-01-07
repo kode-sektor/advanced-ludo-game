@@ -32,8 +32,7 @@ export default class App extends Component {
 		this.seedFourteen = React.createRef();
 		this.seedFifteen = React.createRef();
 		this.seedSixteen = React.createRef();
-
-		this.diceRefs = React.createRef([]);
+		this.diceRef = [];	// Ref buttons
     }
 
 	state = {
@@ -56,13 +55,18 @@ export default class App extends Component {
 		absSix: false,
 		turn: settings.turn,	// 0
 		rollButton: false,
+		dicceRef : [React.createRef(), React.createRef()]
 	}
 
 	// Get length of dice assistants on re-render in order to be able to deal 
 	// with dynamically adding refs
-	
-	componentDidUpdate = () => {
-		this.diceRefs = this.diceRefs.current.slice(0, this.state.dice[1].asst);
+
+	getDiceRef = () => {
+		const dice1 = this.state.dice[1].asst;
+		const dice2 = this.state.dice[2].asst;
+
+		this.diceRef = [...dice1, ...dice2].map(() => React.createRef());
+		return this.diceRef;
 	}
 
 	setDice = (diceObj) => {
@@ -165,7 +169,8 @@ export default class App extends Component {
 					rollButtonRef={this.rollDice}
 					rollButton={this.state.rollButton}
 					toggleRollButton={this.toggleRollButton}
-					diceRefs={this.diceRefs}
+					// diceRefs={[this.diceAsst1, this.diceAsst2]}
+					diceRef={this.getDiceRef()}
 				/>
 				<section className="board">
 					<section className="ludo">

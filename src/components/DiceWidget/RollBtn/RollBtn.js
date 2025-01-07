@@ -294,7 +294,7 @@ export default class RollBtn extends React.Component {
 					
 					// Brief delay to trigger click on dice assistant (if COM)
 					setTimeout(() => {
-						
+						console.log(this.props.diceRefs);
 					}, 1000);	// 1s for now
 				}, (diceData[1] && Array.isArray(diceData[1][diceData[1].length - 1])) ?
 					Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000 :
