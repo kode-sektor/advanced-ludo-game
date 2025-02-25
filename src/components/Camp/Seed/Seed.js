@@ -150,10 +150,23 @@ export default class Seed extends Component {
 				// Update dice assistant & Simulate 'Roll' click for next player
 				updateDiceAssistant(dice, true, turn);
 
+				let COMTurnDelay = getRandomWithinRange(0.5, 1.5) * 1000;
 				// Then simulate click
 				setTimeout(() => {
+
+					alert("COM turn")
 					this.props.rollButtonRef.current.click();
-				}, getRandomWithinRange(0.5, 1.5) * 1000);
+
+					// Check if dice state values are not null (means dice have been rolled)
+					// and not 6, 6, then enable click on dice assistant
+					this.props.dice && 
+						(this.props.dice[1].asst[this.props.dice[1].asst.length - 1] &&
+						this.props.dice[2].asst[this.props.dice[2].asst.length - 1]) && (
+							setTimeout(() => {
+
+							}, COMTurnDelay + getRandomWithinRange(0.5, 1.5) * 1000)
+						)				
+				}, COMTurnDelay);
 			} else {
 				// Update dice assistant & Simulate 'Roll' click for next player
 				updateDiceAssistant(dice, true, turn);
