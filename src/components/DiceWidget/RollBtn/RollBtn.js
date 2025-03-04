@@ -19,24 +19,6 @@ export default class RollBtn extends React.Component {
 		return diceVals;
 	}
 
-	checkForDoubleSix = (firstDieObj, secondDieObj) => {
-		let diceVals = [firstDieObj.value, secondDieObj.value];
-		if (diceVals[0]) {
-			if (diceVals[0] === 6 && diceVals[1] === 6) {
-				this.setState({
-					...this.state,
-					disabled: false,
-					doubleSix: true
-				})
-			} else {
-				this.setState({
-					...this.state,
-					disabled: true,
-				})
-			}
-		}
-	}
-
 	roll = (player) => {
 
 		alert("Rolled");
@@ -290,7 +272,6 @@ export default class RollBtn extends React.Component {
 						
 					// }
 					this.props.setDiceAssistant(diceObj);
-					this.checkForDoubleSix(firstDieObj, secondDieObj);
 					
 					// Brief delay to trigger click on dice assistant (if COM)
 					setTimeout(() => {
@@ -311,9 +292,9 @@ export default class RollBtn extends React.Component {
 		return (
 			<section className="roll-button-container">
 				<div id="roll-button" className="roll-button">
-					<button disabled={this.props.rollButton} className="roll" role="button" onClick={this.roll}
+					<button disabled={this.props.tossed() && !this.props.doubleSix} className="roll" role="button" onClick={this.roll}
 						ref={this.props.rollButtonRef}>
-						{this.state.doubleSix ? "Roll Again" : "Roll"}
+						{this.props.doubleSix ? "Roll Again" : "Roll"}
 					</button>
 				</div>
 			</section>

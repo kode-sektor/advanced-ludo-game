@@ -19,26 +19,36 @@ export const getRandomWithinRange = (min, max, int = false) => {
 
 export const randomDice = (diceValues = []) => {
 	let cycle = getRandomWithinRange(0, 1, true);
-	for (let dicethrow = 0; dicethrow < 2; dicethrow++) {
-		if (SIX_THROW) {	// Guarantee a six on either die
-			if (dicethrow === cycle) {
-				diceValues.push(6);
-			} else {
-				diceValues.push(getRandomWithinRange(1, 6, true));	// Between 1 and 6
-			}
-		} else {
-			diceValues.push(getRandomWithinRange(1, 6, true));	// Between 1 and 6
-			// Check for double-six (You will do this for the Ludo-bot)
-			/* if (dicethrow === 1) {
-				if (diceValues.slice(-2)[0] === 6 && diceValues.slice(-2)[1] === 6) {
-					this.randomDice(diceValues)
-				}
-			} */
-		}
-	}
+	// for (let dicethrow = 0; dicethrow < 2; dicethrow++) {
+	// 	if (SIX_THROW) {	// Guarantee a six on either die
+	// 		if (dicethrow === cycle) {
+	// 			diceValues.push(6);
+	// 		} else {
+	// 			diceValues.push(getRandomWithinRange(1, 6, true));	// Between 1 and 6
+	// 		}
+	// 	} else {
+	// 		diceValues.push(getRandomWithinRange(1, 6, true));	// Between 1 and 6
+	// 		// Check for double-six (You will do this for the Ludo-bot)
+	// 		/* if (dicethrow === 1) {
+	// 			if (diceValues.slice(-2)[0] === 6 && diceValues.slice(-2)[1] === 6) {
+	// 				this.randomDice(diceValues)
+	// 			}
+	// 		} */
+	// 	}
+	// }
 	diceValues.push(6, 5);
 	return diceValues;
 }
+
+// export const isDoubleSix = (dice) => {
+
+// 	// Check if the last 2 dice asst values are double six
+// 	const die1 = dice[1].asst[dice[1].asst.length - 1];
+//     const die2 = dice[2].asst[dice[2].asst.length - 1];
+
+//     console.log(`Rolled: ${die1}, ${die2}`);
+//     return die1 === 6 && die2 === 6;
+// }
 
 export const getDiceCycle = () => {
 	const cycleSteps = [];

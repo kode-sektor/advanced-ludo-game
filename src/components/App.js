@@ -80,6 +80,9 @@ export default class App extends Component {
 	}
 
 	setDiceAssistant = (diceObj) => {
+
+		let die1 = diceObj[1].asst.value;
+		let die2 = diceObj[2].asst.value;
 		// console.log(diceObj)
 		this.setState({
 			...this.state,
@@ -92,7 +95,8 @@ export default class App extends Component {
 					...this.state.dice[2],
 					asst : [...this.state.dice[2].asst, diceObj[2].asst]
 				}
-			}
+			},
+			doubleSix : die1 === 6 && die2 === 6
 		})
 	}
 
@@ -120,13 +124,8 @@ export default class App extends Component {
 			dice: dice,
 			rollButton: rollButton ? !this.state.rollButton : this.state.rollButton 
 		})
-
 	}
 
-	turn = () => getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0
-
-	toggleRollButton = () => this.setState({...this.state, rollButton: !this.state.rollButton});
-	
 	updatePosition = (id, diceVal, coordinates, cellPath, duration) => {
 		console.log(id, diceVal, coordinates, cellPath, duration);
 		/*
@@ -150,13 +149,22 @@ export default class App extends Component {
 		})
 	}
 
+	tossed = () => this.state.dice[1].asst.length;
+
+	turn = () => getRandomWithinRange(0, (this.activePlayers.length - 1), true);	// 0
+
+	toggleRollButton = () => this.setState({...this.state, rollButton: !this.state.rollButton});
+	
+
 	render() {
 		let state = this.state;
 		let dice = state.dice;
 		let turn = state.turn;
 		let seeds = state.seeds;
+		let doubleSix = state.doubleSix;
 		let updatePosition = this.updatePosition;
 		let updateDiceAssistant = this.updateDiceAssistant;
+		let updateDoubleSix = this.updateDoubleSix;
 
 		return (
 			<div className="board-game">
@@ -171,6 +179,8 @@ export default class App extends Component {
 					toggleRollButton={this.toggleRollButton}
 					// diceRefs={[this.diceAsst1, this.diceAsst2]}
 					diceRef={this.getDiceRef()}
+					doubleSix={state.doubleSix}
+					tossed={this.tossed}
 				/>
 				<section className="board">
 					<section className="ludo">
@@ -191,6 +201,7 @@ export default class App extends Component {
 								rollButtonRef={this.rollDice}
 								toggleRollButton={this.toggleRollButton}
 								seedRef={[this.seedOne, this.seedTwo, this.seedThree, this.seedFour]}
+								doubleSix={doubleSix}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -216,6 +227,8 @@ export default class App extends Component {
 								rollDice={this.rollDice}
 								toggleRollButton={this.toggleRollButton}
 								seedRef={[this.seedFive, this.seedSix, this.seedSeven, this.seedEight]}
+								doubleSix={doubleSix}
+
 							/>
 							<Exit 
 								base={"home-two"}
@@ -241,6 +254,7 @@ export default class App extends Component {
 								rollDice={this.rollDice}
 								toggleRollButton={this.toggleRollButton}
 								seedRef={[this.seedNine, this.seedTen, this.seedEleven, this.seedTwelve]}
+								doubleSix={doubleSix}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -266,6 +280,8 @@ export default class App extends Component {
 								rollDice={this.rollDice}
 								toggleRollButton={this.toggleRollButton}
 								seedRef={[this.seedThirteen, this.seedFourteen, this.seedFifteen, this.seedSixteen]}
+								doubleSix={doubleSix}
+
 							/>
 							<Exit 
 								base={"home-four"}

@@ -30,7 +30,7 @@ export default class Camp extends Component {
 
 	render() {
 
-		const { base, dice, turn, seeds, updatePosition, updateDiceAssistant, toggleRollButton, seedRef, rollButtonRef } = this.props;
+		const { base, dice, turn, seeds, updatePosition, doubleSix, updateDiceAssistant, toggleRollButton, seedRef, rollButtonRef } = this.props;
 		console.log(this.props);
 
 		return (
@@ -53,6 +53,7 @@ export default class Camp extends Component {
 							updateDiceAssistant={updateDiceAssistant}
 							rollButtonRef={rollButtonRef}
 							toggleRollButton={toggleRollButton}
+							doubleSix={doubleSix}
 						/>
 					</div>
 					<div className="cell">
@@ -72,6 +73,7 @@ export default class Camp extends Component {
 							updateDiceAssistant={updateDiceAssistant}
 							rollButtonRef={rollButtonRef}
 							toggleRollButton={toggleRollButton}
+							doubleSix={doubleSix}
 						/>
 					</div>
 					<div className="cell">
@@ -91,6 +93,7 @@ export default class Camp extends Component {
 							updateDiceAssistant={updateDiceAssistant}
 							rollButtonRef={rollButtonRef}
 							toggleRollButton={toggleRollButton}
+							doubleSix={doubleSix}
 						/>
 					</div>
 					<div className="cell">
@@ -110,6 +113,7 @@ export default class Camp extends Component {
 							updateDiceAssistant={updateDiceAssistant}
 							rollButtonRef={rollButtonRef}
 							toggleRollButton={toggleRollButton}
+							doubleSix={doubleSix}
 						/>
 					</div>
 				</section>
