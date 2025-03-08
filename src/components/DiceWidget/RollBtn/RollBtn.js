@@ -266,6 +266,8 @@ export default class RollBtn extends React.Component {
 					}
 				}
 				setTimeout(() => {	// Die spin callback
+
+					// If double 6 and is COM's turn, re-trigger 'Roll'
 					// if (diceValues[0] === 6 && diceValues[1] === 6) {
 
 					// } else {
@@ -273,10 +275,27 @@ export default class RollBtn extends React.Component {
 					// }
 					this.props.setDiceAssistant(diceObj);
 					
-					// Brief delay to trigger click on dice assistant (if COM)
-					setTimeout(() => {
-						console.log(this.props.diceRefs);
-					}, 1000);	// 1s for now
+					// Brief delay to (if COM):
+					// 1. If double six, click 'Roll button'
+					// 2. Otherwise, cycle trigger click on dice assistant 
+
+					const turn = this.props.turn;
+					const COMTurn = this.props.COMTurn;
+
+					if (turn === COMTurn) {
+						const dice = this.props.dice;
+						setTimeout(() => {
+							// console.log(this.props.diceRef);
+							if (this.props.doubleSix) {
+								this.props.rollButtonRef.current.click();			
+							} else {
+								const totalDice = [...dice[1].asst, ...dice[2].asst];
+								const currDieAssistant = totalDice.find(item => item.value === )
+							}
+							
+	
+						}, 1000);	// 1s for now
+					}
 				}, (diceData[1] && Array.isArray(diceData[1][diceData[1].length - 1])) ?
 					Math.max(diceData[1][diceData[1].length][0], diceData[1][diceData[1].length][1]) * 1000 :
 					diceData[1][diceData[1].length - 1] * 1000

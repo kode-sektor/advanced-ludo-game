@@ -46,6 +46,8 @@ export default class DiceWidget extends Component {
 					diceRef={diceRef}
 					doubleSix={doubleSix}
 					tossed={tossed}
+					turn={turn}
+					COMTurn={COMTurn}
 				/>
 			</section>
 		)

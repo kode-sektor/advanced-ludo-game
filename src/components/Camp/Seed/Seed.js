@@ -16,16 +16,16 @@ export default class Seed extends Component {
 		transitionDuration: 0,
 	}
 
-	componentDidMount = () => {
-		const activePlayers = getActivePlayers();	// 1, 2, 3, or 4
-		// console.log(activePlayers);
+	// componentDidMount = () => {
+	// 	const activePlayers = getActivePlayers();	// 1, 2, 3, or 4
+	// 	// console.log(activePlayers);
 
-		this.setState({
-			...this.state,
-			activePlayers: activePlayers,
-			COMTurn: activePlayers.length - 1	// COM always the last; hence it's turn will be the last
-		})
-	}
+	// 	this.setState({
+	// 		...this.state,
+	// 		activePlayers: activePlayers,
+	// 		COMTurn: activePlayers.length - 1	// COM always the last; hence it's turn will be the last
+	// 	})
+	// }
 
 	componentDidUpdate = () => {
 		this.isMovable();
@@ -133,6 +133,8 @@ export default class Seed extends Component {
 
 		// Remove dice assistant
 		const dice = this.props.dice;
+		const COMTurn = this.props.COMTurn;
+
 		let updateDiceAssistant = this.props.updateDiceAssistant;
 		
 		let i = 0;
@@ -153,7 +155,7 @@ export default class Seed extends Component {
 		} else {	// If no more dice assistants (dice moves all used up), its next player's turn: increment turn
 			let turn = this.props.turn + 1;
 			
-			if (turn === this.state.COMTurn) {	// Now check if next player is COM, reset turn because COM is set to last turn
+			if (turn === COMTurn) {	// Now check if next player is COM, reset turn because COM is set to last turn
 				turn = 0;
 
 				// Update dice assistant & Simulate 'Roll' click for next player

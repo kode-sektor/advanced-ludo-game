@@ -58,13 +58,26 @@ export default class App extends Component {
 		dicceRef : [React.createRef(), React.createRef()]
 	}
 
+	componentDidMount = () => {
+		const activePlayers = getActivePlayers();	// 1, 2, 3, or 4
+		// console.log(activePlayers);
+
+		this.setState({
+			...this.state,
+			activePlayers: activePlayers,
+			COMTurn: activePlayers.length - 1	// COM always the last; hence it's turn will be the last
+		})
+	}
+
 	// Get length of dice assistants on re-render in order to be able to deal 
 	// with dynamically adding refs
 
 	getDiceRef = () => {
 		const dice1 = this.state.dice[1].asst;
 		const dice2 = this.state.dice[2].asst;
+		
 
+		// This fetches total dice assistants, accounting for double-6 that may make the total 4, 6 etc.
 		this.diceRef = [...dice1, ...dice2].map(() => React.createRef());
 		return this.diceRef;
 	}
@@ -122,7 +135,8 @@ export default class App extends Component {
 		this.setState({
 			...this.state,
 			dice: dice,
-			rollButton: rollButton ? !this.state.rollButton : this.state.rollButton 
+			rollButton: rollButton ? !this.state.rollButton : this.state.rollButton,
+			turn : turn ? this.state.turn++ : this.state.turn
 		})
 	}
 
@@ -162,6 +176,7 @@ export default class App extends Component {
 		let turn = state.turn;
 		let seeds = state.seeds;
 		let doubleSix = state.doubleSix;
+		let COMTurn = state.COMTurn;
 		let updatePosition = this.updatePosition;
 		let updateDiceAssistant = this.updateDiceAssistant;
 		let updateDoubleSix = this.updateDoubleSix;
@@ -179,8 +194,10 @@ export default class App extends Component {
 					toggleRollButton={this.toggleRollButton}
 					// diceRefs={[this.diceAsst1, this.diceAsst2]}
 					diceRef={this.getDiceRef()}
-					doubleSix={state.doubleSix}
+					doubleSix={doubleSix}
 					tossed={this.tossed}
+					turn={turn}
+
 				/>
 				<section className="board">
 					<section className="ludo">
