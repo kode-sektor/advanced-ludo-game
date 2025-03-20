@@ -7,9 +7,10 @@ export default class DiceValues extends Component {
 	}
 
 	selectDieAsst = e => {
-		alert("dice assistant clicked")
-		let button = e.target.parentElement;
+		alert("dice assistant clicked");
+		let button = e.target;
 		let die = button.dataset.die;
+		console.log(die);
 		let index = button.dataset.index;
 		let dieVal = Number(button.dataset.value);
 		let buttonID = button.id;

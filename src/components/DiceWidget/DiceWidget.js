@@ -9,7 +9,6 @@ export default class DiceWidget extends Component {
 
 	constructor(props) {
         super(props);
-		
     }
 
 	render() {
@@ -17,7 +16,7 @@ export default class DiceWidget extends Component {
 		const { 
 			dice, setDice, updateDieAssistant, doubleSix,
 			setDiceAssistant, moveDistance, tossed, rollButtonRef, 
-			rollButton, toggleRollButton, diceRef 
+			turn, COMTurn, rollButton, toggleRollButton, diceRef 
 		} = this.props;
 
 		console.log(diceRef);

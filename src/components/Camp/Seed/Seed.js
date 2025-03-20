@@ -154,9 +154,9 @@ export default class Seed extends Component {
 			updateDiceAssistant(dice, true);
 		} else {	// If no more dice assistants (dice moves all used up), its next player's turn: increment turn
 			let turn = this.props.turn + 1;
-			
-			if (turn === COMTurn) {	// Now check if next player is COM, reset turn because COM is set to last turn
-				turn = 0;
+			if (turn === COMTurn) {	// Now check if next player is COM, reset turn because COM is set to last turnb
+				alert ("b");
+				//turn = 0;
 
 				// Update dice assistant & Simulate 'Roll' click for next player
 				updateDiceAssistant(dice, true, turn);

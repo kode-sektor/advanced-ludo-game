@@ -9,7 +9,7 @@ import Camp from '../components/Camp/Camp.js'
 import OutpostLane from '../components/OutpostLane/OutpostLane.js'
 import Exit from '../components/Exit/Exit.js'
 import DiceWidget from "./DiceWidget/DiceWidget.js"
-import { getRandomWithinRange, calcMoveDistance } from './functions.js'
+import { getActivePlayers, getRandomWithinRange, calcMoveDistance } from './functions.js'
 
 export default class App extends Component {
 
@@ -78,7 +78,9 @@ export default class App extends Component {
 		
 
 		// This fetches total dice assistants, accounting for double-6 that may make the total 4, 6 etc.
-		this.diceRef = [...dice1, ...dice2].map(() => React.createRef());
+		// this.diceRef = [...dice1, ...dice2].map(() => React.createRef());
+		this.diceRef = [...dice1, ...dice2].map(() => React.createRef());;
+		console.log(this.diceRef);
 		return this.diceRef;
 	}
 
@@ -132,11 +134,12 @@ export default class App extends Component {
 	}
 
 	updateDiceAssistant = (dice, rollButton, turn) => {
+		alert ("turn : " + turn);
 		this.setState({
 			...this.state,
 			dice: dice,
 			rollButton: rollButton ? !this.state.rollButton : this.state.rollButton,
-			turn : turn ? this.state.turn++ : this.state.turn
+			turn : turn ? this.state.turn + 1 : this.state.turn
 		})
 	}
 
@@ -197,7 +200,7 @@ export default class App extends Component {
 					doubleSix={doubleSix}
 					tossed={this.tossed}
 					turn={turn}
-
+					COMTurn={COMTurn}
 				/>
 				<section className="board">
 					<section className="ludo">
@@ -219,6 +222,7 @@ export default class App extends Component {
 								toggleRollButton={this.toggleRollButton}
 								seedRef={[this.seedOne, this.seedTwo, this.seedThree, this.seedFour]}
 								doubleSix={doubleSix}
+								COMTurn={COMTurn}
 							/>
 							<Exit 
 								base={"home-one"}
@@ -245,6 +249,7 @@ export default class App extends Component {
 								toggleRollButton={this.toggleRollButton}
 								seedRef={[this.seedFive, this.seedSix, this.seedSeven, this.seedEight]}
 								doubleSix={doubleSix}
+								COMTurn={COMTurn}
 
 							/>
 							<Exit 
@@ -272,6 +277,7 @@ export default class App extends Component {
 								toggleRollButton={this.toggleRollButton}
 								seedRef={[this.seedNine, this.seedTen, this.seedEleven, this.seedTwelve]}
 								doubleSix={doubleSix}
+								COMTurn={COMTurn}
 							/>
 							<Exit 
 								base={"home-three"}
@@ -298,7 +304,7 @@ export default class App extends Component {
 								toggleRollButton={this.toggleRollButton}
 								seedRef={[this.seedThirteen, this.seedFourteen, this.seedFifteen, this.seedSixteen]}
 								doubleSix={doubleSix}
-
+								COMTurn={COMTurn}
 							/>
 							<Exit 
 								base={"home-four"}

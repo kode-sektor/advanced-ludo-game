@@ -279,20 +279,24 @@ export default class RollBtn extends React.Component {
 					// 1. If double six, click 'Roll button'
 					// 2. Otherwise, cycle trigger click on dice assistant 
 
-					const turn = this.props.turn;
+					let turn = this.props.turn;
 					const COMTurn = this.props.COMTurn;
 
 					if (turn === COMTurn) {
+						turn = 0;
 						const dice = this.props.dice;
 						setTimeout(() => {
 							// console.log(this.props.diceRef);
 							if (this.props.doubleSix) {
+								alert ("a");
 								this.props.rollButtonRef.current.click();			
 							} else {
 								const totalDice = [...dice[1].asst, ...dice[2].asst];
-								const currDieAssistant = totalDice.find(item => item.value === )
+								// const currDieAssistant = totalDice.find(item => item.value === )
+								alert ("bb");
+								let diceRef = this.props.diceRef;
+								diceRef[0].current.click();
 							}
-							
 	
 						}, 1000);	// 1s for now
 					}

@@ -634,3 +634,6 @@ button {
 	appearance: none;
 	overflow-clip-margin: border-box;
 }
+.die-btn-asst * {
+	pointer-events: none;
+}

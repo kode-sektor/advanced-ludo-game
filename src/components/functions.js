@@ -50,6 +50,7 @@ export const randomDice = (diceValues = []) => {
 //     return die1 === 6 && die2 === 6;
 // }
 
+
 export const getDiceCycle = () => {
 	const cycleSteps = [];
 	cycleSteps[0] = getRandomWithinRange(1, 3, true);	// 3
