@@ -161,6 +161,10 @@ export default class Seed extends Component {
 				// Update dice assistant & Simulate 'Roll' click for next player
 				updateDiceAssistant(dice, true, turn);
 
+				// Generate moves
+				// let dice = [1, 3, 4, 6];
+				// let tokens = ["A", "B", "C", "D"];
+
 				let COMTurnDelay = getRandomWithinRange(0.5, 1.5) * 1000;
 				// Then simulate roll click
 				setTimeout(() => {

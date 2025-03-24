@@ -308,10 +308,19 @@ export const computeDiceData = (diceTimeout) => {
 	return [timeout, duration, dice];
 }
 
-export const getDiceVals = (index) => {
-	let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
-	return diceVals[index];
+// export const getDiceVals = (index) => {
+// 	let diceVals = [this.props.dice[1].value, this.props.dice[2].value];
+// 	return diceVals[index];
+// }
+
+export const getDiceValues = (dice) => {
+	const diceOneValues = dice[1].asst.map(item => item.value);
+	const diceTwoValues = dice[2].asst.map(item => item.value);
+
+	return [...diceOneValues, ...diceTwoValues];
 }
+
+export const getSixCount = (diceValues) => diceValues.filter(item => item===6).length;
 
 export const checkSix = (dice) => {
 	let diceOneAsst = dice[1].asst;
@@ -439,6 +448,12 @@ export const isActiveToken = (token, turn) => {
 // 	}
 // 	return oppBaseCollection;
 // }
+
+// Get minimum allowable tokens for COM. Instead of selecting all tokens for computing all moves, 
+// select minimum allowable tokens to avoid redundancy
+export const getMinAllowableTokens = (dice) => {
+	const diceValues = dice
+}
 
 export const getBase = (base) => {
 	const result = [];

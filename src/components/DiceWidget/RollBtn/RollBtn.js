@@ -283,8 +283,10 @@ export default class RollBtn extends React.Component {
 					const COMTurn = this.props.COMTurn;
 
 					if (turn === COMTurn) {
-						turn = 0;
-						const dice = this.props.dice;
+						turn = 0;	// Reset turn 
+
+						// Run permutation of dice values
+						const dice = this.props.dice;	
 						setTimeout(() => {
 							// console.log(this.props.diceRef);
 							if (this.props.doubleSix) {
