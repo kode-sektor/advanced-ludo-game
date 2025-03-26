@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { randomDice, getRandomWithinRange, getDiceCycle, getDiceTimeout, computeDiceData } from '../../functions.js';
+import { randomDice, getRandomWithinRange, getDiceCycle, getDiceTimeout, computeDiceData, getDiceValues, getMinAllowableTokens } from '../../functions.js';
 
 export default class RollBtn extends React.Component {
 
@@ -293,7 +293,10 @@ export default class RollBtn extends React.Component {
 								alert ("a");
 								this.props.rollButtonRef.current.click();			
 							} else {
-								const totalDice = [...dice[1].asst, ...dice[2].asst];
+								// const totalDice = [...dice[1].asst, ...dice[2].asst];
+								const allowableTokens = getMinAllowableTokens(dice);
+								// Combine all possible moves
+
 								// const currDieAssistant = totalDice.find(item => item.value === )
 								alert ("bb");
 								let diceRef = this.props.diceRef;

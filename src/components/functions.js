@@ -451,8 +451,39 @@ export const isActiveToken = (token, turn) => {
 
 // Get minimum allowable tokens for COM. Instead of selecting all tokens for computing all moves, 
 // select minimum allowable tokens to avoid redundancy
+
 export const getMinAllowableTokens = (dice) => {
-	const diceValues = dice
+	const diceValues = getDiceValues(dice);
+	const sixCount = getSixCount(diceValues);	// Occurrence of 6
+
+	const activeTokens = getBaseActive();
+	let inactiveTokens = [];
+
+	const getInactiveTokens = (arr, num) => {
+		const shuffled = arr.slice();
+		let currentIndex = num, randomIndex;
+
+		while (currentIndex !== 0) {
+			randomIndex = Math.floor(Math.random() * arr.length);
+			currentIndex--;
+
+			// Swap elements
+			[shuffled[currentIndex], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[currentIndex]];
+		}
+		return shuffled.slice(0, num);	
+	}
+	if (sixCount) {
+		// Randomly pick seed in each base
+		let inactiveAttackTokens = getInactiveAttackBase();
+		let inactiveDefenceTokens = getInactiveDefenceBase();
+
+		for (let i = 0; i < 2; i++) {
+			inactiveAttackTokens = getInactiveTokens(inactiveAttackTokens, sixCount);
+			inactiveDefenceTokens = getInactiveTokens(inactiveDefenceTokens, sixCount);
+		}
+		inactiveTokens = [...inactiveAttackTokens, ...inactiveDefenceTokens]
+	}
+	return [...activeTokens, ...inactiveTokens];
 }
 
 export const getBase = (base) => {
@@ -498,17 +529,29 @@ export const getBaseActive = (player="COM") => {
 	return playerBase.filter((cell) => cell !== null);
 }
 
+export const getBaseInActive = (player="COM") => {
+	const playerBase = getBases(player);
+	return playerBase.filter((cell) => cell === null);
+}
+
+export const getInactiveAttackBase = (player="COM") => {
+	const playerBaseIndex = getBaseIndex(player);
+	const attackBaseIndex = getAttackBaseIndex(playerBaseIndex);
+	const attackBase = getBase(attackBaseIndex);
+	return attackBase.filter((cell) => cell === null);
+}
+
+export const getInactiveDefenceBase = (player="COM") => {
+	const playerBaseIndex = getBaseIndex(player);
+	const defenceBaseIndex = getDefenceBaseIndex(playerBaseIndex);
+	const defenceBase = getBase(defenceBaseIndex);
+	return defenceBase.filter((cell) => cell === null);
+}
+
 export const getBaseActiveCount = (player="COM") => {
 	const baseActive = getBaseActive(player);
 	return baseActive.length;
 }
-
-
-// export const getAttackBase = (base) => {
-// 	const attackBaseIndex = getAttackBaseIndex(base);
-// 	const attackBase = getBase(attackBaseIndex);
-// 	return attackBase;
-// }
 
 export const getAttackBase = (player="COM") => {
 	const playerBaseIndex = getBaseIndex(player);
