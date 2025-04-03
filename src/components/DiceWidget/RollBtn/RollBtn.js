@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { randomDice, getRandomWithinRange, getDiceCycle, getDiceTimeout, computeDiceData, getDiceValues, getMinAllowableTokens } from '../../functions.js';
+import { randomDice, getRandomWithinRange, getDiceCycle, getDiceTimeout, 
+	computeDiceData, getDiceValues, getMinAllowableTokens, generateMoves } from '../../functions.js';
 
-export default class RollBtn extends React.Component {
+export default class RollBtn extends Component {
 
 	constructor(props) {
 		super(props);
@@ -286,21 +287,24 @@ export default class RollBtn extends React.Component {
 						turn = 0;	// Reset turn 
 
 						// Run permutation of dice values
-						const dice = this.props.dice;	
+						let dice = this.props.dice;	
 						setTimeout(() => {
 							// console.log(this.props.diceRef);
 							if (this.props.doubleSix) {
-								alert ("a");
 								this.props.rollButtonRef.current.click();			
 							} else {
 								// const totalDice = [...dice[1].asst, ...dice[2].asst];
 								const allowableTokens = getMinAllowableTokens(dice);
+								dice = getDiceValues(dice);
+								dice = [...dice, ...diceValues];
+								console.log(dice);
+								console.log(dice, allowableTokens);
 								// Combine all possible moves
+								// generateMoves(dice, allowableTokens);
 
 								// const currDieAssistant = totalDice.find(item => item.value === )
-								alert ("bb");
-								let diceRef = this.props.diceRef;
-								diceRef[0].current.click();
+								// let diceRef = this.props.diceRef;
+								// diceRef[0].current.click();
 							}
 	
 						}, 1000);	// 1s for now

@@ -456,7 +456,7 @@ export const getMinAllowableTokens = (dice) => {
 	const diceValues = getDiceValues(dice);
 	const sixCount = getSixCount(diceValues);	// Occurrence of 6
 
-	const activeTokens = getBaseActive();
+	const activeTokens = getActiveTokens();
 	let inactiveTokens = [];
 
 	const getInactiveTokens = (arr, num) => {
@@ -477,7 +477,7 @@ export const getMinAllowableTokens = (dice) => {
 		let inactiveAttackTokens = getInactiveAttackBase();
 		let inactiveDefenceTokens = getInactiveDefenceBase();
 
-		for (let i = 0; i < 2; i++) {
+		for (let i = 0; i < 2; i++) {	// Loop across the 2 bases
 			inactiveAttackTokens = getInactiveTokens(inactiveAttackTokens, sixCount);
 			inactiveDefenceTokens = getInactiveTokens(inactiveDefenceTokens, sixCount);
 		}
@@ -507,50 +507,109 @@ export const getBase = (base) => {
 
 export const getPlayer = (player="COM") => {
 	const COM = player === "COM" ? true : false;
-	return Object.keys(baseSettings).filter(item => baseSettings[item].COM === COM && bases[item].base.length !==0);
+	return Object.keys(baseSettings).filter(item => baseSettings[item].COM === COM && baseSettings[item].base.length !==0);
 }
 
-export const getCOM = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === true && bases[item].base.length !==0);	// ["PLAYER_TWO"]
+export const getCOM = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === true && baseSettings[item].base.length !==0);	// ["PLAYER_TWO"]
 
 // Get opponents
-export const getOpp = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === false && bases[item].base.length !== 0);	// ["PLAYER_ONE"]
+export const getOpp = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === false && baseSettings[item].base.length !== 0);	// ["PLAYER_ONE"]
 
 export const getAttackBaseIndex = (base) => Array.isArray(base) ? Math.max(...base) : null;	// Choose 1 from [0, 1] or return null
 
 export const getDefenceBaseIndex = (base) => Array.isArray(base) ? Math.min(...base) : null;	// Choose 0 from [0, 1] or return null
 
 export const getBaseIndex = (player="COM") => {
-	const selectedPlayer = getPlayer(player);
-	return bases[selectedPlayer].base;
+	const selectedPlayer = getPlayer(player);	// ["PLAYER_TWO"]
+	return baseSettings[selectedPlayer].base;	// [2, 3]
 }
 
-export const getBaseActive = (player="COM") => {
+// export const getBaseActive = (player="COM") => {
+// 	const playerBase = getBases(player);
+// 	console.log(playerBase);
+// 	return playerBase.filter((cell) => cell !== null);
+// }
+
+export const getActiveTokens = (seeds, player="COM") => {
 	const playerBase = getBases(player);
-	return playerBase.filter((cell) => cell !== null);
+	console.log(playerBase);
+	// [
+	// 	['seedThirteen', 'seedFourteen', 'seedFifteen', 'seedSixteen'],
+	// 	['seedNine', 'seedTen', 'seedEleven', 'seedTwelve']
+	// ]
+	const filteredSeeds = Object.fromEntries(
+		playerBase.flat().map(seedKey => [seedKey, seeds[seedKey]])
+	);
+	
+	console.log(filteredSeeds);
+	return filteredSeeds.filter((cell) => cell !== null);
 }
 
-export const getBaseInActive = (player="COM") => {
+// export const getBaseInActive = (player="COM") => {
+// 	const playerBase = getBases(player);
+// 	return playerBase.filter((cell) => cell === null);
+// }
+
+export const getInActiveTokens = (seeds, player="COM") => {
 	const playerBase = getBases(player);
-	return playerBase.filter((cell) => cell === null);
+	console.log(playerBase);
+	// [
+	// 	['seedThirteen', 'seedFourteen', 'seedFifteen', 'seedSixteen'],
+	// 	['seedNine', 'seedTen', 'seedEleven', 'seedTwelve']
+	// ]
+	const filteredSeeds = Object.fromEntries(
+		playerBase.flat().map(seedKey => [seedKey, seeds[seedKey]])
+	);
+	
+	console.log(filteredSeeds);
+	return filteredSeeds.filter((cell) => cell === null);
 }
 
-export const getInactiveAttackBase = (player="COM") => {
+// export const getInactiveAttackBase = (player="COM") => {
+// 	const playerBaseIndex = getBaseIndex(player);
+// 	const attackBaseIndex = getAttackBaseIndex(playerBaseIndex);
+// 	const attackBase = getBase(attackBaseIndex);
+// 	return attackBase.filter((cell) => cell === null);
+// }
+
+export const getInactiveAttackTokens = (player="COM") => {
 	const playerBaseIndex = getBaseIndex(player);
 	const attackBaseIndex = getAttackBaseIndex(playerBaseIndex);
 	const attackBase = getBase(attackBaseIndex);
-	return attackBase.filter((cell) => cell === null);
+	const filteredSeeds = Object.fromEntries(
+		attackBase.flat().map(seedKey => [seedKey, seeds[seedKey]])
+	);
+	return filteredSeeds.filter((cell) => cell === null);
 }
 
+// export const getInactiveDefenceBase = (player="COM") => {
+// 	const playerBaseIndex = getBaseIndex(player);
+// 	const defenceBaseIndex = getDefenceBaseIndex(playerBaseIndex);
+// 	const defenceBase = getBase(defenceBaseIndex);
+// 	return defenceBase.filter((cell) => cell === null);
+// }
 export const getInactiveDefenceBase = (player="COM") => {
 	const playerBaseIndex = getBaseIndex(player);
 	const defenceBaseIndex = getDefenceBaseIndex(playerBaseIndex);
 	const defenceBase = getBase(defenceBaseIndex);
-	return defenceBase.filter((cell) => cell === null);
+	const filteredSeeds = Object.fromEntries(
+		defenceBase.flat().map(seedKey => [seedKey, seeds[seedKey]])
+	);
+	return filteredSeeds.filter((cell) => cell === null);
 }
 
-export const getBaseActiveCount = (player="COM") => {
-	const baseActive = getBaseActive(player);
-	return baseActive.length;
+// export const getBaseActiveCount = (player="COM") => { 
+// 	const baseActive = getBaseActive(player);
+// 	return baseActive.length;
+// }
+export const getActiveTokensCount = (player="COM") => { 
+	const activeTokens = getActiveTokens(player);
+	return activeTokens.length;
+}
+
+export const getInActiveTokensCount = (player="COM") => { 
+	const inActiveTokens = getInActiveTokens(player);
+	return inActiveTokens.length;
 }
 
 export const getAttackBase = (player="COM") => {
@@ -733,195 +792,249 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 	}
 }
 
-export const splinterPermutation = (partition, permutation, partitionedPermutation=[]) => {
-    let splinteredItem = Array.from(Array(permutation.length), () => []);  
-    let splinterTemp = []; 
 
-    // Loop across partition
-    for (let partitionEntry=0; partitionEntry < partition.length; partitionEntry++) {
-        let prevPartitionSum = 0;
-        let currPartitionSum = 0;
+export const generateMoves = (dice, tokens) => {
 
-        let currPartition = partition[partitionEntry];
+	/* 
+	Integer Partition to 4 to prepare categorising array into chunks
+	[1, 1, 1, 1] 
+	[1, 1, 2] 
+	[1, 2, 1] 
+	[2, 1, 1] 
+	[2, 2]
+	[1, 3]
+	[3, 1]
+	[4]
+	*/
 
-        // Loop across each partition entry
-        for (let currPartitionEntry = 0; currPartitionEntry < currPartition.length; currPartitionEntry++) {
-            let childPartition = currPartition[currPartitionEntry];
-            let prevChildPartition = currPartition[currPartitionEntry - 1] === undefined ? 0 : currPartition[currPartitionEntry - 1] ;
-
-            prevPartitionSum += prevChildPartition;
-            currPartitionSum += childPartition;
-
-            // Loop across permutation
-
-            // Now slice dice from previous partition to current partition
-            // ... and if no partition, make 0
-
-            splinterTemp.push(
-                permutation.slice(prevPartitionSum, currPartitionSum)
-            );
-            // console.log("currPartitionEntry : ", currPartitionEntry);
-            // console.log("currPartition Length : ", currPartition.length - 1);
-            if (currPartitionEntry === (currPartition.length - 1)) {
-                // console.log(splinterTemp.length - 1);
-                // console.log(splinterTemp);
-                splinteredItem[splinterTemp.length - 1].push(splinterTemp);
-
-                // console.log("SPLINTERED ITEM : ", splinteredItem);
-                splinterTemp = [];
-            }
-        }
-    }
-    partitionedPermutation.push(splinteredItem);
-    return partitionedPermutation;
-}
-
-export const permuteDuplicates = (sequence, partition, splintered, permuted, curr, visited) => {
-	// If current permutation is complete
-	if (curr.length === sequence.length) {
-        if (partition) {
-            splintered.push(splinterPermutation(partition, curr));
-            // console.log("SPLINTERED : ", splintered);
-        } else {
-            permuted.push([...curr]);
-        }
-	}
-
-	for (let i = 0; i < sequence.length; i++) {
-        if (visited[i]) { continue; }
-        if (i > 0 && (sequence[i] == sequence[i - 1]) && !visited[i - 1]) { continue; }
-
-        visited[i] = true; 
-        curr.push(sequence[i]); 
-        permuteDuplicates(sequence, partition, splintered, permuted, curr, visited);
-
-        visited[i] = false;
-        curr.pop(); 
-	}
-}
-
-// GENERATE PERMUTATIONS OF ARRAY ENTRY LENGTH WITHOUT REPEAT
-/*
-	[1, 2, 3, 4] => [1, 3, 2, 4], [1, 3, 4, 2], [1, 4, 2, 3]...
-*/
-
-export const permute = (sequence, partition, splintered=[], permuted=[], curr=[], visited=[]) => {
-	(sequence).sort(function(a, b)
-        {return a - b}
-    );
-	for (let i = 0; i < sequence.length; i++) {
-	    visited.push(false);    // [false, false, false]
-	}
-	permuteDuplicates(sequence, partition, splintered, permuted, curr, visited);    // Find the distinct permutations of num
-	return partition ? splintered : permuted;
-}
-
-export const generateCombinations = (arr, size, maxSize, start, temp, combinations) => {
-    if (temp.length === size) {
-        if (temp.length <= maxSize) {
-            combinations[temp.length - 1].push([...temp]);
-        } else {
-            return combinations;
-        }
-    }
-
-    for (let i = start; i < arr.length; i++) {
-        temp.push(arr[i]);  
-        generateCombinations(arr, size, maxSize, i + 1, temp, combinations);
-        temp.pop();
-    }
-    return combinations;
-}
-
-/*
-	[1, 2, 3, 4] => 
-	
-	[1], 
-	[2],
-	[3],
-	[4],
-	[1, 2],
-	[1, 3],
-	[1, 4]...,
-	[1, 2, 3],
-	[1, 2, 4]...
-	[1, 2, 3, 4]
-	[1, 2, 4, 3]
-	
-*/
-export const combine = (sequence, maxSize, combinations=[], start=0, temp=[]) => {
-    for (let i = 1; i <= sequence.length; i++) {
-        generateCombinations(sequence, i, maxSize, start, temp, combinations);
-    }
-    return combinations;
-}
-
-/* 
-Integer Partition to 4 to prepare categorising array into chunks
-[1, 1, 1, 1] 
-[1, 1, 2] 
-[1, 2, 1] 
-[2, 1, 1] 
-[2, 2]
-[1, 3]
-[3, 1]
-[4]
-*/
-
-const partitionInt = (target, maxVal, suffix=[], partitions=[]) => {
-	if (target === 0) {
-		// Function to permute [1, 1, 2] to [1, 2, 1] and [2, 1, 1]
-        const sameEntries = (suffix) => suffix.every(val => val === suffix[0]);
-		
-        if (sameEntries(suffix) || suffix.length <= 1) {
-            partitions.push(suffix);
-        } else {
-            partitions.push(...permute(suffix));
-        }
-	} else {
-		if (maxVal > 1) {
-			partitionInt(target, maxVal - 1, suffix, partitions);
+	const partitionInt = (target, maxVal, suffix=[], partitions=[]) => {
+		if (target === 0) {
+			// Function to permute [1, 1, 2] to [1, 2, 1] and [2, 1, 1]
+			const sameEntries = (suffix) => suffix.every(val => val === suffix[0]);
+			
+			if (sameEntries(suffix) || suffix.length <= 1) {
+				partitions.push(suffix);
+			} else {
+				partitions.push(...permute(suffix));
+			}
+		} else {
+			if (maxVal > 1) {
+				partitionInt(target, maxVal - 1, suffix, partitions);
+			}
+			if (maxVal <= target) {
+				partitionInt(target - maxVal, maxVal, [maxVal, ...suffix], partitions);
+			}
 		}
-		if (maxVal <= target) {
-			partitionInt(target - maxVal, maxVal, [maxVal, ...suffix], partitions);
+		return partitions;
+	}
+
+	const splinterPermutation = (partition, permutation, partitionedPermutation=[]) => {
+		let splinteredItem = Array.from(Array(permutation.length), () => []);  
+		let splinterTemp = []; 
+	
+		// Loop across partition
+		for (let partitionEntry=0; partitionEntry < partition.length; partitionEntry++) {
+			let prevPartitionSum = 0;
+			let currPartitionSum = 0;
+	
+			let currPartition = partition[partitionEntry];
+	
+			// Loop across each partition entry
+			for (let currPartitionEntry = 0; currPartitionEntry < currPartition.length; currPartitionEntry++) {
+				let childPartition = currPartition[currPartitionEntry];
+				let prevChildPartition = currPartition[currPartitionEntry - 1] === undefined ? 0 : currPartition[currPartitionEntry - 1] ;
+	
+				prevPartitionSum += prevChildPartition;
+				currPartitionSum += childPartition;
+	
+				// Loop across permutation
+	
+				// Now slice dice from previous partition to current partition
+				// ... and if no partition, make 0
+	
+				splinterTemp.push(
+					permutation.slice(prevPartitionSum, currPartitionSum)
+				);
+				// console.log("currPartitionEntry : ", currPartitionEntry);
+				// console.log("currPartition Length : ", currPartition.length - 1);
+				if (currPartitionEntry === (currPartition.length - 1)) {
+					// console.log(splinterTemp.length - 1);
+					// console.log(splinterTemp);
+					splinteredItem[splinterTemp.length - 1].push(splinterTemp);
+	
+					// console.log("SPLINTERED ITEM : ", splinteredItem);
+					splinterTemp = [];
+				}
+			}
+		}
+		partitionedPermutation.push(splinteredItem);
+		return partitionedPermutation;
+	}
+	
+	const permuteDuplicates = (sequence, partition, splintered, permuted, curr, visited) => {
+		// If current permutation is complete
+		if (curr.length === sequence.length) {
+			if (partition) {
+				splintered.push(splinterPermutation(partition, curr));
+				// console.log("SPLINTERED : ", splintered);
+			} else {
+				permuted.push([...curr]);
+			}
+		}
+	
+		for (let i = 0; i < sequence.length; i++) {
+			if (visited[i]) { continue; }
+			if (i > 0 && (sequence[i] == sequence[i - 1]) && !visited[i - 1]) { continue; }
+	
+			visited[i] = true; 
+			curr.push(sequence[i]); 
+			permuteDuplicates(sequence, partition, splintered, permuted, curr, visited);
+	
+			visited[i] = false;
+			curr.pop(); 
 		}
 	}
-    return partitions;
-}
 
-export const combineMoves = (permutedDice, permutedTokens) => {
-	const moves = [];
 
-	// Combine permuted tokens and dice.
-	// Loop across permuted tokens
-	for (let permutedToken = 0; permutedToken < permutedTokens.length; permutedToken++) {
-		let permutedTokenEntries = permutedTokens[permutedToken];
+	// GENERATE PERMUTATIONS OF ARRAY ENTRY LENGTH WITHOUT REPEAT
+	/*
+		[1, 2, 3, 4] => [1, 3, 2, 4], [1, 3, 4, 2], [1, 4, 2, 3]...
+	*/
+
+	const permute = (sequence, partition, splintered=[], permuted=[], curr=[], visited=[]) => {
+		(sequence).sort(function(a, b)
+			{return a - b}
+		);
+		for (let i = 0; i < sequence.length; i++) {
+			visited.push(false);    // [false, false, false]
+		}
+		permuteDuplicates(sequence, partition, splintered, permuted, curr, visited);    // Find the distinct permutations of num
+		return partition ? splintered : permuted;
+	}
+
+	const generateCombinations = (arr, size, maxSize, start, temp, combinations) => {
+		if (temp.length === size) {
+			if (temp.length <= maxSize) {
+				combinations[temp.length - 1].push([...temp]);
+			} else {
+				return combinations;
+			}
+		}
+
+		for (let i = start; i < arr.length; i++) {
+			temp.push(arr[i]);  
+			generateCombinations(arr, size, maxSize, i + 1, temp, combinations);
+			temp.pop();
+		}
+		return combinations;
+	}
+
+	/*
+		[1, 2, 3, 4] => 
 		
-		for (let permutedTokenEntry = 0; permutedTokenEntry < permutedTokenEntries.length; permutedTokenEntry++) {
-			let permutedTokenItem = permutedTokenEntries[permutedTokenEntry];
+		[1], 
+		[2],
+		[3],
+		[4],
+		[1, 2],
+		[1, 3],
+		[1, 4]...,
+		[1, 2, 3],
+		[1, 2, 4]...
+		[1, 2, 3, 4]
+		[1, 2, 4, 3]
+		
+	*/
+	const combine = (sequence, maxSize, combinations=[], start=0, temp=[]) => {
+		for (let i = 1; i <= sequence.length; i++) {
+			generateCombinations(sequence, i, maxSize, start, temp, combinations);
+		}
+		return combinations;
+	}
 
-			// Match and cycle across corresponding array index in partitionPermutation (dice)
-			for (let permutedDiceEntry = 0; permutedDiceEntry < permutedDice.length; permutedDiceEntry++) {
-				let permutedDiceEntries = permutedDice[permutedDiceEntry];
 
-				for (let permutedDiceEntry = 0; permutedDiceEntry < permutedDiceEntries.length; permutedDiceEntry++) {
-					let permutedDiceItems = permutedDiceEntries[permutedDiceEntry];
+	// ['A']
+	// ['B']
+	// ['C']
+	// ['D']
+	// ['A', 'B']
+	// ['A', 'C']
+	// ['A', 'D']
+	// ['B', 'C']
+	// ['B', 'D']
+	// ['C', 'D']
+	// ['A', 'B', 'C']
+	// ['A', 'B', 'D']
+	// ['A', 'C', 'D']
+	// ['B', 'C', 'D']
+	// ['A', 'B', 'C', 'D']
 
-					for (let permutedDiceItem = 0; permutedDiceItem < permutedDiceItems[permutedToken].length; permutedDiceItem++) {
-						let permutedDiceChildren = permutedDiceItems[permutedToken][permutedDiceItem];
-						moves.push(
-							{
-								token : permutedTokenItem,
-								dice : permutedDiceChildren
-							}
-						)
+	const combineMoves = (dice, tokens) => {
+		const moves = [];
+	
+		// Combine permuted tokens and dice.
+		// Loop across permuted tokens
+		for (let token = 0; token < tokens.length; token++) {
+			let tokenEntries = tokens[token];
+			
+			for (let tokenEntry = 0; tokenEntry < tokenEntries.length; tokenEntry++) {
+				let tokenItem = tokenEntries[tokenEntry];
+	
+				// Match and cycle across corresponding array index in partitionPermutation (dice)
+				for (let diceEntry = 0; diceEntry < dice.length; diceEntry++) {
+					let diceEntries = dice[diceEntry];
+	
+					for (let diceEntry = 0; diceEntry < diceEntries.length; diceEntry++) {
+						let diceItems = diceEntries[diceEntry];
+	
+						for (let diceItem = 0; diceItem < diceItems[token].length; diceItem++) {
+							let diceChildren = diceItems[token][diceItem];
+							moves.push(
+								{
+									token : tokenItem,
+									dice : diceChildren
+								}
+							)
+						}
 					}
 				}
 			}
 		}
+		return moves;
 	}
+
+	// 1. CREATE PARTITIONINT
+	let partition = partitionInt(dice.length, dice.length);
+	console.log(partition);
+	/*
+		[1, 1, 1, 1]
+		[1, 1, 2]
+		[1, 2, 1]
+		[2, 1, 1]
+		[2, 2]
+		[1, 3]
+		[3, 1]
+	*/
+
+	// 2. PERMUTE DICE
+	let permutedDice = permute(dice, partition);
+	console.log(permutedDice);
+
+	// 3. 
+	const combinedTokens = Array.from(Array(dice.length), () => []);
+
+	// 4. PERMUTE TOKENS
+	let permutedTokens = combine(tokens, tokens.length, combinedTokens);
+	console.log(permutedTokens);
+
+	// 5. COMBINE MOVES
+	let moves = combineMoves(permutedDice, permutedTokens);
+	console.log(moves);
+
 	return moves;
+
 }
+
 
 /*
 	2 factors basically disqualify a move
