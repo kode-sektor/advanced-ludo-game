@@ -452,16 +452,28 @@ export const isActiveToken = (token, turn) => {
 // Get minimum allowable tokens for COM. Instead of selecting all tokens for computing all moves, 
 // select minimum allowable tokens to avoid redundancy
 
-export const getMinAllowableTokens = (dice) => {
-	const diceValues = getDiceValues(dice);
-	const sixCount = getSixCount(diceValues);	// Occurrence of 6
+export const getTokenKeys = (tokens) => {
+	console.log(tokens);
+	if (tokens.length > 0) {
+		return tokens.map(item => Object.keys(item)[0]);
+	} else {
+		return [];
+	}
+}
 
-	const activeTokens = getActiveTokens();
+export const getMinAllowableTokens = (dice) => {
+	// const diceValues = getDiceValues(dice);
+	// console.log(diceValues);
+	const sixCount = getSixCount(dice);	// Occurrence of 6
+	console.log(sixCount);
+
+	const activeTokens = getTokenKeys(getActiveTokens());
+	console.log(activeTokens);
 	let inactiveTokens = [];
 
 	const getInactiveTokens = (arr, num) => {
 		const shuffled = arr.slice();
-		let currentIndex = num, randomIndex;
+		let currentIndex = shuffled.length, randomIndex;
 
 		while (currentIndex !== 0) {
 			randomIndex = Math.floor(Math.random() * arr.length);
@@ -474,15 +486,20 @@ export const getMinAllowableTokens = (dice) => {
 	}
 	if (sixCount) {
 		// Randomly pick seed in each base
-		let inactiveAttackTokens = getInactiveAttackBase();
-		let inactiveDefenceTokens = getInactiveDefenceBase();
+		let inactiveAttackTokens = getInactiveAttackTokens();
+		let inactiveDefenceTokens = getInactiveDefenceTokens();
+
+		console.log(inactiveAttackTokens);
+		console.log(inactiveDefenceTokens);
 
 		for (let i = 0; i < 2; i++) {	// Loop across the 2 bases
 			inactiveAttackTokens = getInactiveTokens(inactiveAttackTokens, sixCount);
 			inactiveDefenceTokens = getInactiveTokens(inactiveDefenceTokens, sixCount);
 		}
-		inactiveTokens = [...inactiveAttackTokens, ...inactiveDefenceTokens]
+		console.log([...inactiveAttackTokens, ...inactiveDefenceTokens]);
+		inactiveTokens = getTokenKeys([...inactiveAttackTokens, ...inactiveDefenceTokens]);
 	}
+	console.log(inactiveTokens);	
 	return [...activeTokens, ...inactiveTokens];
 }
 
@@ -507,7 +524,7 @@ export const getBase = (base) => {
 
 export const getPlayer = (player="COM") => {
 	const COM = player === "COM" ? true : false;
-	return Object.keys(baseSettings).filter(item => baseSettings[item].COM === COM && baseSettings[item].base.length !==0);
+	return Object.keys(baseSettings).filter(item => baseSettings[item].COM === true && baseSettings[item].base.length !==0);
 }
 
 export const getCOM = () => Object.keys(baseSettings).filter(item => baseSettings[item].COM === true && baseSettings[item].base.length !==0);	// ["PLAYER_TWO"]
@@ -531,77 +548,49 @@ export const getBaseIndex = (player="COM") => {
 // }
 
 export const getActiveTokens = (seeds, player="COM") => {
-	const playerBase = getBases(player);
+	let playerBase = getBases(player);
 	console.log(playerBase);
-	// [
-	// 	['seedThirteen', 'seedFourteen', 'seedFifteen', 'seedSixteen'],
-	// 	['seedNine', 'seedTen', 'seedEleven', 'seedTwelve']
-	// ]
-	const filteredSeeds = Object.fromEntries(
-		playerBase.flat().map(seedKey => [seedKey, seeds[seedKey]])
-	);
-	
-	console.log(filteredSeeds);
-	return filteredSeeds.filter((cell) => cell !== null);
-}
 
-// export const getBaseInActive = (player="COM") => {
-// 	const playerBase = getBases(player);
-// 	return playerBase.filter((cell) => cell === null);
-// }
+	const activeTokens = playerBase.filter(seed => {
+		const key = Object.keys(seed)[0]; 
+		return seed[key].cell !== null;
+	});
+	console.log(activeTokens);
+	return activeTokens;
+}
 
 export const getInActiveTokens = (seeds, player="COM") => {
-	const playerBase = getBases(player);
-	console.log(playerBase);
-	// [
-	// 	['seedThirteen', 'seedFourteen', 'seedFifteen', 'seedSixteen'],
-	// 	['seedNine', 'seedTen', 'seedEleven', 'seedTwelve']
-	// ]
-	const filteredSeeds = Object.fromEntries(
-		playerBase.flat().map(seedKey => [seedKey, seeds[seedKey]])
-	);
-	
-	console.log(filteredSeeds);
-	return filteredSeeds.filter((cell) => cell === null);
+	let playerBase = getBases(player);
+	const inActiveTokens = playerBase.filter(seed => {
+		const key = Object.keys(seed)[0]; 
+		return seed[key].cell === null;
+	});
+	console.log(inActiveTokens);
+	return inActiveTokens;
 }
 
-// export const getInactiveAttackBase = (player="COM") => {
-// 	const playerBaseIndex = getBaseIndex(player);
-// 	const attackBaseIndex = getAttackBaseIndex(playerBaseIndex);
-// 	const attackBase = getBase(attackBaseIndex);
-// 	return attackBase.filter((cell) => cell === null);
-// }
-
-export const getInactiveAttackTokens = (player="COM") => {
-	const playerBaseIndex = getBaseIndex(player);
-	const attackBaseIndex = getAttackBaseIndex(playerBaseIndex);
-	const attackBase = getBase(attackBaseIndex);
-	const filteredSeeds = Object.fromEntries(
-		attackBase.flat().map(seedKey => [seedKey, seeds[seedKey]])
-	);
-	return filteredSeeds.filter((cell) => cell === null);
+export const getInactiveAttackTokens = (seeds, player="COM") => {
+	const attackBase = getAttackBase();
+	console.log(attackBase);
+	const inActiveAttackTokens = attackBase.filter(seed => {
+		const key = Object.keys(seed)[0]; 
+		return seed[key].cell === null;
+	});
+	console.log(inActiveAttackTokens);
+	return inActiveAttackTokens;
 }
 
-// export const getInactiveDefenceBase = (player="COM") => {
-// 	const playerBaseIndex = getBaseIndex(player);
-// 	const defenceBaseIndex = getDefenceBaseIndex(playerBaseIndex);
-// 	const defenceBase = getBase(defenceBaseIndex);
-// 	return defenceBase.filter((cell) => cell === null);
-// }
-export const getInactiveDefenceBase = (player="COM") => {
-	const playerBaseIndex = getBaseIndex(player);
-	const defenceBaseIndex = getDefenceBaseIndex(playerBaseIndex);
-	const defenceBase = getBase(defenceBaseIndex);
-	const filteredSeeds = Object.fromEntries(
-		defenceBase.flat().map(seedKey => [seedKey, seeds[seedKey]])
-	);
-	return filteredSeeds.filter((cell) => cell === null);
+export const getInactiveDefenceTokens = (player="COM") => {
+	const defenceBase = getDefenceBase();
+	console.log(defenceBase);
+	const inActiveDefenceTokens = defenceBase.filter(seed => {
+		const key = Object.keys(seed)[0]; 
+		return seed[key].cell === null;
+	});
+	console.log(inActiveDefenceTokens);
+	return inActiveDefenceTokens;
 }
 
-// export const getBaseActiveCount = (player="COM") => { 
-// 	const baseActive = getBaseActive(player);
-// 	return baseActive.length;
-// }
 export const getActiveTokensCount = (player="COM") => { 
 	const activeTokens = getActiveTokens(player);
 	return activeTokens.length;
@@ -615,20 +604,35 @@ export const getInActiveTokensCount = (player="COM") => {
 export const getAttackBase = (player="COM") => {
 	const playerBaseIndex = getBaseIndex(player);
 	const attackBaseIndex = getAttackBaseIndex(playerBaseIndex);
-	const attackBase = getBase(attackBaseIndex);
+	let attackBase = getBase(attackBaseIndex);
+	console.log(attackBase);
+	
+	attackBase = attackBase.flat().filter(key => seeds[key]).map(key => ({ [key]: seeds[key] })); 
+
+	console.log(attackBase);
 	return attackBase;
 }
 
 export const getDefenceBase = (player="COM") => {
 	const playerBaseIndex = getBaseIndex(player);
 	const defenceBaseIndex = getDefenceBaseIndex(playerBaseIndex);
-	const defenceBase = getBase(defenceBaseIndex);
+	let defenceBase = getBase(defenceBaseIndex);
+	defenceBase = defenceBase.flat().filter(key => seeds[key]).map(key => ({ [key]: seeds[key] })); 
 	return defenceBase;
 }
 
 // Get base(s) of player by combining attack and defence bases of player
 export const getBases = (player="COM") => {
-	return [...getAttackBase(player), ...getDefenceBase(player)];
+	// [
+	// 	['seedThirteen', 'seedFourteen', 'seedFifteen', 'seedSixteen'],
+	// 	['seedNine', 'seedTen', 'seedEleven', 'seedTwelve']
+	// ]
+	let bases = [...getAttackBase(player), ...getDefenceBase(player)];
+	console.log(bases);
+	// bases = Object.fromEntries(
+	// 	bases.flat().map(seedKey => [seedKey, seeds[seedKey]])
+	// );
+	return bases;
 }
 
 // export const getDefenceBase = (base) => {

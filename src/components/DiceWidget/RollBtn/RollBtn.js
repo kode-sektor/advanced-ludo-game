@@ -22,7 +22,7 @@ export default class RollBtn extends Component {
 
 	roll = (player) => {
 
-		alert("Rolled");
+		// alert("Rolled");
 		
 		// this.setState({ disabled: true });
 		this.props.toggleRollButton();
@@ -294,10 +294,10 @@ export default class RollBtn extends Component {
 								this.props.rollButtonRef.current.click();			
 							} else {
 								// const totalDice = [...dice[1].asst, ...dice[2].asst];
-								const allowableTokens = getMinAllowableTokens(dice);
 								dice = getDiceValues(dice);
 								dice = [...dice, ...diceValues];
 								console.log(dice);
+								const allowableTokens = getMinAllowableTokens(dice);
 								console.log(dice, allowableTokens);
 								// Combine all possible moves
 								// generateMoves(dice, allowableTokens);

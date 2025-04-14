@@ -7,7 +7,7 @@ export default class DiceValues extends Component {
 	}
 
 	selectDieAsst = e => {
-		alert("dice assistant clicked");
+		// alert("dice assistant clicked");
 		let button = e.target;
 		let die = button.dataset.die;
 		console.log(die);
