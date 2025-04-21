@@ -300,7 +300,7 @@ export default class RollBtn extends Component {
 								const allowableTokens = getMinAllowableTokens(dice);
 								console.log(dice, allowableTokens);
 								// Combine all possible moves
-								// generateMoves(dice, allowableTokens);
+								generateMoves(dice, allowableTokens);
 
 								// const currDieAssistant = totalDice.find(item => item.value === )
 								// let diceRef = this.props.diceRef;
