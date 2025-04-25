@@ -796,6 +796,22 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 	}
 }
 
+const compareNestedArrays = (arr1, arr2) => {
+	if (arr1.length !== arr2.length) return false;
+  
+	for (let i = 0; i < arr1.length; i++) {
+		const sortedA = [...arr1[i]].sort();
+		const sortedB = [...arr2[i]].sort();
+	
+		if (sortedA.length !== sortedB.length) return false;
+	
+		for (let j = 0; j < sortedA.length; j++) {
+			if (sortedA[j] !== sortedB[j]) return false;
+			}
+		}
+	
+		return true;
+  }
 
 export const generateMoves = (dice, tokens) => {
 
@@ -835,12 +851,18 @@ export const generateMoves = (dice, tokens) => {
 	const splinterPermutation = (partition, permutation, partitionedPermutation=[]) => {
 		let splinteredItem = Array.from(Array(permutation.length), () => []);  
 		let splinterTemp = []; 
+
+		console.log(partition, permutation)	// [[1,1], [2]] & [6, 5]
+
+		// Get last stored permutation
+		const prevSplinteredItem = splinteredItem[splinteredItem.length - 1];	// [[1], [2]] to 
+		
 	
 		// Loop across partition
 		for (let partitionEntry=0; partitionEntry < partition.length; partitionEntry++) {
 			let prevPartitionSum = 0;
 			let currPartitionSum = 0;
-	
+			
 			let currPartition = partition[partitionEntry];
 	
 			// Loop across each partition entry
@@ -864,7 +886,9 @@ export const generateMoves = (dice, tokens) => {
 				if (currPartitionEntry === (currPartition.length - 1)) {
 					// console.log(splinterTemp.length - 1);
 					// console.log(splinterTemp);
-					splinteredItem[splinterTemp.length - 1].push(splinterTemp);
+					if (!compareNestedArrays(prevSplinteredItem, splinterTemp)) {
+						splinteredItem[splinterTemp.length - 1].push(splinterTemp);
+					}
 	
 					// console.log("SPLINTERED ITEM : ", splinteredItem);
 					splinterTemp = [];
