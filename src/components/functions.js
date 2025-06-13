@@ -848,18 +848,17 @@ export const generateMoves = (dice, tokens) => {
 		return partitions;
 	}
 
-	const splinterPermutation = (partition, permutation, partitionedPermutation=[]) => {
-		let splinteredItem = Array.from(Array(permutation.length), () => []);  
-		let splinterTemp = []; 
+	const splinterPermutation = (partition, permutation, splintered) => {
 
-		console.log(partition, permutation)	// [[1,1], [2]] & [6, 5]
+		// console.log(partition, permutation)	// [[1,1], [2]] & [6, 5] (chunked permutation, dice roll)
+		let partitionedPermutation = [];
 
-		// Get last stored permutation
-		const prevSplinteredItem = splinteredItem[splinteredItem.length - 1];	// [[1], [2]] to 
-		
-	
 		// Loop across partition
 		for (let partitionEntry=0; partitionEntry < partition.length; partitionEntry++) {
+
+			let splinteredItem = Array.from({ length: permutation.length }, () => []);  // [[], [], [], []]
+			let splinterTemp = [];
+
 			let prevPartitionSum = 0;
 			let currPartitionSum = 0;
 			
@@ -884,18 +883,32 @@ export const generateMoves = (dice, tokens) => {
 				// console.log("currPartitionEntry : ", currPartitionEntry);
 				// console.log("currPartition Length : ", currPartition.length - 1);
 				if (currPartitionEntry === (currPartition.length - 1)) {
-					// console.log(splinterTemp.length - 1);
-					// console.log(splinterTemp);
-					if (!compareNestedArrays(prevSplinteredItem, splinterTemp)) {
-						splinteredItem[splinterTemp.length - 1].push(splinterTemp);
+					splinteredItem[splinterTemp.length - 1].push(splinterTemp);
+					// console.log(splinteredItem);
+					
+					// Compare previous partitioned permutation to current partitioned permutation  to prevent 
+					// duplicated partitions. For instance [[1] [3, 4, 6]] and [[1] [4, 3, 6]] are the same because
+					// it will result in the same move
+
+					// Fetch last splintered entry. Splintered will be empty first because no partitioned entry
+					// has been pushed inside
+					const lastSplintered = splintered.at(-1); 
+					let prevPartitioned = lastSplintered?.[permutation.length] ?? lastSplintered?.[permutation.length - 1];
+					prevPartitioned = prevPartitioned?.find(inner => inner.length > 0);
+
+					// alert("prevPartitioned: " + JSON.stringify(prevPartitioned, null, 2));
+					// alert("splinterTemp: " + JSON.stringify(splinterTemp, null, 2));
+
+					// alert ((JSON.stringify(prevPartitioned, null, 2)))
+
+					if (prevPartitioned === undefined || !compareNestedArrays(prevPartitioned, splinterTemp)) {
+						partitionedPermutation.push(splinteredItem);
+					} else {
+						// alert ('matched');
 					}
-	
-					// console.log("SPLINTERED ITEM : ", splinteredItem);
-					splinterTemp = [];
 				}
 			}
 		}
-		partitionedPermutation.push(splinteredItem);
 		return partitionedPermutation;
 	}
 	
@@ -903,7 +916,7 @@ export const generateMoves = (dice, tokens) => {
 		// If current permutation is complete
 		if (curr.length === sequence.length) {
 			if (partition) {
-				splintered.push(splinterPermutation(partition, curr));
+				splintered.push(splinterPermutation(partition, curr, splintered));
 				// console.log("SPLINTERED : ", splintered);
 			} else {
 				permuted.push([...curr]);
