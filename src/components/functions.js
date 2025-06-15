@@ -796,22 +796,38 @@ const randomiseWeightedOdds = (weightedOdds, totOddsPcnt=100, oddSum=0, shuffled
 	}
 }
 
-const compareNestedArrays = (arr1, arr2) => {
+// const compareNestedArrays = (arr1, arr2) => {
+// 	if (arr1.length !== arr2.length) return false;
+  
+// 	for (let i = 0; i < arr1.length; i++) {
+// 		const sortedA = [...arr1[i]].sort();
+// 		const sortedB = [...arr2[i]].sort();
+	
+// 		if (sortedA.length !== sortedB.length) return false;
+	
+// 		for (let j = 0; j < sortedA.length; j++) {
+// 			if (sortedA[j] !== sortedB[j]) return false;
+// 		}
+// 	}
+// 	return true;
+// }
+
+function areArraysEqual(arr1, arr2) {
 	if (arr1.length !== arr2.length) return false;
   
 	for (let i = 0; i < arr1.length; i++) {
-		const sortedA = [...arr1[i]].sort();
-		const sortedB = [...arr2[i]].sort();
-	
-		if (sortedA.length !== sortedB.length) return false;
-	
-		for (let j = 0; j < sortedA.length; j++) {
-			if (sortedA[j] !== sortedB[j]) return false;
-			}
-		}
-	
-		return true;
-  }
+	  const a = [...arr1[i]].sort((x, y) => x - y);
+	  const b = [...arr2[i]].sort((x, y) => x - y);
+  
+	  if (a.length !== b.length) return false;
+  
+	  for (let j = 0; j < a.length; j++) {
+		if (a[j] !== b[j]) return false;
+	  }
+	}
+  
+	return true;
+}
 
 export const generateMoves = (dice, tokens) => {
 
@@ -901,7 +917,7 @@ export const generateMoves = (dice, tokens) => {
 
 					// alert ((JSON.stringify(prevPartitioned, null, 2)))
 
-					if (prevPartitioned === undefined || !compareNestedArrays(prevPartitioned, splinterTemp)) {
+					if (prevPartitioned === undefined || !areArraysEqual(prevPartitioned, splinterTemp)) {
 						partitionedPermutation.push(splinteredItem);
 					} else {
 						// alert ('matched');
