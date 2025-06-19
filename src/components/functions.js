@@ -1138,3 +1138,94 @@ const filterMoves = (seeds, dice) => {
 // 	const COMActive = getCOMBaseActive();	// Get active COM tokens
 
 // }
+
+let cellPath = 52;
+	
+const COM = {
+  A: {
+	  breakaway: [{ x: 3, y: 3}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 8,
+	  risk : 0
+  },
+  B: {
+	  breakaway: [{ x: 2, y: 3}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 13,
+	  risk : 0
+  },
+  C: {
+	  breakaway: [{ x: 3, y: 2}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 5,
+	  risk : 0
+  },
+  D: {
+	  breakaway: [{ x: 2, y: 2}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 19,
+	  risk : 0
+  }
+}
+
+const player = {
+	E: {
+		breakaway: [{ x: 3, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 1,
+		risk : 0
+	},
+	F: {
+		breakaway: [{ x: 2, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 4,
+		risk : 0
+	},
+	G: {
+		breakaway: [{ x: 2, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 10,
+		risk : 0
+	},
+	H: {
+		breakaway: [{ x: 2, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 27,
+		risk : 0
+	}
+}
+
+// Loop across COM 
+for (const comKey in COM) {
+if (COM.hasOwnProperty(comKey)) {
+  let COMCell = COM[comKey].cell; // Get absolute cell position
+  let COMRisk = COM[comKey].risk; // Get risk of COM
+  // Sort Opp cell values from closest to farthest 
+  const sortedPlayerEntries = Object.entries(player).sort(([, a], [, b]) => {
+	return Math.abs(a.cell - COMCell) - Math.abs(b.cell - COMCell);
+  });
+  const sortedPlayer = Object.fromEntries(sortedPlayerEntries);
+  
+  const sortedPlayerKeys = Object.keys(sortedPlayer);
+  const sortedPlayerLastIndex = sortedPlayerKeys.length - 1;
+
+  let playerLoopCount = 0;
+  for (const playerKey in sortedPlayer) {
+	if (player.hasOwnProperty(playerKey)) {
+	  let playerCell = player[playerKey].cell;
+
+	  let risk = (((cellPath - (Math.max(COMCell, playerCell) - Math.min(COMCell, playerCell))) / cellPath) * 100).toFixed(2);
+	  if (playerLoopCount > 0) {
+		risk = ((risk / 100) * COMRisk) + COMRisk;
+	  }
+	  if (playerLoopCount === sortedPlayerLastIndex ) {
+		COM[comKey].cell = risk;
+	  }
+	  console.log("risk : ", risk);
+	  playerLoopCount++; 
+	}
+  }
+}
+}
+
+
