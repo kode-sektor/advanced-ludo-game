@@ -1195,17 +1195,105 @@ const player = {
 	}
 }
 
+	
+	
+let cellPath = 52;
+	
+const COM = {
+  A: {
+	  breakaway: [{ x: 3, y: 3}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 8,
+	  risk : 0
+  },
+  B: {
+	  breakaway: [{ x: 2, y: 3}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 13,
+	  risk : 0
+  },
+  C: {
+	  breakaway: [{ x: 3, y: 2}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 5,
+	  risk : 0
+  },
+  D: {
+	  breakaway: [{ x: 2, y: 2}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 19,
+	  risk : 0
+  }
+}
+
+const player = {
+	E: {
+		breakaway: [{ x: 3, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 1,
+		risk : 0
+	},
+	F: {
+		breakaway: [{ x: 2, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 4,
+		risk : 0
+	},
+	G: {
+		breakaway: [{ x: 2, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 10,
+		risk : 0
+	},
+	H: {
+		breakaway: [{ x: 2, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 27,
+		risk : 0
+	}
+}
+
+
+
 // Loop across COM 
 for (const comKey in COM) {
 if (COM.hasOwnProperty(comKey)) {
   let COMCell = COM[comKey].cell; // Get absolute cell position
-  let COMRisk = COM[comKey].risk; // Get risk of COM
-  // Sort Opp cell values from closest to farthest 
+  let COMRisk = 0; // Why 0 & not COM[risk] value? Because it needs to be calculated fresh regardless of old COM risk value
+  let remainderRisk = 100;
+  
+  // Sort Opp cell values from closest to farthest but check existence of Opp token that precedes
+  // the COM token and within striking distance ( < 12), in other words can be struck in one cast of 
+  // the dice. If more than one token satisfies these conditions, choose the closest.
+  
+  // This influences how the risk is calculated. If the odds of a strike is 40% from the closest preceding
+  // token, that forms the bedrock for further cumulative risks to be calculated. The risk other tokens 
+  // pose would be a factor of the remainder (100% - 40% = 60%) cumulatively. e.g, the 2nd Opp token if 30% danger (risk) to token would
+  // then make a cumulative risk of 30% of 60% which is 18%. Cumulative risk would now be 50% + 15%
   const sortedPlayerEntries = Object.entries(player).sort(([, a], [, b]) => {
 	return Math.abs(a.cell - COMCell) - Math.abs(b.cell - COMCell);
   });
-  const sortedPlayer = Object.fromEntries(sortedPlayerEntries);
   
+  // Further filter only tokens within strike range (12 cells) from closest to farthest
+  const playerTokensInStrikeRange = sortedPlayerEntries.
+  filter(([_, val]) => val.cell < COMCell && val.cell > (COMCell - 12));
+  
+  console.log(playerTokensInStrikeRange);
+  
+  // Join tokens within strike range ranging from closest to remaining tokens, also ranging from closest
+  const strikeRangeKeys = new Set(playerTokensInStrikeRange.map(([key]) => key));
+  
+  // Combine without repeating strike-range entries, with closest tokens within strike range coming first
+  const sortedPlayerTokens = [
+	...playerTokensInStrikeRange,
+	...sortedPlayerEntries.filter(([key]) => !strikeRangeKeys.has(key))
+  ];
+  
+  console.log(COMCell);
+  console.log(sortedPlayerTokens);
+  
+  // Get last index to determine last cycle in loop
+  const sortedPlayer = Object.fromEntries(sortedPlayerTokens);
   const sortedPlayerKeys = Object.keys(sortedPlayer);
   const sortedPlayerLastIndex = sortedPlayerKeys.length - 1;
 
@@ -1213,19 +1301,41 @@ if (COM.hasOwnProperty(comKey)) {
   for (const playerKey in sortedPlayer) {
 	if (player.hasOwnProperty(playerKey)) {
 	  let playerCell = player[playerKey].cell;
-
+	  console.log(COMCell); // Should now log the COM cell values
+	  
+	  // Calculate risk 
+	  // [(total cells - cell difference) / total cells] * 100%
 	  let risk = (((cellPath - (Math.max(COMCell, playerCell) - Math.min(COMCell, playerCell))) / cellPath) * 100).toFixed(2);
-	  if (playerLoopCount > 0) {
-		risk = ((risk / 100) * COMRisk) + COMRisk;
-	  }
+	  
+	  console.log(risk);
+	  
+	  // Account for ∑risk:
+	  // risk% * [100% - ∑risk]
+	  let adjustedRisk = (risk / 100) * remainderRisk;  // 100 - risk, on first cycle
+	  
+	  COMRisk += adjustedRisk;   // ∑risk
+	  remainderRisk -= adjustedRisk;
+	  
+	  console.log("Adjusted risk:", adjustedRisk.toFixed(2));
+	  console.log("Cumulative COMRisk:", COMRisk.toFixed(2));
+	  console.log("Remaining risk pool:", remainderRisk.toFixed(2));
+	  
 	  if (playerLoopCount === sortedPlayerLastIndex ) {
-		COM[comKey].cell = risk;
+		COM[comKey].risk = COMRisk; // Update risk value for COM token
+		COMRisk = 0;
 	  }
-	  console.log("risk : ", risk);
 	  playerLoopCount++; 
 	}
   }
 }
 }
+
+// console.log(COM);
+
+
+const getStrikeOdds = () => {
+  
+}
+
 
 
