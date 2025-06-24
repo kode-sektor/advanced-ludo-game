@@ -1255,6 +1255,92 @@ const player = {
 
 
 
+let cellPath = 52;
+	
+const COM = {
+  A: {
+	  breakaway: [{ x: 3, y: 3}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 8,
+	  risk : 0
+  },
+  B: {
+	  breakaway: [{ x: 2, y: 3}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 13,
+	  risk : 0
+  },
+  C: {
+	  breakaway: [{ x: 3, y: 2}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 5,
+	  risk : 0
+  },
+  D: {
+	  breakaway: [{ x: 2, y: 2}],
+	  coordinates: [{ x: 0, y: 0}],
+	  cell: 19,
+	  risk : 0
+  }
+}
+
+const player = {
+	E: {
+		breakaway: [{ x: 3, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 1,
+		risk : 0
+	},
+	F: {
+		breakaway: [{ x: 2, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 4,
+		risk : 0
+	},
+	G: {
+		breakaway: [{ x: 2, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 10,
+		risk : 0
+	},
+	H: {
+		breakaway: [{ x: 2, y: 3}],
+		coordinates: [{ x: 0, y: 0}],
+		cell: 27,
+		risk : 0
+	}
+}
+
+function calculateOdds() {
+let totalOutcomes = 0;
+let favorableOutcomes = 0;
+
+for (let die1 = 1; die1 <= 6; die1++) {
+  for (let die2 = 1; die2 <= 6; die2++) {
+	totalOutcomes++;
+
+	const hasFive = die1 === 5 || die2 === 5;
+	const sumIsFive = die1 + die2 === 5;
+
+	if (hasFive || sumIsFive) {
+	  favorableOutcomes++;
+	}
+  }
+}
+
+const probability = favorableOutcomes / totalOutcomes;
+const percentage = (probability * 100).toFixed(2);
+
+return {
+  favorableOutcomes,
+  totalOutcomes,
+  probability,
+  percentage: percentage + '%'
+};
+}
+
+const cellWithinStrikeRange = (COMCell, playerCell) => COMCell - playerCell < 12; 
+
 // Loop across COM 
 for (const comKey in COM) {
 if (COM.hasOwnProperty(comKey)) {
@@ -1313,8 +1399,24 @@ if (COM.hasOwnProperty(comKey)) {
 	  // risk% * [100% - ∑risk]
 	  let adjustedRisk = (risk / 100) * remainderRisk;  // 100 - risk, on first cycle
 	  
+	  
+	  
 	  COMRisk += adjustedRisk;   // ∑risk
 	  remainderRisk -= adjustedRisk;
+	  
+	  // The proximity of a token is a risk itself. The actual strike probability is also another risk by itself.
+	  // Calculate the cell distance it takes to make a dislodge, calculate the odds of getting that distance 
+	  // with the dice toss, then make it a factor of the risk. For instance, if it takes 6 to make a dislodge,
+	  // and its a 50% odds of getting 6, then the 50% would be used to apply the diminishing Cumulative efffect
+	  // by multiplying it with the remaining risk
+	  
+	  // Why is this important? Because proximity is not a total representation of risk. By way of odds, its more 
+	  // difficult to get a '1', than 3 or 5. Thus the strike odds must be factored in, too. 
+	  if (cellWithinStrikeRange(COMCell, playerCell)) {
+		let diceOdds = calculateOdds(COMCell - playerCell); // strike range 
+		COMRisk += (diceOdds * adjustedRisk) + risk;
+		remainderRisk -= (diceOdds * adjustedRisk);
+	  }
 	  
 	  console.log("Adjusted risk:", adjustedRisk.toFixed(2));
 	  console.log("Cumulative COMRisk:", COMRisk.toFixed(2));
@@ -1336,6 +1438,3 @@ if (COM.hasOwnProperty(comKey)) {
 const getStrikeOdds = () => {
   
 }
-
-
-
