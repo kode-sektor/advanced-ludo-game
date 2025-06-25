@@ -1201,6 +1201,8 @@ const player = {
 	
 	
 	
+	
+	
 let cellPath = 52;
 	
 const COM = {
@@ -1406,14 +1408,30 @@ if (COM.hasOwnProperty(comKey)) {
 		breakOut: true
 	  });
 	  
-	  if (breakOutRisk.oddsRisk > risk.oddsRisk) {
+	  if (breakoutRisk.oddsRisk > risk.oddsRisk) {
 		// Add breakout risk
-		COMRisk += oddsRisk;
-		remainderRisk -= oddsRisk;
+		COMRisk += breakoutRisk.oddsRisk;
+		remainderRisk -= breakoutRisk.oddsRisk;
 		
 		// Then in recursive function, calculate risk 
+		let risk = calculateRisk ({
+		  COMCell: COM[comKey].cell,
+		  playerCell: player[playerKey].cell,
+		  cellPath,
+		});
+		
+		COMRisk += risk.oddsRisk;
+		remainderRisk -= risk.oddsRisk;
+	  } else {
+		let risk = calculateRisk ({
+		  COMCell: COM[comKey].cell,
+		  playerCell: player[playerKey].cell,
+		  cellPath,
+		});
+		
+		COMRisk += risk.oddsRisk;
+		remainderRisk -= risk.oddsRisk;
 	  }
-
 	  
 	  COMRisk = risk.COMRisk;
 	  remainderRisk = risk.remainderRisk;
@@ -1434,6 +1452,11 @@ if (COM.hasOwnProperty(comKey)) {
 const getStrikeOdds = () => {
   
 }
+
+
+
+
+
 
 
 
