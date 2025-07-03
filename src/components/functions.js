@@ -1141,6 +1141,8 @@ const filterMoves = (seeds, dice) => {
 
 	
 	
+		
+	
 	let cellPath = 52;
 	
 	const COM = {
@@ -1240,7 +1242,6 @@ const filterMoves = (seeds, dice) => {
   }) {
     
     let adjustedRisk = 0;
-    let inPortalRisk = 0;
     
     // Calculating risk for in-portal tokens
     if (COMCell > 50) {
@@ -1257,7 +1258,7 @@ const filterMoves = (seeds, dice) => {
         numerator += (56 - val.cell);
       }
       
-      inPortalRisk = 1 - (numerator / denominator);
+      adjustedRisk = 1 - (numerator / denominator);
 
     } else {
       // Base risk from proximity
@@ -1265,28 +1266,29 @@ const filterMoves = (seeds, dice) => {
       // [(total cells - cell difference) / total cells] * 100%
       const strikeRange = Math.abs(COMCell - playerCell);
       let risk = (((cellPath - strikeRange) / cellPath) * 100).toFixed(2);
+      risk = breakout ? (11/36) * risk;
       risk = parseFloat(risk);
     
       // Apply diminishing effect
       // Account for ∑risk:
       // risk% * [100% - ∑risk]
       adjustedRisk = (risk / 100) * remainderRisk;
-    
+      
+      
       // Strike odds risk (bonus risk if within strike range)
       // The proximity of a token is a risk itself. The actual strike probability is also another risk by itself.
       // Calculate the cell distance it takes to make a dislodge, calculate the odds of getting that distance 
       // with the dice toss, then make it a factor of the risk. For instance, if it takes 6 to make a dislodge,
       // and its a 50% odds of getting 6, then the 50% would be used to apply the diminishing Cumulative efffect
       // by multiplying it with the remaining risk
-    }
-  
     
-    // Why is this important? Because proximity is not a total representation of risk. By way of odds, its more 
-    // difficult to get a '1', than 3 or 5. Thus the strike odds must be factored in, too. 
-    if (cellWithinStrikeRange(COMCell, playerCell) && ) {
-      let strikeOdds = calculateDiceOdds(strikeRange); // e.g., 6 = 5/36
-      strikeOdds = breakout ? (11/36) * strikeOdds;
-      adjustedRisk *= strikeOdds;
+      // Why is this important? Because proximity is not a total representation of risk. By way of odds, its more 
+      // difficult to get a '1', than 3 or 5. Thus the strike odds must be factored in, too. 
+      if (cellWithinStrikeRange(COMCell, playerCell)) {
+        let strikeOdds = calculateDiceOdds(strikeRange); // e.g., 6 = 5/36
+        strikeOdds = breakout ? (11/36) * strikeOdds;
+        adjustedRisk *= strikeOdds;
+      }
     }
     
     console.log("Adjusted risk:", adjustedRisk.toFixed(2));
@@ -1300,8 +1302,8 @@ const filterMoves = (seeds, dice) => {
   const cellWithinStrikeRange = (COMCell, playerCell) => COMCell - playerCell < 12; 
   
   const breakoutOdds = 11/36;
-  const homeBreakoutSpot = 3.5;
-  const awayBreakoutSPot = 17.5;
+  const defenceBreakoutSpot = 3.5;
+  const attackBreakoutSpot = 17.5;
   
   const midBreakoutSpot = (homeBreakoutSpot + awayBreakoutSpot) / 2;
 	
@@ -1363,26 +1365,33 @@ const filterMoves = (seeds, dice) => {
       const sortedPlayerKeys = Object.keys(sortedPlayer);
       const sortedPlayerLastIndex = sortedPlayerKeys.length - 1;
 
+      let breakoutFlag = false;
       let playerLoopCount = 0;
       let risk = 0;
       
       for (const playerKey in sortedPlayer) {
         if (player.hasOwnProperty(playerKey)) {
           
-          let risk = calculateRisk ({
-            COMCell: COM[comKey].cell,
-            playerCell: player[playerKey].cell,
-            cellPath,
-          });
-          
-          let breakoutRisk = calculateRisk ({
-            COMCell: COM[comKey].cell,
-            playerCell: midBreakoutSpot,
-            cellPath,
-            breakOut: true
-          });
-          
-          if (breakoutRisk.oddsRisk > risk.oddsRisk) {
+          if (!breakoutFlag) {
+            let risk = calculateRisk ({
+              COMCell: COM[comKey].cell,
+              playerCell: player[playerKey].cell,
+              cellPath,
+            });
+            
+            let breakoutRisk = calculateRisk ({
+              COMCell: COM[comKey].cell,
+              // Assume Opp will breakout on defence base if COM token is at 9 or less; otherwise 
+              // opp breaks out on attack base 
+              playerCell: COM[comKey].cell > midBreakoutSpot ? attackBreakoutSpot : defenceBreakoutSpot,
+              cellPath,
+              breakOut: true
+            });
+          }
+
+          if ((breakoutRisk.oddsRisk > risk.oddsRisk) && !breakoutFlag) {
+            
+            breakoutFlag = true;
             
             // Add breakout risk
             COMRisk += breakoutRisk.oddsRisk;
@@ -1431,11 +1440,6 @@ const filterMoves = (seeds, dice) => {
 	
 	
 	
-
-
-
-
-
 
 
 
