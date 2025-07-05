@@ -1141,7 +1141,6 @@ const filterMoves = (seeds, dice) => {
 
 	
 	
-		
 	
 	let cellPath = 52;
 	
@@ -1199,95 +1198,128 @@ const filterMoves = (seeds, dice) => {
     	}
 	}
 	
+	function divmod(dividend, divisor) {
+    const quotient = Math.floor(dividend / divisor);
+    const remainder = dividend % divisor;
+    return [quotient, remainder];
+  }
+	
   function calculateDiceOdds (targetTotal, targetDieNumber) {
     targetDieNumber = (targetDieNumber === null) && targetTotal;
     if (targetDieNumber < 1 || targetDieNumber > 6) {
       throw new Error("Die number must be between 1 and 6");
     }
   
-    if (targetTotal < 2 || targetTotal > 12) {
+    if (targetTotal < 2) {
       throw new Error("Total sum must be between 2 and 12");
     }
-  
-    let totalOutcomes = 0;
-    let favorableOutcomes = 0;
-  
-    for (let die1 = 1; die1 <= 6; die1++) {
-      for (let die2 = 1; die2 <= 6; die2++) {
-        totalOutcomes++;
-  
-        const hasTargetNumber = die1 === targetDieNumber || die2 === targetDieNumber;
-        const isTargetTotal = die1 + die2 === targetTotal;
-  
-        if (hasTargetNumber || isTargetTotal) {
-          favorableOutcomes++;
+    
+    if (targetTotal > 12) {
+      const activePlayerTokensCount = Object.values(player).filter(val => val.cell > 0).length;
+      let strikeOdds = 0;
+      
+      if (activePlayerTokensCount === 1) {
+        const [quot, remainder] = divmod(targetTotal, 7);
+        let medianStrideOdds = calculateDiceOdds(7); // Move in average of 7's
+        if (remainder === 1) {
+          let remStrideOdds = calculateDiceOdds(7 + 1);
+          strikeOdds = Math.pow(medianStrideOdds, quot - 1) * remStrideOdds; 
+        } else {
+          let remStrideOdds = remainder === 0 ? 1 : calculateDiceOdds(remainder);
+          strikeOdds = Math.pow(medianStrideOdds, quot) * remStrideOdds;
         }
       }
+    } else {
+      let totalOutcomes = 0;
+      let favorableOutcomes = 0;
+    
+      for (let die1 = 1; die1 <= 6; die1++) {
+        for (let die2 = 1; die2 <= 6; die2++) {
+          totalOutcomes++;
+    
+          const hasTargetNumber = die1 === targetDieNumber || die2 === targetDieNumber;
+          const isTargetTotal = die1 + die2 === targetTotal;
+    
+          if (hasTargetNumber || isTargetTotal) {
+            favorableOutcomes++;
+          }
+        }
+      }
+      
     }
   
-    const probability = favorableOutcomes / totalOutcomes;
+    const probability = targetTotal > 12 ? strikeOdds : (favorableOutcomes / totalOutcomes);
     const percentage = (probability * 100).toFixed(2);
   
     return percentage;
+  }
+  
+  const getRisk = (COMCell, playerCell, breakout=false) => {
+    // Base risk from proximity
+    // Calculate risk 
+    // [(total cells - cell difference) / total cells] * 100%
+    const strikeRange = Math.abs(COMCell - playerCell);
+    let risk = (((cellPath - strikeRange) / cellPath) * 100).toFixed(2);
+    risk = breakout && (11/36) * risk;
+    risk = parseFloat(risk);
+  
+    // Apply diminishing effect
+    // Account for ∑risk:
+    // risk% * [100% - ∑risk]
+    adjustedRisk = (risk / 100) * remainderRisk;
+    
+    
+    // Strike odds risk (bonus risk if within strike range)
+    // The proximity of a token is a risk itself. The actual strike probability is also another risk by itself.
+    // Calculate the cell distance it takes to make a dislodge, calculate the odds of getting that distance 
+    // with the dice toss, then make it a factor of the risk. For instance, if it takes 6 to make a dislodge,
+    // and its a 50% odds of getting 6, then the 50% would be used to apply the diminishing Cumulative efffect
+    // by multiplying it with the remaining risk
+  
+    // Why is this important? Because proximity is not a total representation of risk. By way of odds, its more 
+    // difficult to get a '1', than 3 or 5. Thus the strike odds must be factored in, too. 
+    if (cellWithinStrikeRange(COMCell, playerCell)) {
+      let strikeOdds = calculateDiceOdds(strikeRange); // e.g., 6 = 5/36
+      strikeOdds = breakout && (11/36) * strikeOdds;
+      adjustedRisk *= strikeOdds;
+    }
+    
+    return adjustedRisk;
   }
   
   function calculateRisk ({
     COMCell,
     playerCell,
     cellPath,
-    remainderRisk: 100,
-    COMRisk: 0,
+    remainderRisk = 100,
+    COMRisk = 0,
     cellWithinStrikeRange,
-    breakout: false
+    breakout = false
   }) {
     
     let adjustedRisk = 0;
     
-    // Calculating risk for in-portal tokens
-    if (COMCell > 50) {
-      // Filter 2 in-portal tokens with most distance to clearance. In other words 
-      // select the 2 least tokens greater than 50
-      
-      const sortedInPortalCOMTokens = filteredCOM.sort(([, a], [, b]) => a.cell - b.cell);
-      const smallestInPortalCOMTokens = sortedInPortalCOMTokens.slice(0, 2);
-      
-      let numerator = 0;
-      let denominator = 56 * 2; // since you want fraction over 56 + 56 = 112
-      
-      for (const [key, val] of smallestInPortalCOMTokens) {
-        numerator += (56 - val.cell);
-      }
-      
-      adjustedRisk = 1 - (numerator / denominator);
-
+    if (breakout) {
+      adjustedRisk = getRisk(COMCell, playerCell, true);
     } else {
-      // Base risk from proximity
-      // Calculate risk 
-      // [(total cells - cell difference) / total cells] * 100%
-      const strikeRange = Math.abs(COMCell - playerCell);
-      let risk = (((cellPath - strikeRange) / cellPath) * 100).toFixed(2);
-      risk = breakout ? (11/36) * risk;
-      risk = parseFloat(risk);
-    
-      // Apply diminishing effect
-      // Account for ∑risk:
-      // risk% * [100% - ∑risk]
-      adjustedRisk = (risk / 100) * remainderRisk;
-      
-      
-      // Strike odds risk (bonus risk if within strike range)
-      // The proximity of a token is a risk itself. The actual strike probability is also another risk by itself.
-      // Calculate the cell distance it takes to make a dislodge, calculate the odds of getting that distance 
-      // with the dice toss, then make it a factor of the risk. For instance, if it takes 6 to make a dislodge,
-      // and its a 50% odds of getting 6, then the 50% would be used to apply the diminishing Cumulative efffect
-      // by multiplying it with the remaining risk
-    
-      // Why is this important? Because proximity is not a total representation of risk. By way of odds, its more 
-      // difficult to get a '1', than 3 or 5. Thus the strike odds must be factored in, too. 
-      if (cellWithinStrikeRange(COMCell, playerCell)) {
-        let strikeOdds = calculateDiceOdds(strikeRange); // e.g., 6 = 5/36
-        strikeOdds = breakout ? (11/36) * strikeOdds;
-        adjustedRisk *= strikeOdds;
+      // Calculating risk for in-portal tokens
+      if (COMCell > 50) {
+        // Filter 2 in-portal tokens with most distance to clearance. In other words 
+        // select the 2 least tokens greater than 50
+        
+        const sortedInPortalCOMTokens = filteredCOM.sort(([, a], [, b]) => a.cell - b.cell);
+        const smallestInPortalCOMTokens = sortedInPortalCOMTokens.slice(0, 2);
+        
+        let numerator = 0;
+        let denominator = 56 * 2; // since you want fraction over 56 + 56 = 112
+        
+        for (const [key, val] of smallestInPortalCOMTokens) {
+          numerator += (56 - val.cell);
+        }
+        adjustedRisk = 1 - (numerator / denominator);
+        
+      } else {
+        adjustedRisk = getRisk(COMCell, playerCell, false);
       }
     }
     
@@ -1295,7 +1327,7 @@ const filterMoves = (seeds, dice) => {
     console.log("Cumulative COMRisk:", COMRisk.toFixed(2));
     console.log("Remaining risk pool:", remainderRisk.toFixed(2));
   
-    return oddsRisk;
+    return adjustedRisk;
   }
   
   
@@ -1305,23 +1337,24 @@ const filterMoves = (seeds, dice) => {
   const defenceBreakoutSpot = 3.5;
   const attackBreakoutSpot = 17.5;
   
-  const midBreakoutSpot = (homeBreakoutSpot + awayBreakoutSpot) / 2;
+  const midBreakoutSpot = (attackBreakoutSpot + defenceBreakoutSpot) / 2;
 	
-	// Filter COM in-portal tokens
-	const inPortalCOMEntries = sortedCOMEntries.filter(([key, val]) => val.cell > 50);
-	
-	// Sort > 50 by ASC 
-	const sortedInPortalCOM = inPortalCOMEntries.sort((a, b) => a[1].cell - b[1].cell);
-	
-	const inPortalCOMTokens = new Set(Object.fromEntries(sortedInPortalCOM));
-	
-	// Now combine out-of-portal COM tokens (first) with in-portal COM tokens (last)
-	// and in-portal tokens in ASC order
-	
-	const sortedCOMTokens = [
-	  ...sortedCOMEntries.filter(([keys]) => !inPortalCOMTokens.has(key)),
-	  ...sortedCOMEntries
-	]
+  // Filter COM in-portal tokens
+  const sortedCOMEntries = Object.entries(COM);
+  const inPortalCOMEntries = sortedCOMEntries.filter(([key, val]) => val.cell > 50);
+  
+  // Sort > 50 by ASC 
+  const sortedInPortalCOM = inPortalCOMEntries.sort((a, b) => a[1].cell - b[1].cell);
+  
+  // ✅ Corrected: Create a Set of keys
+  const inPortalCOMTokens = new Set(sortedInPortalCOM.map(([key]) => key));
+  
+  // Combine out-of-portal COM tokens (first) with in-portal COM tokens (last, sorted)
+  const sortedCOMTokens = [
+    ...sortedCOMEntries.filter(([key]) => !inPortalCOMTokens.has(key)),
+    ...sortedInPortalCOM
+  ];
+  
 	
 	// Loop across COM 
   for (const comKey in sortedCOMTokens) {
@@ -1389,13 +1422,13 @@ const filterMoves = (seeds, dice) => {
             });
           }
 
-          if ((breakoutRisk.oddsRisk > risk.oddsRisk) && !breakoutFlag) {
+          if ((breakoutRisk.adjustedRisk > risk.adjustedRisk) && !breakoutFlag) {
             
             breakoutFlag = true;
             
             // Add breakout risk
-            COMRisk += breakoutRisk.oddsRisk;
-            remainderRisk -= breakoutRisk.oddsRisk;
+            COMRisk += breakoutRisk.adjustedRisk;
+            remainderRisk -= breakoutRisk.adjustedRisk;
             
             // Then in recursive function, calculate risk 
             let risk = calculateRisk ({
@@ -1405,8 +1438,8 @@ const filterMoves = (seeds, dice) => {
               inPortalCOMTokens
             });
             
-            COMRisk += risk.oddsRisk;
-            remainderRisk -= risk.oddsRisk;
+            COMRisk += risk.adjustedRisk;
+            remainderRisk -= risk.adjustedRisk;
           } else {
             let risk = calculateRisk ({
               COMCell: COM[comKey].cell,
@@ -1415,8 +1448,8 @@ const filterMoves = (seeds, dice) => {
               inPortalCOMTokens
             });
             
-            COMRisk += risk.oddsRisk;
-            remainderRisk -= risk.oddsRisk;
+            COMRisk += risk.adjustedRisk;
+            remainderRisk -= risk.adjustedRisk;
           }
           
           if (playerLoopCount === sortedPlayerLastIndex ) {
@@ -1430,6 +1463,16 @@ const filterMoves = (seeds, dice) => {
   }
   
   // console.log(COM);
+	
+	
+	const getStrikeOdds = () => {
+	  
+	}
+	
+	
+	
+	
+	
 	
 	
 	const getStrikeOdds = () => {
