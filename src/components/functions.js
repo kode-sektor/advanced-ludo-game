@@ -1144,6 +1144,8 @@ const filterMoves = (seeds, dice) => {
 	
 		
 	
+		
+	
 	let cellPath = 52;
 	
 	const COM = {
@@ -1211,6 +1213,8 @@ const filterMoves = (seeds, dice) => {
     		risk : 0
     	}
 	}
+	
+	const withinStrikeRange = (COMCell, playerCell) => COMCell - playerCell < 12; 
 	
 	function divmod(dividend, divisor) {
     const quotient = Math.floor(dividend / divisor);
@@ -1289,6 +1293,44 @@ const filterMoves = (seeds, dice) => {
     return arr1.every((value, index) => value === arr2[index]);
   }
   
+  function getLeastTravelledToken (player="COM") {
+    const activeTokens = getActiveTokens(player);
+    return activeTokens.reduce((prev, current) ==> isNaN(prev.cell) && prev.cell < current.cell) ? prev : current);
+  }
+  
+  function setOppTokenClosestToBreakout (COMBaseAttack, COMBaseDefence, OppCell, player="COM") {
+    const inActiveAttackTokens = getInActiveAttackTokens(player);
+    const inActiveCOMDefenceTokens = getInactiveDefenceTokens(player);
+    
+    const COMAttackStartPosition = getCOMAttackStartPosition(player);
+    const COMDefenceStartPosition = getDefenceStartPosition(player);
+    
+    const leastTravelledToken = getLeastTravelledToken("COM");
+    
+    if (inActiveAttackTokens) {
+      if (oppActive.length > 1) {
+        closestTokenToAttackStartPosition = Math.min(Math.abs(COMAttackStartPosition - OppCell), closestTokenToAttackStartPosition);
+      } else {
+        closestTokenToAttackStartPosition = Math.min((OppCell > COMAttackStartPosition ? 
+        OppCell - COMAttackStartPosition : 
+        OppCell + totalCells - COMAttackStartPosition), closestTokenToAttackStartPosition);
+      } 
+    }
+    
+    if (inActiveDefenceTokens) {
+      if (oppActive.length > 1) {
+        closestTokenToDefenceStartPosition = Math.min(Math.abs(COMDefenceStartPosition - OppCell), closestTokenToDefenceStartPosition);
+      } else {
+        closestTokenToDefenceStartPosition = Math.min((OppCell > COMDefenceStartPosition ? 
+        OppCell - COMDefenceAttackStartPosition : 
+        OppCell + totalCells - COMDefenceStartPosition), closestTokenToDefenceStartPosition);
+      } 
+    }
+  }
+  
+  
+  const tokenInPortal = cell => cell > 50 ? true : false;
+  
   const getRisk = (COMCell, COMBasePosition, playerCell, playerBasePosition, breakout=false) => {
     
     let cellDiff = 0;
@@ -1334,30 +1376,39 @@ const filterMoves = (seeds, dice) => {
     
     cellDiff = COMToOppDiff === null ? OppToCOMDiff : OppToCOMDiff === null ? COMToOppDiff : Math.min(COMToOppDiff, OppToCOMDiff);
     
-    if (opp.length === 1) {
-      if (cellDiff = OppToCOMDiff) {
-        oddsRisk = calculateDiceOdds(cellDiff);
-      } else {
-        oddsRisk = 0;
+    if (tokenInPortal(COMCell)) {
+      oddsRisk = (1 - ((totalCells - COMCell) / totalCells)) * 100;
+      if (oddsRisk > portalOddsRisk[0] || portalOddsRisk[0] === undefined) {
+        portalOddsRisk.unshift(oddsRisk);
+      } else if (oddsRisk > portalOddsRisk[1] || portalOddsRisk[1] === undefined) {
+        portalOddsRisk[1] = oddsRisk;
       }
     } else {
-      if (COM.length === 1) {
-        oddsRisk = (1 - (cellDiff / totalCells)) * 100;
-        if (withinStrikeRange (cellDiff)) {
-          let remRisk = 100 - oddsRisk;
-          let strikeRisk = calculateDiceOdds(cellDiff, cellDiff);
-          oddsRisk += (strikeRisk / 100) * remRisk;
+      if (opp.length === 1) {
+        if (cellDiff === OppToCOMDiff) {
+          oddsRisk = calculateDiceOdds(cellDiff);
+        } else {
+          oddsRisk = 0;
         }
       } else {
-        cellDiff = OppToCOMDiff;
-        if (cellDiff === null) {
-          oddsRisk = 0;
-        } else {
+        if (COM.length === 1) {
           oddsRisk = (1 - (cellDiff / totalCells)) * 100;
-          if (withinStrikeRange(cellDiff)) {
+          if (withinStrikeRange (cellDiff)) {
             let remRisk = 100 - oddsRisk;
             let strikeRisk = calculateDiceOdds(cellDiff, cellDiff);
             oddsRisk += (strikeRisk / 100) * remRisk;
+          }
+        } else {
+          cellDiff = OppToCOMDiff;
+          if (cellDiff === null) {
+            oddsRisk = 0;
+          } else {
+            oddsRisk = (1 - (cellDiff / totalCells)) * 100;
+            if (withinStrikeRange(cellDiff)) {
+              let remRisk = 100 - oddsRisk;
+              let strikeRisk = calculateDiceOdds(cellDiff, cellDiff);
+              oddsRisk += (strikeRisk / 100) * remRisk;
+            }
           }
         }
       }
@@ -1452,8 +1503,7 @@ const filterMoves = (seeds, dice) => {
   }
   
   
-  const cellWithinStrikeRange = (COMCell, playerCell) => COMCell - playerCell < 12; 
-  
+  const portalOddsRisk = [];  
   const breakoutOdds = 11/36;
   const defenceBreakoutSpot = 3.5;
   const attackBreakoutSpot = 17.5;
