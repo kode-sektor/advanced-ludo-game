@@ -1146,6 +1146,8 @@ const filterMoves = (seeds, dice) => {
 	
 		
 	
+		
+	
 	let cellPath = 52;
 	
 	const COM = {
@@ -1293,45 +1295,66 @@ const filterMoves = (seeds, dice) => {
     return arr1.every((value, index) => value === arr2[index]);
   }
   
-  function getLeastTravelledToken (player="COM") {
+  function getLeastTravelledToken (player="opp") {
     const activeTokens = getActiveTokens(player);
     return activeTokens.reduce((prev, current) ==> isNaN(prev.cell) && prev.cell < current.cell) ? prev : current);
   }
   
-  function setOppTokenClosestToBreakout (COMBaseAttack, COMBaseDefence, OppCell, player="COM") {
+  function setTokenClosestToBreakout (baseAttack, baseDefence, COMCell, player="opp") {
     const inActiveAttackTokens = getInActiveAttackTokens(player);
     const inActiveCOMDefenceTokens = getInactiveDefenceTokens(player);
     
-    const COMAttackStartPosition = getCOMAttackStartPosition(player);
-    const COMDefenceStartPosition = getDefenceStartPosition(player);
-    
-    const leastTravelledToken = getLeastTravelledToken("COM");
+    const attackStartPosition = getAttackStartPosition(player);
+    const defenceStartPosition = getDefenceStartPosition(player);
     
     if (inActiveAttackTokens) {
       if (oppActive.length > 1) {
-        closestTokenToAttackStartPosition = Math.min(Math.abs(COMAttackStartPosition - OppCell), closestTokenToAttackStartPosition);
+        closestTokenToAttackStartPosition = Math.min(Math.abs(attackStartPosition - COMCell), closestTokenToAttackStartPosition);
       } else {
-        closestTokenToAttackStartPosition = Math.min((OppCell > COMAttackStartPosition ? 
-        OppCell - COMAttackStartPosition : 
-        OppCell + totalCells - COMAttackStartPosition), closestTokenToAttackStartPosition);
+        closestTokenToAttackStartPosition = Math.min((COMCell > attackStartPosition ? 
+        COMCell - attackStartPosition : 
+        COMCell + totalCells - attackStartPosition), closestTokenToAttackStartPosition);
       } 
     }
     
     if (inActiveDefenceTokens) {
       if (oppActive.length > 1) {
-        closestTokenToDefenceStartPosition = Math.min(Math.abs(COMDefenceStartPosition - OppCell), closestTokenToDefenceStartPosition);
+        closestTokenToDefenceStartPosition = Math.min(Math.abs(defenceStartPosition - COMCell), closestTokenToDefenceStartPosition);
       } else {
-        closestTokenToDefenceStartPosition = Math.min((OppCell > COMDefenceStartPosition ? 
-        OppCell - COMDefenceAttackStartPosition : 
-        OppCell + totalCells - COMDefenceStartPosition), closestTokenToDefenceStartPosition);
+        closestTokenToDefenceStartPosition = Math.min((COMCell > defenceStartPosition ? 
+        COMCell - defenceStartPosition : 
+        COMCell + totalCells - defenceStartPosition), closestTokenToDefenceStartPosition);
       } 
+    }
+  }
+  
+  
+  let closestTokenToAttackBase = COM[A].cell;
+  let closestTokenToDefenceBase = COM[A].cell;
+  
+  let closestTokenToAttackBase = Math.abs(COMBaseAttack - closestTokenToAttackBase);
+  let closestTokenToDefenceBase = Math.abs(COMBaseDefence - diffTokenToDefenceBase);
+  
+  function testClosestTokenToBreakout (baseAttack, baseDefence, COMCell) {
+    if (COM.length === 1) {
+      let diffTokenToAttackBase = Math.abs(baseAttack - COMCell);
+      let diffTokenToDefenceBase = Math.abs(baseDefence - COMCell);
+      
+      closestTokenToAttackBase = diffTokenToAttackBase < closestTokenToAttackBase && COMCell;
+      closestTokenToDefenceBase = diffTokenToAttackBase < closestTokenToDefenceBase && COMCell;;
+    } else {
+      let diffTokenToAttackBase = COMCell > baseAttack ? COMCell - baseAttack : COMCell + totalCells - baseAttack;
+      let diffTokenToDefenceBase = COMCell > baseDefence ? COMCell - baseDefence : COMCell + totalCells - baseDefence;
+      
+      closestTokenToAttackBase = diffTokenToAttackBase < closestTokenToAttackBase && COMCell;
+      closestTokenToDefenceBase = diffTokenToAttackBase < closestTokenToDefenceBase && COMCell;;
     }
   }
   
   
   const tokenInPortal = cell => cell > 50 ? true : false;
   
-  const getRisk = (COMCell, COMBasePosition, playerCell, playerBasePosition, breakout=false) => {
+  const getRisk = (COMCell, oppCell, COMBasePosition, oppBasePosition, playerBasePosition, breakout=false) => {
     
     let cellDiff = 0;
     let strikeRange = 0;
@@ -1348,33 +1371,33 @@ const filterMoves = (seeds, dice) => {
     // Base risk from proximity
     
     const COMExistentRiskPattern = ["COMPortal", "COMCell", "PlayerCell"];
-    const oppExistentRiskPattern = ["OppPortal", "OppCell", "COMCell"];
+    const oppExistentRiskPattern = ["oppPortal", "oppCell", "COMCell"];
     
     const COMToOppPlay = {
       "COMCell" : COMCell,
-      "OppCell" : OppCell,
+      "oppCell" : oppCell,
       "COMPortal" : COMBasePosition === 0 ? 50 : COMBasePosition - 2
     }
     
-    const OppToCOMPlay = {
+    const oppToCOMPlay = {
       "COMCell" : COMCell,
-      "OppCell" : OppCell,
-      "COMPortal" : COMBasePosition === 0 ? 50 : COMBasePosition - 2
+      "oppCell" : oppCell,
+      "oppPortal" : oppBasePosition === 0 ? 50 : oppBasePosition - 2
     }
     
     const sortedCOMToOppKeys = sortRiskPlay(COMToOppPlay);
-    const sortedOppToCOMKeys = sortRiskPlay(OppToCOMPlay);
+    const sortedOppToCOMKeys = sortRiskPlay(oppToCOMPlay);
     
     const rearrangedCOMRiskPattern = rearrangeCyclic(COMExistentRiskPattern, sortedCOMToOppKeys[0]);
-    const rearrangedOppRiskPattern = rearrangeCyclic(OppExistentRiskPattern, sortedOppToCOMKeys[0]);
+    const rearrangedOppRiskPattern = rearrangeCyclic(oppExistentRiskPattern, sortedOppToCOMKeys[0]);
     
     const COMToOppRisk = arraysEqual(sortedCOMToOppKeys, rearrangedCOMRiskPattern);
-    const OppToCOMRisk = arraysEqual(sortedOppToCOMKeys, rearrangedOppRiskPattern);
+    const oppToCOMRisk = arraysEqual(sortedOppToCOMKeys, rearrangedOppRiskPattern);
     
-    let COMToOppDiff = COMToOppRisk === null ? COMToOppRisk : (oppCell > COMCell ? oppCell - COMCell : oppCell + totalCells - COMCell);
-    let OppToCOMDiff = OppToCOMRisk === null ? OppToCOMRisk : (COMCell > OppCell? COMCell - oppCell : COMCell + totalCells - COMCell);
+    let COMToOppDiff = COMToOppRisk === false ? COMToOppRisk : (oppCell > COMCell ? oppCell - COMCell : oppCell + totalCells - COMCell);
+    let oppToCOMDiff = oppToCOMRisk === false ? oppToCOMRisk : (COMCell > oppCell ? COMCell - oppCell : COMCell + totalCells - COMCell);
     
-    cellDiff = COMToOppDiff === null ? OppToCOMDiff : OppToCOMDiff === null ? COMToOppDiff : Math.min(COMToOppDiff, OppToCOMDiff);
+    cellDiff = COMToOppDiff === false ? oppToCOMDiff : oppToCOMDiff === false ? COMToOppDiff : Math.min(COMToOppDiff, OppToCOMDiff);
     
     if (tokenInPortal(COMCell)) {
       oddsRisk = (1 - ((totalCells - COMCell) / totalCells)) * 100;
@@ -1385,7 +1408,7 @@ const filterMoves = (seeds, dice) => {
       }
     } else {
       if (opp.length === 1) {
-        if (cellDiff === OppToCOMDiff) {
+        if (cellDiff === oppToCOMDiff) {
           oddsRisk = calculateDiceOdds(cellDiff);
         } else {
           oddsRisk = 0;
@@ -1399,7 +1422,7 @@ const filterMoves = (seeds, dice) => {
             oddsRisk += (strikeRisk / 100) * remRisk;
           }
         } else {
-          cellDiff = OppToCOMDiff;
+          cellDiff = oppToCOMDiff;
           if (cellDiff === null) {
             oddsRisk = 0;
           } else {
@@ -1411,6 +1434,23 @@ const filterMoves = (seeds, dice) => {
             }
           }
         }
+      }
+    }
+    
+    // breakout risk
+    
+    if ()
+    
+    if (tokenCounter === COM.length - 1) {
+      setTokenClosestToBreakout(COMBaseAttack, COMBaseDefence, OppCell, player="COM");
+      const oppLeastTravelledToken = getLeastTravelledToken("opp");
+
+      if (closestTokenToAttackStartPosition) {
+        let oppBreakoutAttackSpot = totalCells - oppLeastTravelledToken > 3.5 ? oppAttackStartPosition + 3.5 : oppAttackStartPosition + oppLeastTravelledToken;
+        getRisk(oppBreakoutAttackSpot, COMCell, COMBasePosition, oppBasePosition);
+      } else {
+        let oppBreakoutDefenceSpot = totalCells - oppLeastTravelledToken > 3.5 ? oppDefenceStartPosition + 3.5 : oppDefenceStartPosition + oppLeastTravelledToken;
+        getRisk(oppBreakoutDefenceSpot, COMCell, COMBasePosition, oppBasePosition);
       }
     }
     
