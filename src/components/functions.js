@@ -1148,6 +1148,8 @@ const filterMoves = (seeds, dice) => {
 	
 		
 	
+		
+	
 	let cellPath = 52;
 	
 	const COM = {
@@ -1341,13 +1343,13 @@ const filterMoves = (seeds, dice) => {
       let diffTokenToDefenceBase = Math.abs(baseDefence - COMCell);
       
       closestTokenToAttackBase = diffTokenToAttackBase < closestTokenToAttackBase && COMCell;
-      closestTokenToDefenceBase = diffTokenToAttackBase < closestTokenToDefenceBase && COMCell;;
+      closestTokenToDefenceBase = diffTokenToAttackBase < closestTokenToDefenceBase && COMCell;
     } else {
       let diffTokenToAttackBase = COMCell > baseAttack ? COMCell - baseAttack : COMCell + totalCells - baseAttack;
       let diffTokenToDefenceBase = COMCell > baseDefence ? COMCell - baseDefence : COMCell + totalCells - baseDefence;
       
       closestTokenToAttackBase = diffTokenToAttackBase < closestTokenToAttackBase && COMCell;
-      closestTokenToDefenceBase = diffTokenToAttackBase < closestTokenToDefenceBase && COMCell;;
+      closestTokenToDefenceBase = diffTokenToAttackBase < closestTokenToDefenceBase && COMCell;
     }
   }
   
@@ -1437,9 +1439,26 @@ const filterMoves = (seeds, dice) => {
       }
     }
     
-    // breakout risk
+    if (breakout) {
+      let COMCount = COMActive.length;
+      let squadRiskCount = squadRisk.length;
+      
+      let breakoutRisk = 0;
+      
+      if (squadRiskCount - COMCount === 2) {
+        let breakoutAttackRisk = computeRisk(squadRisk[squadRiskCount - 1]);
+        let breakoutDefenceRisk = computeRisk(squadRisk[squadRiskCount - 2]);
+        breakoutRisk = Math.max(breakoutAttackRisk, breakoutDefenceRisk);
+      } {
+        breakoutRisk = computeRisk(squadRisk[squadRiskCount - 1])
+      }
+      
+    }
     
-    if ()
+    const riskExposure = [oddsRisk, progressFrac, startGapFrac, ...portalOddsRisk];
+
+    
+    // breakout risk
     
     if (tokenCounter === COM.length - 1) {
       setTokenClosestToBreakout(COMBaseAttack, COMBaseDefence, OppCell, player="COM");
@@ -1447,10 +1466,10 @@ const filterMoves = (seeds, dice) => {
 
       if (closestTokenToAttackStartPosition) {
         let oppBreakoutAttackSpot = totalCells - oppLeastTravelledToken > 3.5 ? oppAttackStartPosition + 3.5 : oppAttackStartPosition + oppLeastTravelledToken;
-        getRisk(oppBreakoutAttackSpot, COMCell, COMBasePosition, oppBasePosition);
+        getRisk(oppBreakoutAttackSpot, COMCell, COMBasePosition, oppBasePosition, true);
       } else {
         let oppBreakoutDefenceSpot = totalCells - oppLeastTravelledToken > 3.5 ? oppDefenceStartPosition + 3.5 : oppDefenceStartPosition + oppLeastTravelledToken;
-        getRisk(oppBreakoutDefenceSpot, COMCell, COMBasePosition, oppBasePosition);
+        getRisk(oppBreakoutDefenceSpot, COMCell, COMBasePosition, oppBasePosition, true);
       }
     }
     
