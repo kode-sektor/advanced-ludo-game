@@ -1150,6 +1150,9 @@ const filterMoves = (seeds, dice) => {
 	
 		
 	
+	
+		
+	
 	let cellPath = 52;
 	
 	const COM = {
@@ -1356,12 +1359,16 @@ const filterMoves = (seeds, dice) => {
   
   const tokenInPortal = cell => cell > 50 ? true : false;
   
+  let breakoutCount = 0;
+  
   const getRisk = (COMCell, oppCell, COMBasePosition, oppBasePosition, playerBasePosition, breakout=false) => {
     
     let cellDiff = 0;
     let strikeRange = 0;
     let risk = 0;
+    let riskExposure = [];
     let progressFrac = COMCell / totalCells;
+    
     
     // Get the fraction COMCell and total cells
     let progressFrac = COMCell / totalCells;
@@ -1436,38 +1443,54 @@ const filterMoves = (seeds, dice) => {
             }
           }
         }
+        riskExposure = [oddsRisk, progressFrac, startGapFrac, ...portalOddsRisk];
+        squadRisk.push(riskExposure);
       }
     }
+
     
-    if (breakout) {
+    if (breakoutCount === ([inActiveAttackTokens, inActiveCOMDefenceTokens].filter(Boolean).length)) {
+      riskExposure = [...portalOddsRisk];
+            
       let COMCount = COMActive.length;
       let squadRiskCount = squadRisk.length;
       
       let breakoutRisk = 0;
       
       if (squadRiskCount - COMCount === 2) {
-        let breakoutAttackRisk = computeRisk(squadRisk[squadRiskCount - 1]);
-        let breakoutDefenceRisk = computeRisk(squadRisk[squadRiskCount - 2]);
+        let breakoutAttackRisk = computeRisk(squadRisk[squadRiskCount - 2]);
+        let breakoutDefenceRisk = computeRisk(squadRisk[squadRiskCount - 1]);
         breakoutRisk = Math.max(breakoutAttackRisk, breakoutDefenceRisk);
-      } {
-        breakoutRisk = computeRisk(squadRisk[squadRiskCount - 1])
+        squadRisk.splice(-2);
+      } else {
+        breakoutRisk = computeRisk(squadRisk[squadRiskCount - 1]);
+        squadRisk.splice(-1);
       }
       
+      for (let squad = 0; i < squadRisk.length - 1; squad++) {
+        squadRisk[squad] = computeRisk(squad);
+      }
+      squadRisk.push(breakoutRisk);
+      squadRisk.sort();
+      risk = computeRisk(squadRisk);
     }
-    
-    const riskExposure = [oddsRisk, progressFrac, startGapFrac, ...portalOddsRisk];
-
     
     // breakout risk
     
     if (tokenCounter === COM.length - 1) {
-      setTokenClosestToBreakout(COMBaseAttack, COMBaseDefence, OppCell, player="COM");
+      // setTokenClosestToBreakout(COMBaseAttack, COMBaseDefence, OppCell, player="COM");
       const oppLeastTravelledToken = getLeastTravelledToken("opp");
+      
+      const inActiveAttackTokens = getInActiveAttackTokens(player);
+      const inActiveCOMDefenceTokens = getInactiveDefenceTokens(player);
 
-      if (closestTokenToAttackStartPosition) {
+      if (inActiveAttackTokens) {
+        breakoutCount++;
         let oppBreakoutAttackSpot = totalCells - oppLeastTravelledToken > 3.5 ? oppAttackStartPosition + 3.5 : oppAttackStartPosition + oppLeastTravelledToken;
         getRisk(oppBreakoutAttackSpot, COMCell, COMBasePosition, oppBasePosition, true);
-      } else {
+      } 
+      if (inActiveCOMDefenceTokens) {
+        breakoutCount++;
         let oppBreakoutDefenceSpot = totalCells - oppLeastTravelledToken > 3.5 ? oppDefenceStartPosition + 3.5 : oppDefenceStartPosition + oppLeastTravelledToken;
         getRisk(oppBreakoutDefenceSpot, COMCell, COMBasePosition, oppBasePosition, true);
       }
