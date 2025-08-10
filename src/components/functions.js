@@ -1153,7 +1153,7 @@ const filterMoves = (seeds, dice) => {
 	
 		
 	
-	let cellPath = 52;
+		let cellPath = 52;
 	
 	const COM = {
 	  A: {
@@ -1255,6 +1255,7 @@ const filterMoves = (seeds, dice) => {
         }
       }
     } else {
+      // If you want a 5 either by absolute die e.g, '5' or by combination e.g, "3 + 2" 
       let totalOutcomes = 0;
       let favorableOutcomes = 0;
     
@@ -1355,6 +1356,19 @@ const filterMoves = (seeds, dice) => {
       closestTokenToDefenceBase = diffTokenToAttackBase < closestTokenToDefenceBase && COMCell;
     }
   }
+  
+  function calcExposure(base, risks) {
+    let exposure = base / 100;
+    for (const r of risks) {
+      exposure *= (1 - r / 100);
+    }
+    const final = +(exposure * 100).toFixed(4);
+    const reduction = +(base - final).toFixed(4);
+    return { finalExposure: final, totalReduction: reduction };
+  }
+  
+  console.log(calcExposure(100, [25, 50]));    // { finalExposure: 37.5, totalReduction: 62.5 }
+  console.log(calcExposure(100, [37.5, 37.5])); // { finalExposure: 39.0625, totalReduction: 60.9375 }
   
   
   const tokenInPortal = cell => cell > 50 ? true : false;
@@ -1630,6 +1644,3 @@ const filterMoves = (seeds, dice) => {
 	
 	
 	
-
-
-
