@@ -1153,7 +1153,7 @@ const filterMoves = (seeds, dice) => {
 	
 		
 	
-		let cellPath = 52;
+			let cellPath = 52;
 	
 	const COM = {
 	  A: {
@@ -1248,12 +1248,42 @@ const filterMoves = (seeds, dice) => {
         let medianStrideOdds = calculateDiceOdds(7); // Move in average of 7's
         if (remainder === 1) {
           let remStrideOdds = calculateDiceOdds(7 + 1);
-          strikeOdds = Math.pow(medianStrideOdds, quot - 1) * remStrideOdds; 
+          strikeOdds = Math.pow(medianStrideOdds, quot - 1) * remStrideOdds;  
         } else {
           let remStrideOdds = remainder === 0 ? 1 : calculateDiceOdds(remainder);
           strikeOdds = Math.pow(medianStrideOdds, quot) * remStrideOdds;
         }
       }
+        
+        const doubleSixValue = 12; // (6,6) sum
+        const pDoubleSix = 1 / 36; // probability of (6,6)
+      
+        const times = Math.floor(targetTotal / doubleSixValue);
+        const remainder = targetTotal % doubleSixValue;
+      
+        const probDoubleSixes = Math.pow(pDoubleSix, times);  // Probability of getting the double six chain part
+      
+        let ways = 0;
+        if (remainder > 0) {
+          // Ways to sum exactly to remainder (standard dice math)
+          ways += (remainder < 7 ? remainder - 1 : 13 - remainder);
+      
+          const inActiveAttackTokens = getInActiveAttackTokens(player);
+          // For cases where the die remainder can only be effected by one die throw, then 
+          // add odds for probability of a '6' to break out for another token. For instance 
+          // if the remainder is 5, generate odds of dice whose sum is 5, also including odds of a "6, 5" and "5, 6"
+          if ((remainder < 7) && inActiveAttackTokens) {
+            remainder === 6 ? ways += 1 : ways += 2; // [6, remainder] and [remainder, 6]. Remember [6, 6] only generates one way, hence ways += 1
+          }
+        } else {
+          // No remainder → exactly hitting the target with double sixes only
+          ways = 36;
+        }
+      
+        const probRemainder = ways / 36;
+      
+        // Return percentage probability
+        strikeOdds = probDoubleSixes * probRemainder;
     } else {
       // If you want a 5 either by absolute die e.g, '5' or by combination e.g, "3 + 2" 
       let totalOutcomes = 0;
