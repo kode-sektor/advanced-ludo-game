@@ -1228,22 +1228,21 @@ const filterMoves = (seeds, dice) => {
     const remainder = dividend % divisor;
     return [quotient, remainder];
   }
+  
 	
   function calculateDiceOdds (targetTotal, targetDieNumber) {
-    targetDieNumber = (targetDieNumber === null) && targetTotal;
+    // targetDieNumber = (targetDieNumber === null) && targetTotal;
     if (targetDieNumber < 1 || targetDieNumber > 6) {
       throw new Error("Die number must be between 1 and 6");
     }
   
-    if (targetTotal < 2) {
-      throw new Error("Total sum must be between 2 and 12");
-    }
-    
-    if (targetTotal > 12) {
+    if (targetTotal) {
       const activePlayerTokensCount = Object.values(player).filter(val => val.cell > 0).length;
-      let strikeOdds = 0;
-      
-      if (activePlayerTokensCount === 1) {
+      let strikeOdds = 1;
+      let remainder = 1;
+      let probDoubleSixes = 1;
+           
+      /*if (activePlayerTokensCount === 1) {
         const [quot, remainder] = divmod(targetTotal, 7);
         let medianStrideOdds = calculateDiceOdds(7); // Move in average of 7's
         if (remainder === 1) {
@@ -1253,37 +1252,51 @@ const filterMoves = (seeds, dice) => {
           let remStrideOdds = remainder === 0 ? 1 : calculateDiceOdds(remainder);
           strikeOdds = Math.pow(medianStrideOdds, quot) * remStrideOdds;
         }
-      }
-        
+      }*/
+      
+      // Get odds for cell distance > 12 getting amount of 12 moves possible, and determining odds for the remainder
+      // Why 12s? Because only double-six enables continuous play 
+      
+      const inActiveAttackTokens = getInActiveAttackTokens(player);
+
+      if (targetTotal > 12 && inActiveAttackTokens) { 
         const doubleSixValue = 12; // (6,6) sum
         const pDoubleSix = 1 / 36; // probability of (6,6)
       
         const times = Math.floor(targetTotal / doubleSixValue);
-        const remainder = targetTotal % doubleSixValue;
+        remainder = targetTotal % doubleSixValue;
       
-        const probDoubleSixes = Math.pow(pDoubleSix, times);  // Probability of getting the double six chain part
+        probDoubleSixes = Math.pow(pDoubleSix, times);  // Probability of getting the double six chain part
+      } else {  // Expand function to handle a call to check odds for cell distance < 12
+        targetTotal = remainder;
+      }
       
-        let ways = 0;
-        if (remainder > 0) {
-          // Ways to sum exactly to remainder (standard dice math)
-          ways += (remainder < 7 ? remainder - 1 : 13 - remainder);
-      
-          const inActiveAttackTokens = getInActiveAttackTokens(player);
-          // For cases where the die remainder can only be effected by one die throw, then 
-          // add odds for probability of a '6' to break out for another token. For instance 
-          // if the remainder is 5, generate odds of dice whose sum is 5, also including odds of a "6, 5" and "5, 6"
-          if ((remainder < 7) && inActiveAttackTokens) {
-            remainder === 6 ? ways += 1 : ways += 2; // [6, remainder] and [remainder, 6]. Remember [6, 6] only generates one way, hence ways += 1
+      let ways = 0;
+      if (remainder > 0) {
+        // Ways to sum exactly to remainder (standard dice math)
+        ways += (remainder > 1 && remainder < 7 ? remainder - 1 : 13 - remainder);
+    
+        // For cases where the die remainder can only be effected by one die throw, then 
+        // add odds for probability of a '6' to break out for another token. For instance 
+        // if the remainder is 5, generate odds of dice whose sum is 5, also including breakout odds of a "6, 5" and "5, 6"
+        if (inActiveAttackTokens) { // Camped tokens exist to make allowance for breakout with a '6' die roll
+          if (remainder === 6) { // [5, 1], [4, 2] etc. are other ways to get 6. But here, we additionally want [6, 6]. First 6 to complete move, second 6 to break out
+            ways += 1;
+          } else if (remainder === 1) { // If remainining move is 1, only [6, 1] and [1, 6] qualify. Only 2 moves; no arrangement can sum up to 1
+            ways = 2;
+          } else {  // From remainder ranging from 2 to 5, 6 can be an appendage both ways e.g. for 2 => [6, 2] and [2, 6]. Add these to previous ways
+            ways += 2;
           }
-        } else {
-          // No remainder → exactly hitting the target with double sixes only
-          ways = 36;
         }
-      
-        const probRemainder = ways / 36;
-      
-        // Return percentage probability
-        strikeOdds = probDoubleSixes * probRemainder;
+      } else {
+        // No remainder → exactly hitting the target with double sixes only
+        ways = 36;
+      }
+    
+      const probRemainder = ways / 36;
+    
+      // Return percentage probability
+      strikeOdds = probDoubleSixes * probRemainder;
     } else {
       // If you want a 5 either by absolute die e.g, '5' or by combination e.g, "3 + 2" 
       let totalOutcomes = 0;
