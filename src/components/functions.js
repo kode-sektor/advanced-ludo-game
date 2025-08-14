@@ -1152,8 +1152,7 @@ const filterMoves = (seeds, dice) => {
 	
 	
 		
-	
-			let cellPath = 52;
+	let cellPath = 52;
 	
 	const COM = {
 	  A: {
@@ -1279,7 +1278,8 @@ const filterMoves = (seeds, dice) => {
         // For cases where the die remainder can only be effected by one die throw, then 
         // add odds for probability of a '6' to break out for another token. For instance 
         // if the remainder is 5, generate odds of dice whose sum is 5, also including breakout odds of a "6, 5" and "5, 6"
-        if (inActiveAttackTokens) { // Camped tokens exist to make allowance for breakout with a '6' die roll
+        
+        /*if (inActiveAttackTokens) { // Camped tokens exist to make allowance for breakout with a '6' die roll
           if (remainder === 6) { // [5, 1], [4, 2] etc. are other ways to get 6. But here, we additionally want [6, 6]. First 6 to complete move, second 6 to break out
             ways += 1;
           } else if (remainder === 1) { // If remainining move is 1, only [6, 1] and [1, 6] qualify. Only 2 moves; no arrangement can sum up to 1
@@ -1287,7 +1287,8 @@ const filterMoves = (seeds, dice) => {
           } else {  // From remainder ranging from 2 to 5, 6 can be an appendage both ways e.g. for 2 => [6, 2] and [2, 6]. Add these to previous ways
             ways += 2;
           }
-        }
+        }*/
+        
       } else {
         // No remainder → exactly hitting the target with double sixes only
         ways = 36;
@@ -1297,27 +1298,38 @@ const filterMoves = (seeds, dice) => {
     
       // Return percentage probability
       strikeOdds = probDoubleSixes * probRemainder;
-    } else {
-      // If you want a 5 either by absolute die e.g, '5' or by combination e.g, "3 + 2" 
+    } 
+    
+    if (targetDie) {  // For absolute die value, mostly used to get breakout odds i.e., odds of getting a '6' on either die
       let totalOutcomes = 0;
-      let favorableOutcomes = 0;
+      let favourableOutcomes = 0;
     
       for (let die1 = 1; die1 <= 6; die1++) {
         for (let die2 = 1; die2 <= 6; die2++) {
           totalOutcomes++;
     
           const hasTargetNumber = die1 === targetDieNumber || die2 === targetDieNumber;
-          const isTargetTotal = die1 + die2 === targetTotal;
-    
-          if (hasTargetNumber || isTargetTotal) {
-            favorableOutcomes++;
+          // If you want a 5 either by absolute die e.g, '5' or by combination e.g, "3 + 2" 
+          // const isTargetTotal = die1 + die2 === targetTotal;       
+          
+          //if (hasTargetNumber || isTargetTotal) {
+          if (hasTargetNumber) {
+            favourableOutcomes++;
           }
         }
       }
-      
+     if (targetTotal) {
+       if (targetTotal > targetDieNumber) {
+         if (targetTotal === targetDieNumber * 2) {
+           favourableOutcomes--;
+         } else {
+           favourableOutcomes -= 2;
+         }
+       }
+     }
     }
   
-    const probability = targetTotal > 12 ? strikeOdds : (favorableOutcomes / totalOutcomes);
+    const probability = favourableOutcomes / totalOutcomes;
     const percentage = (probability * 100).toFixed(2);
   
     return percentage;
@@ -1682,6 +1694,11 @@ const filterMoves = (seeds, dice) => {
 	const getStrikeOdds = () => {
 	  
 	}
+	
+	
+	
+	
+	
 	
 	
 	
