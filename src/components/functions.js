@@ -1152,7 +1152,7 @@ const filterMoves = (seeds, dice) => {
 	
 	
 		
-	let cellPath = 52;
+	  let cellPath = 51;
 	
 	const COM = {
 	  A: {
@@ -1197,25 +1197,37 @@ const filterMoves = (seeds, dice) => {
     	E: {
     		breakaway: [{ x: 3, y: 3}],
     		coordinates: [{ x: 0, y: 0}],
+    		absCell: 27,
+  		  relCell: 1,
     		cell: 1,
+    		basePosition: 26,
     		risk : 0
     	},
     	F: {
     		breakaway: [{ x: 2, y: 3}],
     		coordinates: [{ x: 0, y: 0}],
+    		absCell: 30,
+  		  relCell: 4,
     		cell: 4,
+    		basePosition: 26,
     		risk : 0
     	},
     	G: {
     		breakaway: [{ x: 2, y: 3}],
     		coordinates: [{ x: 0, y: 0}],
+    		absCell: 14,
+  		  relCell: 49,
     		cell: 10,
+    		basePosition: 39,
     		risk : 0
     	},
     	H: {
     		breakaway: [{ x: 2, y: 3}],
     		coordinates: [{ x: 0, y: 0}],
-    		cell: 27,
+    		absCell: 43,
+  		  relCell: 17,
+    		cell: 17,
+    		basePosition: 26,
     		risk : 0
     	}
 	}
@@ -1293,7 +1305,6 @@ const filterMoves = (seeds, dice) => {
         // No remainder → exactly hitting the target with double sixes only
         ways = 36;
       }
-    
       const probRemainder = ways / 36;
     
       // Return percentage probability
@@ -1318,15 +1329,15 @@ const filterMoves = (seeds, dice) => {
           }
         }
       }
-     if (targetTotal) {
-       if (targetTotal > targetDieNumber) {
-         if (targetTotal === targetDieNumber * 2) {
-           favourableOutcomes--;
-         } else {
-           favourableOutcomes -= 2;
-         }
-       }
-     }
+      if (targetTotal) {
+        if (targetTotal > targetDieNumber) {
+          if (targetTotal === targetDieNumber * 2) {
+            favourableOutcomes--;
+          } else {
+            favourableOutcomes -= 2;
+          }
+        }
+      }
     }
   
     const probability = favourableOutcomes / totalOutcomes;
@@ -1622,11 +1633,11 @@ const filterMoves = (seeds, dice) => {
     
     let adjustedRisk = 0;
     if (breakout) {
-      adjustedRisk = getRisk(COMCell, playerCell, true);
+      adjustedRisk = getRisk(COMCell, playerCell, COMBasePosition, playerBasePosition, true);
     } else {
-      adjustedRisk = getRisk(COMCell, playerCell, false);
+      adjustedRisk = getRisk(COMCell, playerCell, COMBasePosition, playerBasePosition, breakout=false);
       // Calculating risk for in-portal tokens
-      if (COMCell > 50) {
+      /*if (COMCell > 50) {
         // Filter 2 in-portal tokens with most distance to clearance. In other words 
         // select the 2 least tokens greater than 50
         
@@ -1640,10 +1651,9 @@ const filterMoves = (seeds, dice) => {
           numerator += (56 - val.cell);
         }
         adjustedRisk = 1 - (numerator / denominator);
-        
       } else {
         adjustedRisk = getRisk(COMCell, playerCell, false);
-      }
+      }*/
     }
     
     console.log("Adjusted risk:", adjustedRisk.toFixed(2));
@@ -1669,12 +1679,12 @@ const filterMoves = (seeds, dice) => {
       let COMCell = COM[comKey].cell; // Get absolute cell position
    
       let playerLoopCount = 0;
-      let risk = 0;
       
-      for (const playerKey in sortedPlayer) {
+      // Loop across Opp
+      for (const playerKey in player) {
         playerLoopCount++;
         if (player.hasOwnProperty(playerKey)) {
-          // Then in recursive function, calculate risk 
+
           let risk = calculateRisk ({
             COMCell: COM[comKey].cell,
             playerCell: player[playerKey].cell,
