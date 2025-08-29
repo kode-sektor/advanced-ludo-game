@@ -1152,8 +1152,11 @@ const filterMoves = (seeds, dice) => {
 	
 	
 		
-	   let cellPath = 51;
+	     let cellPath = 51;
+  let portalPath = 5; 
+  let travelPath = cellPath + tokenPath;
 	
+	// The formula is basePosition + cell or relCell = absCell
 	const com = {
 	  A: {
   		breakaway: [{ x: 3, y: 3}],
@@ -1167,7 +1170,7 @@ const filterMoves = (seeds, dice) => {
   	B: {
   		breakaway: [{ x: 2, y: 3}],
   		coordinates: [{ x: 0, y: 0}],
-  		absCell: 0,
+  		absCell: 13,
   		relCell: 13,
   		cell: 13,
   		basePosition: 0,
@@ -1176,7 +1179,7 @@ const filterMoves = (seeds, dice) => {
   	C: {
   		breakaway: [{ x: 3, y: 2}],
   		coordinates: [{ x: 0, y: 0}],
-  		absCell: 16,
+  		absCell: 42,
   		relCell: 29,
   		cell: 29,
   		basePosition: 13,
@@ -1185,7 +1188,7 @@ const filterMoves = (seeds, dice) => {
   	D: {
   		breakaway: [{ x: 2, y: 2}],
   		coordinates: [{ x: 0, y: 0}],
-  		absCell: 6,
+  		absCell: 32,
   		relCell: 19,
   		cell: 19,
   		basePosition: 13,
@@ -1215,8 +1218,8 @@ const filterMoves = (seeds, dice) => {
     	G: {
     		breakaway: [{ x: 2, y: 3}],
     		coordinates: [{ x: 0, y: 0}],
-    		absCell: 14,
-  		  relCell: 49,
+    		absCell: 49,
+  		  relCell: 10,
     		cell: 10,
     		basePosition: 39,
     		risk : 0
@@ -1231,6 +1234,8 @@ const filterMoves = (seeds, dice) => {
     		risk : 0
     	}
 	}
+	
+	const getActiveTokens = player => player.filter(player.relCell > 0);
 	
 	const withinStrikeRange = (comCell, playerCell) => comCell - playerCell < 12; 
 	
@@ -1247,7 +1252,7 @@ const filterMoves = (seeds, dice) => {
       throw new Error("Die number must be between 1 and 6");
     }
   
-    if (targetTotal) {
+    if (targetTotal && !Array.isArray(targetTotal)) {
       const activePlayerTokensCount = Object.values(player).filter(val => val.cell > 0).length;
       let strikeOdds = 1;
       let remainder = 1;
@@ -1311,18 +1316,23 @@ const filterMoves = (seeds, dice) => {
       strikeOdds = probDoubleSixes * probRemainder;
     } 
     
-    if (targetDie) {  // For absolute die value, mostly used to get breakout odds i.e., odds of getting a '6' on either die
+    if (targetDie || Array.isArray(targetTotal)) {  // For absolute die value, mostly used to get breakout odds i.e., odds of getting a '6' on either die
       let totalOutcomes = 0;
       let favourableOutcomes = 0;
+      const [{ safeMoves }] = targetTotal;  
     
       for (let die1 = 1; die1 <= 6; die1++) {
         for (let die2 = 1; die2 <= 6; die2++) {
           totalOutcomes++;
-    
-          const hasTargetNumber = die1 === targetDieNumber || die2 === targetDieNumber;
-          // If you want a 5 either by absolute die e.g, '5' or by combination e.g, "3 + 2" 
-          // const isTargetTotal = die1 + die2 === targetTotal;       
           
+          if (Array.isArray(targetTotal)) {
+            const hasTargetNumber = (die1 + die2) <= safeMoves;
+          } else {
+            const hasTargetNumber = die1 === targetDieNumber || die2 === targetDieNumber;
+            // If you want a 5 either by absolute die e.g, '5' or by combination e.g, "3 + 2" 
+            // const isTargetTotal = die1 + die2 === targetTotal;       
+          }     
+  
           //if (hasTargetNumber || isTargetTotal) {
           if (hasTargetNumber) {
             favourableOutcomes++;
@@ -1437,16 +1447,47 @@ const filterMoves = (seeds, dice) => {
   
   const tokenInPortal = cell => cell > 50 ? true : false;
   
-  const getFullMoveOdds = (comCell, oppCell, player) => {
+  const getFullMoveOdds = (comCell, oppCell, oppBasePosition, player=opp) => {
     const strikeRangeDiff = oppCell - comCell;
     
     if (strikeRangeDiff > 12) {
-      throw new Error (`${OppCell - comCell} is greater than strikeRange of 12`);
+      throw new Error (`${oppCell - comCell} is greater than strikeRange of 12`);
     } else {
-      const twoLeastTravelledTokens = getLeastTravelledTokens(opp, 2);
-      const firstLeastTravelledToken = twoLeastTravelledTokens[0];
-      const secondLeastTravelledToken = twoLeastTravelledTokens[1];
+      const twoLeastTravelledTokens = getLeastTravelledTokens(player, 2);
+      let leastTravelledTokens = [strikeRangeDiff, ...twoLeastTravelledTokens];
+      let safeMoves = Math.min(leastTravelledTokens, 2); // [4, 5]
       
+      const portalBank = oppBasePosition === 0 ? 50 : oppBasePosition - 2;
+      const breakoutSpot = oppBasePosition;
+      const safeLeapSpot = oppBasePosition - 1;
+      
+      const breakoutDistance = oppBasePosition - breakoutSpot;
+      const safeLeapDistance = safeLeapSpot - comCell;
+      
+      const safeLeapMoves = safeLeapDistance <= 12 ? Array.from({ length: 12 - safeLeapDistance + 1 }, (_, i) => i + safeLeapDistance) : null;
+      const eligibleMoves = [
+                              {
+                                safeMoves: [4, 5],
+                                safeLeapMoves: [7, 8, 9, 10, 11, 12],
+                                breakoutSpot: 8
+                              }
+                            ];
+      
+      
+      
+      // Now get dice odds 
+      const oddsRisk = calculateDiceOdds(eligibleMoves);
+      /*
+        const oddsRisk = calculateDiceOdds(
+                                          [
+                                            {
+                                              safeMoves: [4, 5],
+                                              safeLeapMoves: [7, 8, 9, 10, 11, 12],
+                                              breakoutSpot: 8
+                                            }
+                                          ]
+                                        );
+      */                                
       
     }
   }
@@ -1460,16 +1501,17 @@ const filterMoves = (seeds, dice) => {
     let oppCell = currOpp[cell];
     let comBasePosition = currCom[basePosition];
     let oppBasePosition = currOpp[basePosition];
+    let cyclePath = cellPath - 1; // 50
     
     let cellDiff = 0;
     let strikeRange = 0;
     let risk = 0;
     let riskExposure = [];
-    let progressFrac = comCell / cellPath;
+    let progressFrac = comCell / cyclePath;
     
     
     // Get the fraction comCell and total cells
-    let progressFrac = comCell / cellPath;
+    let progressFrac = comCell / cyclePath;
 
     // Get the difference of start positions of COM & opponent tokens as fraction of total cells
     let startGapFrac = Math.min((Math.max(comBasePosition, oppBasePosition) - Math.min(comBasePosition, oppBasePosition)),
@@ -1524,7 +1566,18 @@ const filterMoves = (seeds, dice) => {
     
     cellDiff = comToOppDiff === false ? oppToComDiff : oppToComDiff === false ? comToOppDiff : Math.min(comToOppDiff, oppToComDiff);
     
+    // Now it's time to calculate risk of each token. All else equal, the closer a token is to being dislodged, the higher the risk.
+    // So the idea is, for one COM token, all other active opponent tokens pose some level of risk. The risk posed by all opponent tokens 
+    // towards COM token will be cumulatively assessed, after sorting each opponent token from closest to farthest.
+    
+    // Treat tokens inside portal specially because they are under no threat from opponent token. The farther a token is inside the 
+    // portal, the better. 5 is the max and 1 is the min. It gives more leeway for out-of-portal tokens to manoeuver. Even for the
+    // in-portal token to clear, the farther the better because the chance also increases to clear through with an absolute die
+    // value or combination of values
+    
     if (tokenInPortal(comCell)) {
+      oddsRisk = (travelPath - comCell) / portalPath; // e.g. (56 - 53) / 5 => 3/5
+      
       oddsRisk = (1 - ((cellPath - comCell) / cellPath)) * 100;
       if (oddsRisk > portalOddsRisk[0] || portalOddsRisk[0] === undefined) {
         portalOddsRisk.unshift(oddsRisk);
@@ -1746,6 +1799,11 @@ const filterMoves = (seeds, dice) => {
 	const getStrikeOdds = () => {
 	  
 	}
+	
+	
+	
+	
+	
 	
 	
 	
