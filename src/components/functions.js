@@ -1320,13 +1320,14 @@ const filterMoves = (seeds, dice) => {
       let totalOutcomes = 0;
       let favourableOutcomes = 0;
       const [{ safeMoves }] = targetTotal;  
+      const maxSafeMove = Math.max(safeMoves);
     
       for (let die1 = 1; die1 <= 6; die1++) {
         for (let die2 = 1; die2 <= 6; die2++) {
           totalOutcomes++;
           
           if (Array.isArray(targetTotal)) {
-            const hasTargetNumber = (die1 + die2) <= safeMoves;
+            const hasTargetNumber = (die1 + die2) <= maxSafeMove;
           } else {
             const hasTargetNumber = die1 === targetDieNumber || die2 === targetDieNumber;
             // If you want a 5 either by absolute die e.g, '5' or by combination e.g, "3 + 2" 
