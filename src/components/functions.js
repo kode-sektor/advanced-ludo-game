@@ -516,6 +516,8 @@ export const getBase = (base) => {
 		const COM = Object.values(base).find(COM === true);
 		const COMbase = COM.base;
 		getBase(COMbase);
+	} else if (typeof base == "string") {	// "seedOne" => Get base by token Id
+
 	} else {	// "PLAYER_ONE"
 
 	}
@@ -539,6 +541,10 @@ export const getDefenceBaseIndex = (base) => Array.isArray(base) ? Math.min(...b
 export const getBaseIndex = (player="COM") => {
 	const selectedPlayer = getPlayer(player);	// ["PLAYER_TWO"]
 	return baseSettings[selectedPlayer].base;	// [2, 3]
+}
+
+export const getBaseIndexByTokenId = (tokenId) => {	// "seedOne"
+  	return bases.findIndex(base => base.includes(tokenId));	// 0, 1
 }
 
 // export const getBaseActive = (player="COM") => {
@@ -567,6 +573,38 @@ export const getInActiveTokens = (seeds, player="COM") => {
 	});
 	console.log(inActiveTokens);
 	return inActiveTokens;
+}
+
+export const getActiveTokensByBase = (base) => {
+	let base = bases[base];
+	const activeTokens = base.filter(seed => {
+		const key = Object.keys(seed)[0]; 
+		return seed[key].cell !== null;
+	});
+	return activeTokens;
+}
+
+export const getInActiveTokensByBase = (base) => {
+	let base = bases[base];
+	const inActiveTokens = playerBase.filter(seed => {
+		const key = Object.keys(seed)[0]; 
+		return seed[key].cell === null;
+	});
+	return inActiveTokens;
+}
+
+export const getActiveTokensCountByTokenId = (tokenId) => {
+	const tokenBaseIndex = getBaseIndexByTokenId(tokenId);	// Get base of token first	// 0, 1
+	const tokenBase = bases[tokenBaseIndex];
+	const activeTokens = getactiveTokensByBase(tokenBase);
+	return activeTokens.length;
+}
+
+export const getInactiveTokensCountByTokenId = (tokenId) => {
+	const tokenBaseIndex = getBaseIndexByTokenId(tokenId);	// Get base of token first	// 0, 1
+	const tokenBase = bases[tokenBaseIndex];
+	const inactiveTokens = getInActiveTokensByBase(tokenBase);
+	return inactiveTokens.length;
 }
 
 export const getInactiveAttackTokens = (seeds, player="COM") => {
@@ -1149,10 +1187,7 @@ const filterMoves = (seeds, dice) => {
 		
 	
 		
-	
-	
-		
-	     let cellPath = 51;
+  let cellPath = 51;
   let portalPath = 5; 
   let travelPath = cellPath + tokenPath;
 	
@@ -1448,7 +1483,7 @@ const filterMoves = (seeds, dice) => {
   
   const tokenInPortal = cell => cell > 50 ? true : false;
   
-  const getFullMoveOdds = (comCell, oppCell, oppBasePosition, player=opp) => {
+  const getFullMoveOdds = (comCell, oppCell, oppId, oppBasePosition, player=opp) => {
     const strikeRangeDiff = oppCell - comCell;
     
     if (strikeRangeDiff > 12) {
@@ -1465,7 +1500,12 @@ const filterMoves = (seeds, dice) => {
       const breakoutDistance = oppBasePosition - breakoutSpot;
       const safeLeapDistance = safeLeapSpot - comCell;
       
-      const safeLeapMoves = safeLeapDistance <= 12 ? Array.from({ length: 12 - safeLeapDistance + 1 }, (_, i) => i + safeLeapDistance) : null;
+      let safeLeapMoves = safeLeapDistance <= 12 ? Array.from({ length: 12 - safeLeapDistance + 1 }, (_, i) => i + safeLeapDistance) : null;
+      const oppBaseTokensExist = getInactiveTokensCountByTokenId(oppId);
+      if (oppBaseTokensExist) {
+        safeLeapMoves = safeLeapMoves.filter(cell => cell === breakoutSpot); 
+      }
+
       const eligibleMoves = [
                               {
                                 safeMoves: [4, 5],
@@ -1800,6 +1840,10 @@ const filterMoves = (seeds, dice) => {
 	const getStrikeOdds = () => {
 	  
 	}
+	
+	
+	
+	
 	
 	
 	
