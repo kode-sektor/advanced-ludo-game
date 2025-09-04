@@ -1187,7 +1187,7 @@ const filterMoves = (seeds, dice) => {
 		
 	
 		
-  let cellPath = 51;
+    let cellPath = 51;
   let portalPath = 5; 
   let travelPath = cellPath + tokenPath;
 	
@@ -1280,15 +1280,26 @@ const filterMoves = (seeds, dice) => {
     return [quotient, remainder];
   }
   
-	
-  function calculateDiceOdds (targetTotal, targetDieNumber) {
+	/*
+	  3-way function to calculate odds of dice. 
+	  
+	  - (targetTotal): Calculate odds to get total dice values (4, 5) => 9.
+	      Makes special provision for when strike range > 12. This will enact when there is only one active com token and 
+	      at least one active opp token
+	  - (targetTotal): As array. Calculate odds to get dice values (sum of 2 dice) inside array
+	  - (targetDieNumber): Odds to calculate specific die value
+	*/
+  function calculateDiceOdds (player=com, targetTotal, targetDieNumber) {
     // targetDieNumber = (targetDieNumber === null) && targetTotal;
-    if (targetDieNumber < 1 || targetDieNumber > 6) {
-      throw new Error("Die number must be between 1 and 6");
+    if (targetDieNumber) {  // targetDieNumber, i.e, single die value can't be less than 1 or greater than 6
+      if (targetDieNumber < 1 || targetDieNumber > 6) {
+        throw new Error("Die number must be between 1 and 6");
+      }
     }
-  
+
+    // Handle target total of a single value, not array of values 
     if (targetTotal && !Array.isArray(targetTotal)) {
-      const activePlayerTokensCount = Object.values(player).filter(val => val.cell > 0).length;
+      // const activePlayerTokensCount = Object.values(player).filter(val => val.cell > 0).length; 
       let strikeOdds = 1;
       let remainder = 1;
       let probDoubleSixes = 1;
@@ -1307,10 +1318,10 @@ const filterMoves = (seeds, dice) => {
       
       // Get odds for cell distance > 12 getting amount of 12 moves possible, and determining odds for the remainder
       // Why 12s? Because only double-six enables continuous play 
-      
-      const inActiveAttackTokens = getInActiveAttackTokens(player);
+      const inActiveTokens = getInActiveTokens(player);
 
-      if (targetTotal > 12 && inActiveAttackTokens) { 
+      // If > 12, divide moves in 12's and store remainder, whose odds will be calculated next
+      if (targetTotal > 12 && inActiveTokens) { 
         const doubleSixValue = 12; // (6,6) sum
         const pDoubleSix = 1 / 36; // probability of (6,6)
       
@@ -1319,7 +1330,7 @@ const filterMoves = (seeds, dice) => {
       
         probDoubleSixes = Math.pow(pDoubleSix, times);  // Probability of getting the double six chain part
       } else {  // Expand function to handle a call to check odds for cell distance < 12
-        targetTotal = remainder;
+        remainder = targetTotal;
       }
       
       let ways = 0;
@@ -1332,11 +1343,14 @@ const filterMoves = (seeds, dice) => {
         // if the remainder is 5, generate odds of dice whose sum is 5, also including breakout odds of a "6, 5" and "5, 6"
         
         /*if (inActiveAttackTokens) { // Camped tokens exist to make allowance for breakout with a '6' die roll
-          if (remainder === 6) { // [5, 1], [4, 2] etc. are other ways to get 6. But here, we additionally want [6, 6]. First 6 to complete move, second 6 to break out
+          if (remainder === 6) { // [5, 1], [4, 2] etc. are other ways to get 6. But here, we additionally want [6, 6]. First 6 to 
+            complete move, second 6 to break out
             ways += 1;
-          } else if (remainder === 1) { // If remainining move is 1, only [6, 1] and [1, 6] qualify. Only 2 moves; no arrangement can sum up to 1
+          } else if (remainder === 1) { // If remainining move is 1, only [6, 1] and [1, 6] qualify. Only 2 moves; no arrangement can 
+            sum up to 1
             ways = 2;
-          } else {  // From remainder ranging from 2 to 5, 6 can be an appendage both ways e.g. for 2 => [6, 2] and [2, 6]. Add these to previous ways
+          } else {  // From remainder ranging from 2 to 5, 6 can be an appendage both ways e.g. for 2 => [6, 2] and [2, 6]. Add these to 
+            previous ways
             ways += 2;
           }
         }*/
@@ -1351,18 +1365,36 @@ const filterMoves = (seeds, dice) => {
       strikeOdds = probDoubleSixes * probRemainder;
     } 
     
-    if (targetDie || Array.isArray(targetTotal)) {  // For absolute die value, mostly used to get breakout odds i.e., odds of getting a '6' on either die
+    // targetDie: For absolute die value, mostly used to get breakout odds i.e., odds of getting a '6'
+    // targetTotal: for e.g [7, 8, 9, 10, 11, 12]
+    if (targetDie || Array.isArray(targetTotal)) {  
+      // on either die
       let totalOutcomes = 0;
       let favourableOutcomes = 0;
-      const [{ safeMoves }] = targetTotal;  
-      const maxSafeMove = Math.max(safeMoves);
-    
+      
+      if (Array.isArray(targetTotal)) {
+        const [{ safeMoves }] = targetTotal;  
+        const maxSafeMove = Math.max(safeMoves);  
+        const minSafeMove = Math.min(safeMoves);  
+      }
+      
       for (let die1 = 1; die1 <= 6; die1++) {
         for (let die2 = 1; die2 <= 6; die2++) {
           totalOutcomes++;
+          const diceTotal = die1 + die2;
           
+          /*
+            - If dicetotal is less than maxSafeMove
+            - If dicetotal is within safeLeapMoves
+            - Separate die moves less than or equal both safe moves
+            - One die value is within safeLeapMoves and the other is less than minSafeMove
+            - One die value is within safeLeapMoves and the other is less than maxSafeMove
+          */
           if (Array.isArray(targetTotal)) {
-            const hasTargetNumber = (die1 + die2) <= maxSafeMove;
+            if ((diceTotal <= maxSafeMove) || safeLeapMoves.include(diceTotal) || (die1 <= minSafeMove && die2 <= maxSafeMove) 
+            || safeLeapMoves.include(die1) && die2 <= minSafeMove ||  safeLeapMoves.include(die1) && die2 <= maxSafeMove) {
+              const hasTargetNumber = true;
+            }
           } else {
             const hasTargetNumber = die1 === targetDieNumber || die2 === targetDieNumber;
             // If you want a 5 either by absolute die e.g, '5' or by combination e.g, "3 + 2" 
@@ -1483,24 +1515,39 @@ const filterMoves = (seeds, dice) => {
   
   const tokenInPortal = cell => cell > 50 ? true : false;
   
+  /*
+    This function caters for token risk where the other least travelled com tokens do not have enough cells to advance in order
+    to prevent com token from overlapping opp token. This scenario can only occur within strike range (max possible dice values)
+    
+    - The other active tokens would definitely be in-portal tokens because they must have travelled nothing less than 51 cell spots
+    to leae a maximum of 5 cell spots to compute their odyssey
+    
+    - Case scenario: COM token occupies cell spot 35 and opp occupies 31. Opp has 2 other tokens that occupy cell spots 52 and 54
+    respectively. Tossing a high dice value of 10, obviously would lead to COM token overlapping the opp token, which would now 
+    expose it to some risk ... it's ahead! 
+    
+  */
   const getFullMoveOdds = (comCell, oppCell, oppId, oppBasePosition, player=opp) => {
     const strikeRangeDiff = oppCell - comCell;
     
-    if (strikeRangeDiff > 12) {
+    // Will only be computed within strike range
+    if (strikeRangeDiff > 12) { 
       throw new Error (`${oppCell - comCell} is greater than strikeRange of 12`);
     } else {
-      const twoLeastTravelledTokens = getLeastTravelledTokens(player, 2);
-      let leastTravelledTokens = [strikeRangeDiff, ...twoLeastTravelledTokens];
-      let safeMoves = Math.min(leastTravelledTokens, 2); // [4, 5]
+      const twoLeastTravelledTokens = getLeastTravelledTokens(player, 2); // Get 2 least travelled tokens
+      let leastTravelledTokens = [strikeRangeDiff, ...twoLeastTravelledTokens]; // Include strike range, making 3 distances in array
+      let safeMoves = Math.min(leastTravelledTokens, 2); // [4, 5]  // Then find the maximum 2 to mirror max dice values
       
-      const portalBank = oppBasePosition === 0 ? 50 : oppBasePosition - 2;
-      const breakoutSpot = oppBasePosition;
-      const safeLeapSpot = oppBasePosition - 1;
+      const portalBank = oppBasePosition === 0 ? 50 : oppBasePosition - 2;  // Get portal bank of opp 
+      const breakoutSpot = oppBasePosition; // Get breakout spot of opp
+      const safeLeapSpot = oppBasePosition - 1; // Get safe leap spot i.e, safe cell right next to portal bank
       
-      const breakoutDistance = oppBasePosition - breakoutSpot;
-      const safeLeapDistance = safeLeapSpot - comCell;
-      
+      // Calculate distance of a leapfrog into safeleap spot and if less than 12, complete the cells up to 12 (max dice value)
+      // Thus, if safeLeapDistance is 7, create array with values from 7 - 12 which are all safe spots after a leapfrog
+      const safeLeapDistance = safeLeapSpot - comCell;  
       let safeLeapMoves = safeLeapDistance <= 12 ? Array.from({ length: 12 - safeLeapDistance + 1 }, (_, i) => i + safeLeapDistance) : null;
+      
+      // Take care of the small matter of landing on opp breakoutSpot by filtering it off safeLeapMoves if opponent has tokens in base
       const oppBaseTokensExist = getInactiveTokensCountByTokenId(oppId);
       if (oppBaseTokensExist) {
         safeLeapMoves = safeLeapMoves.filter(cell => cell === breakoutSpot); 
@@ -1508,13 +1555,11 @@ const filterMoves = (seeds, dice) => {
 
       const eligibleMoves = [
                               {
-                                safeMoves: [4, 5],
-                                safeLeapMoves: [7, 8, 9, 10, 11, 12],
-                                breakoutSpot: 8
+                                safeMoves,
+                                safeLeapMoves,
+                                breakoutSpot
                               }
                             ];
-      
-      
       
       // Now get dice odds 
       const oddsRisk = calculateDiceOdds(eligibleMoves);
@@ -1840,6 +1885,8 @@ const filterMoves = (seeds, dice) => {
 	const getStrikeOdds = () => {
 	  
 	}
+	
+	
 	
 	
 	
