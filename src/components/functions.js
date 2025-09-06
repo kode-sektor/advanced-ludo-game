@@ -1187,7 +1187,7 @@ const filterMoves = (seeds, dice) => {
 		
 	
 		
-    let cellPath = 51;
+      let cellPath = 51;
   let portalPath = 5; 
   let travelPath = cellPath + tokenPath;
 	
@@ -1703,26 +1703,32 @@ const filterMoves = (seeds, dice) => {
       }
     }
 
-    
+    // Run only when breakout risk for either attack or defence base or both is complete
+    // Check out breakout risk in code below => if (tokenCounter === COM.length - 1) {...}
     if (breakoutCount === ([inActiveAttackTokens, inActiveCOMDefenceTokens].filter(Boolean).length)) {
-      riskExposure = [...portalOddsRisk];
+      // riskExposure = [...portalOddsRisk]; // Cache portal odds risk on very last loop. Will be appended last in squadRisk
             
-      let COMCount = COMActive.length;
+      //       
+      let comCount = COMActive.length;  
       let squadRiskCount = squadRisk.length;
       
       let breakoutRisk = 0;
       
-      if (squadRiskCount - COMCount === 2) {
+      // This condition checks if breakout risk runs for both attack and defence breakout tokens 
+      // How does this work? There are active COM tokens. The supposed breakout tokens add either 1 or 2 tokens to squadRiskCount
+      // Simply subtract activetokens (comCount) from squadRiskCount to get number of breakout tokens
+      if (squadRiskCount - comCount === 2) {
         let breakoutAttackRisk = computeRisk(squadRisk[squadRiskCount - 2]);
         let breakoutDefenceRisk = computeRisk(squadRisk[squadRiskCount - 1]);
-        breakoutRisk = Math.max(breakoutAttackRisk, breakoutDefenceRisk);
+        breakoutRisk = Math.max(breakoutAttackRisk, breakoutDefenceRisk); // Get the maximum breakout risk
         squadRisk.splice(-2);
-      } else {
+      } else {  // Breakout risk runs for only either attack or defence breakout tokens
         breakoutRisk = computeRisk(squadRisk[squadRiskCount - 1]);
         squadRisk.splice(-1);
       }
       
-      for (let squad = 0; i < squadRisk.length - 1; squad++) {
+      squadRisk.push(riskExposure); // Push portal odds risk
+      for (let squad = 0; i < squadRisk.length - 1; squad++) {  // Evaluate risk for each 
         squadRisk[squad] = computeRisk(squad);
       }
       squadRisk.push(breakoutRisk);
@@ -1730,24 +1736,43 @@ const filterMoves = (seeds, dice) => {
       risk = computeRisk(squadRisk);
     }
     
-    // breakout risk
+    // Breakout risk
     
-    if (tokenCounter === COM.length - 1) {
+    /*
+       A possible breakout opponent token must be factored. The possibility of a surprise breakout attack influences how 
+       COM moves because careless movements, especially around the opponent's lair could be costly. It's similar to taking a 
+       boat ride on a body of water with a section of it croc-infested. Although no croc action may be apparent, nonetheless
+       it definitely influences how you ride the boat and what direction you may take
+    */
+    
+    /*
+      - Create final loop that assumes an opp token breaks out. This will be on a [6, 3.5] position, with 3.5 being the median
+        of range 1 -6. Then we'll call the getRisk() function on this assumed broken out token; just like the previous tokens.
+      
+      - The position will be the token's breakout spot + 3.5. But there are 2 more points to consider: Which of the token base 
+        should the token break out from? We should assume 2 breakout tokens, each for attack and defence opponent base, compute
+        the risk for each, and choose the maximum. Ensure to check for existence of tokens in each base
+    */
+    
+    if (tokenCounter === COM.length - 1) {  // On last loop
+    
       // setTokenClosestToBreakout(COMBaseAttack, COMBaseDefence, OppCell, player="COM");
-      const oppLeastTravelledToken = getLeastTravelledTokens("opp");
+      // const oppLeastTravelledToken = getLeastTravelledTokens("opp");
       
       const inActiveAttackTokens = getInActiveAttackTokens(player);
-      const inActiveCOMDefenceTokens = getInactiveDefenceTokens(player);
+      const inActiveDefenceTokens = getInactiveDefenceTokens(player);
 
-      if (inActiveAttackTokens) {
-        breakoutCount++;
-        let oppBreakoutAttackSpot = cellPath - oppLeastTravelledToken > 3.5 ? oppAttackStartPosition + 3.5 : oppAttackStartPosition + oppLeastTravelledToken;
-        getRisk(oppBreakoutAttackSpot, comCell, comBasePosition, oppBasePosition, true);
+      if (inActiveAttackTokens) { // Check tokens exist in attack base. 
+        breakoutCount++;  // Increment counter. Counter will be used to 
+        // let oppBreakoutAttackSpot = cellPath - oppLeastTravelledToken > 3.5 ? oppAttackStartPosition + 3.5 : oppAttackStartPosition + oppLeastTravelledToken;
+        let oppBreakoutAttackSpot = oppAttackStartPosition + 3.5; 
+        getRisk(oppBreakoutAttackSpot, comCell, comBasePosition, oppBasePosition, true);  // compute risk for assumed breakout attack token
       } 
-      if (inActiveCOMDefenceTokens) {
-        breakoutCount++;
-        let oppBreakoutDefenceSpot = cellPath - oppLeastTravelledToken > 3.5 ? oppDefenceStartPosition + 3.5 : oppDefenceStartPosition + oppLeastTravelledToken;
-        getRisk(oppBreakoutDefenceSpot, comCell, comBasePosition, oppBasePosition, true);
+      if (inActiveCOMDefenceTokens) { // Check tokens exist in defence base
+        breakoutCount++;  
+        // let oppBreakoutDefenceSpot = cellPath - oppLeastTravelledToken > 3.5 ? oppDefenceStartPosition + 3.5 : oppDefenceStartPosition + oppLeastTravelledToken;
+        let oppBreakoutAttackSpot =  oppAttackStartPosition + 3.5;
+        getRisk(oppBreakoutDefenceSpot, comCell, comBasePosition, oppBasePosition, true); // compute risk for assumed breakout defence token
       }
     }
     
