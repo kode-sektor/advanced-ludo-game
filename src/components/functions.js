@@ -1189,7 +1189,7 @@ const filterMoves = (seeds, dice) => {
 		
       let cellPath = 51;
   let portalPath = 5; 
-  let travelPath = cellPath + tokenPath;
+  let travelPath = cellPath + portalPath;
 	
 	// The formula is basePosition + cell or relCell = absCell
 	const com = {
@@ -1512,6 +1512,31 @@ const filterMoves = (seeds, dice) => {
   
   console.log(computeRisk(100, [25, 50]));    // { finalExposure: 37.5, totalReduction: 62.5 }
   console.log(computeRisk(100, [37.5, 37.5])); // { finalExposure: 39.0625, totalReduction: 60.9375 }
+
+  /**
+     * Calculate aggregate risk from an array of risk values (0–5 each).
+     * Uses RMS (root mean square) to weight higher risks more heavily.
+     * 
+     * @param {number[]} risks - Array of risks (each 0–5).
+     * @returns {number} Aggregate risk as percentage (0–100).
+ */
+  function calculateAggregateRisk(risks) {
+    if (!Array.isArray(risks) || risks.length === 0) {
+      throw new Error("Input must be a non-empty array of numbers.");
+    }
+
+    const n = risks.length;
+    const sumSquares = risks.reduce((sum, r) => sum + r ** 2, 0);
+    const rms = Math.sqrt(sumSquares / n);
+    return (rms / 5) * 100; // percentage
+  }
+
+// console.log(calculateAggregateRisk([5, 0, 0]));       // ~57.7%
+// console.log(calculateAggregateRisk([5, 5, 0]));       // ~81.6%
+// console.log(calculateAggregateRisk([2.5, 2.5, 2.5])); // 50%
+// console.log(calculateAggregateRisk([5, 5, 5]));       // 100%
+// console.log(calculateAggregateRisk([0, 0, 0]));       // 0%
+// console.log(calculateAggregateRisk([3, 4, 5, 2]));    // ~70.7%
   
   const tokenInPortal = cell => cell > 50 ? true : false;
   
@@ -1662,14 +1687,15 @@ const filterMoves = (seeds, dice) => {
     // value or combination of values
     
     if (tokenInPortal(comCell)) {
-      oddsRisk = (travelPath - comCell) / portalPath; // e.g. (56 - 53) / 5 => 3/5
+      portalTokenCells.push(travelPath - comCell);
+      // oddsRisk = (travelPath - comCell) / portalPath; // e.g. (56 - 53) / 5 => 3/5
       
-      oddsRisk = (1 - ((cellPath - comCell) / cellPath)) * 100;
-      if (oddsRisk > portalOddsRisk[0] || portalOddsRisk[0] === undefined) {
-        portalOddsRisk.unshift(oddsRisk);
-      } else if (oddsRisk > portalOddsRisk[1] || portalOddsRisk[1] === undefined) {
-        portalOddsRisk[1] = oddsRisk;
-      }
+      // oddsRisk = (1 - ((cellPath - comCell) / cellPath)) * 100;
+      // if (oddsRisk > portalTokenCells[0] || portalTokenCells[0] === undefined) {
+      //   portalTokenCells.unshift(oddsRisk);
+      // } else if (oddsRisk > portalTokenCells[1] || portalTokenCells[1] === undefined) {
+      //   portalTokenCells[1] = oddsRisk;
+      // }
     } else {
       if (opp.length === 1) {
         if (cellDiff === oppToComDiff) {
@@ -1698,15 +1724,33 @@ const filterMoves = (seeds, dice) => {
             }
           }
         }
-        riskExposure = [oddsRisk, progressFrac, startGapFrac, ...portalOddsRisk];
-        squadRisk.push(riskExposure);
       }
+      riskExposure = [oddsRisk, progressFrac, startGapFrac];
+      squadRisk.push(riskExposure);
     }
 
     // Run only when breakout risk for either attack or defence base or both is complete
-    // Check out breakout risk in code below => if (tokenCounter === COM.length - 1) {...}
+    // Check out breakout risk in condition below => if (tokenCounter === COM.length - 1) {...}
     if (breakoutCount === ([inActiveAttackTokens, inActiveCOMDefenceTokens].filter(Boolean).length)) {
-      // riskExposure = [...portalOddsRisk]; // Cache portal odds risk on very last loop. Will be appended last in squadRisk
+      /*
+        Compute portal odds risk on very last loop. Will be appended last in squadRisk
+        Recall portal token cells were simply saved in array. So to evaluate the risk, we simply want to delay any further movement
+        inside the portal. Any move inside the portal, even a clearance, increases the risk because it reduces leverage for other tokens
+        outside of portal. 5 is the max token portal cell while 0 (clearance) is the min. So if there are 2 in-portal tokens [5, 5], that's 
+        the best possible scenario (0% risk). Now if there are 3 tokens [5, 5, 5], that's also 0% risk. But if the last array of 3 tokens 
+        changes to [5, 5, 3], we've made it a bit riskier because we have reduced its leverage. Mind you, [5, 5] of 2 in-portal tokens is 
+        less risky than [5, 5, 3].
+
+        Root Mean Square provides the solution by skewing higher risks more heavily
+        AggregateRisk = ((√ r1^2 + r2^2 + ... rn^2) / 5) * 100%;
+
+        Important: If all the in-portal tokens make clearance, the portalRisk becomes 100% so long other out-of-portal tokens exist. But
+        once there are no more out-of-portal tokens but inactive tokens, moving the in-portal tokens further still increases the risk because
+        you want to hold out as much as possible until a '6' die is thrown to break out. But if all these conditions persist and all portal
+        tokens clear, then portal risk resets (to 0).
+
+      */
+      let portalOddsRisk = calculateAggregateRisk(portalTokenCells); 
             
       //       
       let comCount = COMActive.length;  
@@ -1718,22 +1762,47 @@ const filterMoves = (seeds, dice) => {
       // How does this work? There are active COM tokens. The supposed breakout tokens add either 1 or 2 tokens to squadRiskCount
       // Simply subtract activetokens (comCount) from squadRiskCount to get number of breakout tokens
       if (squadRiskCount - comCount === 2) {
-        let breakoutAttackRisk = computeRisk(squadRisk[squadRiskCount - 2]);
-        let breakoutDefenceRisk = computeRisk(squadRisk[squadRiskCount - 1]);
+        let breakoutAttackRisk = computeRisk([...squadRisk[squadRiskCount - 2], ...portalOddsRisk]);
+        let breakoutDefenceRisk = computeRisk([...squadRisk[squadRiskCount - 1], ...portalOddsRisk]);
         breakoutRisk = Math.max(breakoutAttackRisk, breakoutDefenceRisk); // Get the maximum breakout risk
-        squadRisk.splice(-2);
+
+        // Remove breakout risk(s) from squad risk. Both have been computed and max gotten, max will be added back
+        // Other squad risks have not yet been evaluated. Hence keep breakout separate, to be added later
+        squadRisk.splice(-2); 
       } else {  // Breakout risk runs for only either attack or defence breakout tokens
         breakoutRisk = computeRisk(squadRisk[squadRiskCount - 1]);
         squadRisk.splice(-1);
       }
+      /*
+        Squad risk is a collection of each token's risk and factors like (oddsRisk, progressFrac) influencing each risk
+        squadRisk = [                         squadRisk = [
+                      [80, 46, 44],                         [oddsRisk , progressFrac, startGapFrac],
+                      [80, 46, 44]                          [oddsRisk , progressFrac, startGapFrac]
+                    ]                                     ]
+
+        So portalOddsRisk comes last, even if it is bigger because it is the least influential amonst the remaining factors like 
+        progressFrac, startGapFrac etc. and added to each array 
+        squadRisk = [
+                      [oddsRisk , progressFrac, startGapFrac, ...portalOddsRisk],
+                      [oddsRisk , progressFrac, startGapFrac, ...portalOddsRisk]
+                    ]
+      */
       
-      squadRisk.push(riskExposure); // Push portal odds risk
+      // squadRisk.push(riskExposure); // Push portal odds risk
       for (let squad = 0; i < squadRisk.length - 1; squad++) {  // Evaluate risk for each 
-        squadRisk[squad] = computeRisk(squad);
+        squadRisk[squad] = computeRisk([...squad, ...portalOddsRisk]);
       }
-      squadRisk.push(breakoutRisk);
+      /*
+        All squadRisk entries are now evaluated from arrays into single risk values
+        squadRisk = [80, 40, 33, 31]
+
+        Now push breakoutRisk, but sort before portalOddsRisk. Remember portalOddsRisk is least impactful
+        so will be appended after the sort: 
+        squadRisk = [80, 40, 33, 31 ..., 69]
+      */
       squadRisk.sort();
-      risk = computeRisk(squadRisk);
+      squadRisk.push(breakoutRisk);
+      risk = computeRisk(squadRisk);  // Then finally compute which further evaluates into one single value e.g. 66%
     }
     
     // Breakout risk
@@ -1763,9 +1832,9 @@ const filterMoves = (seeds, dice) => {
       const inActiveDefenceTokens = getInactiveDefenceTokens(player);
 
       if (inActiveAttackTokens) { // Check tokens exist in attack base. 
-        breakoutCount++;  // Increment counter. Counter will be used to 
+        breakoutCount++;  // Increment counter. Counter will be used to track if we are running one or two breakout risks 
         // let oppBreakoutAttackSpot = cellPath - oppLeastTravelledToken > 3.5 ? oppAttackStartPosition + 3.5 : oppAttackStartPosition + oppLeastTravelledToken;
-        let oppBreakoutAttackSpot = oppAttackStartPosition + 3.5; 
+        let oppBreakoutAttackSpot = oppAttackStartPosition + 3.5;  // If yes, calculate risk using (attack breakout spot + 3.5) as opp cell
         getRisk(oppBreakoutAttackSpot, comCell, comBasePosition, oppBasePosition, true);  // compute risk for assumed breakout attack token
       } 
       if (inActiveCOMDefenceTokens) { // Check tokens exist in defence base
@@ -1862,7 +1931,7 @@ const filterMoves = (seeds, dice) => {
   }
   
   
-  const portalOddsRisk = [];  
+  const portalTokenCells = [];  
   const breakoutOdds = 11/36;
   const defenceBreakoutSpot = 3.5;
   const attackBreakoutSpot = 17.5;
@@ -1910,6 +1979,11 @@ const filterMoves = (seeds, dice) => {
 	const getStrikeOdds = () => {
 	  
 	}
+	
+	
+	
+	
+	
 	
 	
 	
