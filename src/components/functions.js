@@ -1186,8 +1186,7 @@ const filterMoves = (seeds, dice) => {
 	
 		
 	
-		
-      let cellPath = 51;
+	  let cellPath = 51;
   let portalPath = 5; 
   let travelPath = cellPath + portalPath;
 	
@@ -1539,6 +1538,35 @@ const filterMoves = (seeds, dice) => {
 // console.log(calculateAggregateRisk([3, 4, 5, 2]));    // ~70.7%
   
   const tokenInPortal = cell => cell > 50 ? true : false;
+
+  /* 
+    This function tests if tokens can make full move; in other words, maximum dice value [6, 6] are attributable to 
+    base tokens without either tokens overlapping token into a danger zone (striking distance) or moving beyond cell
+    path (56)
+  */
+
+  const isFullMoveAllowable = (comCell, oppCell, basePosition=oppBasePosition, player=opp) => {
+    let allowed = false;
+
+    const strikeRangeDiff = oppCell - comCell;
+    const twoLeastTravelledTokens = getLeastTravelledTokens(player, 2); // Get 2 least travelled tokens
+    let leastTravelledTokens = [strikeRangeDiff, ...twoLeastTravelledTokens]; // Include strike range, making 3 distances in array
+    let safeMoves = Math.min(leastTravelledTokens, 2); // [4, 5]  // Then find the maximum 2 to mirror max dice values
+    let totalSafeMoves = safeMoves[0] + safeMoves[1];
+
+    // If one die value is less than 6 and the second is less than 12, it means full move is not allowable as com token would either 
+    // overlap opp token or other com token's move advance beyond cellpath
+    // It's a bit confusing but considering it carefully, the first condition (< 6) checks a short move (1 die throw) doesn't overlap
+    // while the second condition (< 12) covers the check for the long move (2 dice throw)
+    if ((safeMoves[0] < 6 && safeMoves[1] < 12) || (safeMoves[0] < 12 && safeMoves[1] < 6)) {
+      return allowed;
+    }
+
+    const portalBank = oppBasePosition === 0 ? 50 : oppBasePosition - 2;  // Get portal bank of opp 
+    const breakoutSpot = oppBasePosition; // Get breakout spot of opp
+    const safeLeapSpot = oppBasePosition - 1; // Get safe leap spot i.e, safe cell right next to portal bank
+
+ }
   
   /*
     This function caters for token risk where the other least travelled com tokens do not have enough cells to advance in order
@@ -1979,6 +2007,7 @@ const filterMoves = (seeds, dice) => {
 	const getStrikeOdds = () => {
 	  
 	}
+	
 	
 	
 	
