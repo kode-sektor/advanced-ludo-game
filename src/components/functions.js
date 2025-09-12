@@ -1545,27 +1545,28 @@ const filterMoves = (seeds, dice) => {
     path (56)
   */
 
-  const isFullMoveAllowable = (comCell, oppCell, basePosition=oppBasePosition, player=opp) => {
-    let allowed = false;
+  const isFullMoveAllowable = (comCell, oppCell, basePosition=opp.basePosition, player=opp) => {
+    let allowed = true;
 
     const strikeRangeDiff = oppCell - comCell;
     const twoLeastTravelledTokens = getLeastTravelledTokens(player, 2); // Get 2 least travelled tokens
     let leastTravelledTokens = [strikeRangeDiff, ...twoLeastTravelledTokens]; // Include strike range, making 3 distances in array
     let safeMoves = Math.min(leastTravelledTokens, 2); // [4, 5]  // Then find the maximum 2 to mirror max dice values
-    let totalSafeMoves = safeMoves[0] + safeMoves[1];
+    // let totalSafeMoves = safeMoves[0] + safeMoves[1];
+    let portalGateway = basePosition === 0 ? 50 : basePosition - 2;
 
     // If one die value is less than 6 and the second is less than 12, it means full move is not allowable as com token would either 
     // overlap opp token or other com token's move advance beyond cellpath
-    // It's a bit confusing but considering it carefully, the first condition (< 6) checks a short move (1 die throw) doesn't overlap
-    // while the second condition (< 12) covers the check for the long move (2 dice throw)
-    if ((safeMoves[0] < 6 && safeMoves[1] < 12) || (safeMoves[0] < 12 && safeMoves[1] < 6)) {
-      return allowed;
+    // Solution for moves to be allowable: 
+    // 1. Both tokens must have 6 or more distance to either not overlap or advance past cellPath (56) or 
+    // 2. At least one of the tokens must have a max safe distance of 12 or 
+    // 3. If opp cell occupies its portal gateway
+
+    if ((safeMoves[0] > 6 && safeMoves[1] > 6) || safeMoves[0] > 12 || safeMoves[0] > 12 || oppCell === portalGateway) {
+      return {safeMoves, portalGateway};  // Instead of returning true, return variables used for next function
+    } else {
+      return !allowed;
     }
-
-    const portalBank = oppBasePosition === 0 ? 50 : oppBasePosition - 2;  // Get portal bank of opp 
-    const breakoutSpot = oppBasePosition; // Get breakout spot of opp
-    const safeLeapSpot = oppBasePosition - 1; // Get safe leap spot i.e, safe cell right next to portal bank
-
  }
   
   /*
@@ -1578,57 +1579,50 @@ const filterMoves = (seeds, dice) => {
     - Case scenario: COM token occupies cell spot 35 and opp occupies 31. Opp has 2 other tokens that occupy cell spots 52 and 54
     respectively. Tossing a high dice value of 10, obviously would lead to COM token overlapping the opp token, which would now 
     expose it to some risk ... it's ahead! 
-    
   */
-  const getFullMoveOdds = (comCell, oppCell, oppId, oppBasePosition, player=opp) => {
-    const strikeRangeDiff = oppCell - comCell;
-    
-    // Will only be computed within strike range
-    if (strikeRangeDiff > 12) { 
-      throw new Error (`${oppCell - comCell} is greater than strikeRange of 12`);
-    } else {
-      const twoLeastTravelledTokens = getLeastTravelledTokens(player, 2); // Get 2 least travelled tokens
-      let leastTravelledTokens = [strikeRangeDiff, ...twoLeastTravelledTokens]; // Include strike range, making 3 distances in array
-      let safeMoves = Math.min(leastTravelledTokens, 2); // [4, 5]  // Then find the maximum 2 to mirror max dice values
-      
-      const portalBank = oppBasePosition === 0 ? 50 : oppBasePosition - 2;  // Get portal bank of opp 
-      const breakoutSpot = oppBasePosition; // Get breakout spot of opp
-      const safeLeapSpot = oppBasePosition - 1; // Get safe leap spot i.e, safe cell right next to portal bank
-      
-      // Calculate distance of a leapfrog into safeleap spot and if less than 12, complete the cells up to 12 (max dice value)
-      // Thus, if safeLeapDistance is 7, create array with values from 7 - 12 which are all safe spots after a leapfrog
-      const safeLeapDistance = safeLeapSpot - comCell;  
-      let safeLeapMoves = safeLeapDistance <= 12 ? Array.from({ length: 12 - safeLeapDistance + 1 }, (_, i) => i + safeLeapDistance) : null;
-      
-      // Take care of the small matter of landing on opp breakoutSpot by filtering it off safeLeapMoves if opponent has tokens in base
-      const oppBaseTokensExist = getInactiveTokensCountByTokenId(oppId);
-      if (oppBaseTokensExist) {
-        safeLeapMoves = safeLeapMoves.filter(cell => cell === breakoutSpot); 
-      }
 
-      const eligibleMoves = [
-                              {
-                                safeMoves,
-                                safeLeapMoves,
-                                breakoutSpot
-                              }
-                            ];
-      
-      // Now get dice odds 
-      const oddsRisk = calculateDiceOdds(eligibleMoves);
-      /*
-        const oddsRisk = calculateDiceOdds(
-                                          [
-                                            {
-                                              safeMoves: [4, 5],
-                                              safeLeapMoves: [7, 8, 9, 10, 11, 12],
-                                              breakoutSpot: 8
-                                            }
-                                          ]
-                                        );
-      */                                
-      
+  const getFullMoveOdds = (comCell, oppCell, oppId, oppBasePosition, player=opp) => {
+    
+    const twoLeastTravelledTokens = getLeastTravelledTokens(player, 2); // Get 2 least travelled tokens
+    let leastTravelledTokens = [strikeRangeDiff, ...twoLeastTravelledTokens]; // Include strike range, making 3 distances in array
+    let safeMoves = Math.min(leastTravelledTokens, 2); // [4, 5]  // Then find the maximum 2 to mirror max dice values
+    
+    const portalBank = oppBasePosition === 0 ? 50 : oppBasePosition - 2;  // Get portal bank of opp 
+    const breakoutSpot = oppBasePosition; // Get breakout spot of opp
+    const safeLeapSpot = oppBasePosition - 1; // Get safe leap spot i.e, safe cell right next to portal bank
+    
+    // Calculate distance of a leapfrog into safeleap spot and if less than 12, complete the cells up to 12 (max dice value)
+    // Thus, if safeLeapDistance is 7, create array with values from 7 - 12 which are all safe spots after a leapfrog
+    const safeLeapDistance = safeLeapSpot - comCell;  
+    let safeLeapMoves = safeLeapDistance <= 12 ? Array.from({ length: 12 - safeLeapDistance + 1 }, (_, i) => i + safeLeapDistance) : null;
+    
+    // Take care of the small matter of landing on opp breakoutSpot by filtering it off safeLeapMoves if opponent has tokens in base
+    const oppBaseTokensExist = getInactiveTokensCountByTokenId(oppId);
+    if (oppBaseTokensExist) {
+      safeLeapMoves = safeLeapMoves.filter(cell => cell === breakoutSpot); 
     }
+
+    const eligibleMoves = [
+                            {
+                              safeMoves,
+                              safeLeapMoves,
+                              breakoutSpot
+                            }
+                          ];
+    
+    // Now get dice odds 
+    const oddsRisk = calculateDiceOdds(eligibleMoves);
+    /*
+      const oddsRisk = calculateDiceOdds(
+                                        [
+                                          {
+                                            safeMoves: [4, 5],
+                                            safeLeapMoves: [7, 8, 9, 10, 11, 12],
+                                            breakoutSpot: 8
+                                          }
+                                        ]
+                                      );
+    */                                
   }
   
   
@@ -1693,15 +1687,16 @@ const filterMoves = (seeds, dice) => {
     
     // Now compare the rearranged risk patterns to the sorted keys, after resolving symmetricity issues
     const comToOppRisk = arraysEqual(sortedComToOppKeys, rearrangedComRiskPattern);
-    const oppToCOMRisk = arraysEqual(sortedOppToComKeys, rearrangedOppRiskPattern);
+    const oppToComRisk = arraysEqual(sortedOppToComKeys, rearrangedOppRiskPattern);
     
     // The difference between oppCell and comCell is the difference required. The distance is required to calculate risk based on 
     // proximity. comToOppDiff means risk exposure when com is behind opp. oppToComDiff means risk exposure when opp is behind com.
     
     // For comToOppDiff, opp has to be ahead of com. Although ahead, its cell value may be lower due to the different relative 
     // start positions of tokens. If this is the case, add 51 (total cells) to the token ahead, and subtract previous token
+    // So get both comToOppDiff and oppToComDiff, then select the minimum of each as cellDiff
     let comToOppDiff = comToOppRisk === false ? comToOppRisk : (oppCell > comCell ? oppCell - comCell : oppCell + cellPath - comCell);
-    let oppToComDiff = oppToCOMRisk === false ? oppToCOMRisk : (comCell > oppCell ? comCell - oppCell : comCell + cellPath - comCell);
+    let oppToComDiff = oppToComRisk === false ? oppToComRisk : (comCell > oppCell ? comCell - oppCell : comCell + cellPath - comCell);
     
     cellDiff = comToOppDiff === false ? oppToComDiff : oppToComDiff === false ? comToOppDiff : Math.min(comToOppDiff, oppToComDiff);
     
@@ -1716,23 +1711,45 @@ const filterMoves = (seeds, dice) => {
     
     if (tokenInPortal(comCell)) {
       portalTokenCells.push(travelPath - comCell);
-      // oddsRisk = (travelPath - comCell) / portalPath; // e.g. (56 - 53) / 5 => 3/5
-      
-      // oddsRisk = (1 - ((cellPath - comCell) / cellPath)) * 100;
-      // if (oddsRisk > portalTokenCells[0] || portalTokenCells[0] === undefined) {
-      //   portalTokenCells.unshift(oddsRisk);
-      // } else if (oddsRisk > portalTokenCells[1] || portalTokenCells[1] === undefined) {
-      //   portalTokenCells[1] = oddsRisk;
-      // }
     } else {
-      if (opp.length === 1) {
-        if (cellDiff === oppToComDiff) {
-          oddsRisk = calculateDiceOdds(cellDiff);
+      if (opp.length === 1) { // Only 1 active opponent token
+        if (cellDiff === oppToComDiff) {  // If opp->com risk (attack coming from behind)
+          // Calculate exact odds to dislodge com.
+          // Don't worry about odds of getting a '6' to influence this because breakout risk will still be implemented
+          oddsRisk = calculateDiceOdds(cellDiff); 
         } else {
-          oddsRisk = 0;
+          // Check for full moves 
+          const fullMoveAllowable = isFullMoveAllowable(comCell, oppCell, basePosition=opp.basePosition, player=opp);
+          if (fullMoveAllowable) {
+            oddsRisk = 0;
+          } else {
+            const breakoutSpot = oppBasePosition; // Get breakout spot of opp
+            const safeLeapSpot = oppBasePosition - 1; // Get safe leap spot i.e, safe cell right next to portal bank
+            
+            // Calculate distance of a leapfrog into safeleap spot and if less than 12, complete the cells up to 12 (max dice value)
+            // Thus, if safeLeapDistance is 7, create array with values from 7 - 12 which are all safe spots after a leapfrog
+            const safeLeapDistance = safeLeapSpot - comCell;  
+            let safeLeapMoves = safeLeapDistance <= 12 ? Array.from({ length: 12 - safeLeapDistance + 1 }, (_, i) => i + safeLeapDistance) : null;
+            
+            // Take care of the small matter of landing on opp breakoutSpot by filtering it off safeLeapMoves if opponent has tokens in base
+            const oppBaseTokensExist = getInactiveTokensCountByTokenId(oppId);
+            if (oppBaseTokensExist) {
+              safeLeapMoves = safeLeapMoves.filter(cell => cell === breakoutSpot); 
+            }
+
+            const eligibleMoves = [
+                                    {
+                                      safeMoves,
+                                      safeLeapMoves,
+                                      breakoutSpot
+                                    }
+                                  ];
+            // Now get dice odds 
+            const oddsRisk = calculateDiceOdds(eligibleMoves);
+          }
         }
-      } else {
-        if (COM.length === 1) {
+      } else {  // Multiple opp active tokens
+        if (com.length === 1) { // If 1 com token 
           oddsRisk = (1 - (cellDiff / cellPath)) * 100;
           if (withinStrikeRange (cellDiff)) {
             let remRisk = 100 - oddsRisk;
@@ -1740,7 +1757,7 @@ const filterMoves = (seeds, dice) => {
             oddsRisk += (strikeRisk / 100) * remRisk;
           }
         } else {
-          cellDiff = oppToComDiff;
+          cellDiff = oppToComDiff;  // If multiple com tokens, attack (proximity risk) can only come from behind (opp->com)
           if (cellDiff === null) {
             oddsRisk = 0;
           } else {
