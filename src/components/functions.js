@@ -1411,9 +1411,19 @@ const filterMoves = (seeds, dice) => {
               hasTargetNumber = true;
             }
           } else {
+            /*
+              If target die is <= 6, find dice combination to get target die or [6, targetDie] if there's a camped token
+              Example: If target die is 3, find combination of [1, 2], [2, 1] and then [6, 3] and [3, 6] for target die & breakout
+            */
+            if (targetDie <= 6) { // If <=6, targetDie & breakout odds 
+              targetDie = [6, targetDie];
+            }
             if (Array.isArray(targetDie)) {
-              hasTargetNumber = (targetDie[0] === die1 && targetDie[1] === die2) || (targetDie[0] === die2 && targetDie[1] === die1);
-            } else {
+              if ((targetDie[0] === die1 && targetDie[1] === die2) || (targetDie[0] === die2 && targetDie[1] === die1) || 
+                (die1 + die2 === targetTotal)) {
+                hasTargetNumber = true;
+              }
+            } else {  // If we want to check the occurence of a single die value, used especially to get odds for a '6' (breakout)
               hasTargetNumber = die1 === targetDieNumber || die2 === targetDieNumber;
             }
             // If you want a 5 either by absolute die e.g, '5' or by combination e.g, "3 + 2" 
@@ -2034,6 +2044,10 @@ const filterMoves = (seeds, dice) => {
 	const getStrikeOdds = () => {
 	  
 	}
+	
+	
+	
+	
 	
 	
 	
