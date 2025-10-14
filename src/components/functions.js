@@ -2049,7 +2049,8 @@ const filterMoves = (seeds, dice) => {
 	
 	
 	
-const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiveTokens) => {
+
+const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiveTokens=true) => {
   
   const isMatch = (targetDieNumber, die1, die2) => targetDieNumber === die1 || targetDieNumber === die2;
 
@@ -2057,7 +2058,7 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
     (targetDieNumber === die1 && maxDieMove === die2) || 
     (targetDieNumber === die2 && maxDieMove === die1);
 
-  const inActiveCombo = (remainder, die1, die2) => 
+  const isActiveCombo = (remainder, die1, die2) => 
     inActiveTokens && ((remainder === die1 && 6 === die2) || (remainder === die2 && 6 === die1));
 
   const isSumMatch = (targetDieNumber, die1, die2) => die1 + die2 === targetDieNumber;
@@ -2069,17 +2070,18 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
   }
 
   let strikeOdds;
-  let targetTotalOdds = 0;
+  let targetTotalOdds = 1;
   let ways = 0;
+  let remainder = 1;
+  let probDoubleSixes = 1;
 
   if (targetTotal && !Array.isArray(targetTotal)) {
-    let remainder = 1;
-    let probDoubleSixes = 1;
+
 
     // If getInActiveTokens is defined elsewhere
     // const inactiveCount = getInActiveTokens(player);
 
-    if (targetTotal > 12 && inActiveTokens) { 
+    if (targetTotal > 12) { 
       const doubleSixValue = 12; 
       const pDoubleSix = 1 / 36; 
     
@@ -2087,29 +2089,50 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
       remainder = targetTotal % doubleSixValue;
     
       probDoubleSixes = Math.pow(pDoubleSix, times);  
-    } else { 
-      remainder = targetTotal;  
-      if (targetDieNumber) {
-        if (remainder <= 6) {
-          targetDieNumber = [targetDieNumber, remainder];
-        }
-      } else {
-        if (remainder <= 6) {
-          targetDieNumber = remainder;
-        }
+    } else {
+      remainder = targetTotal; 
+    }
+    
+    console.log("remainder : ", remainder);
+    
+    if (targetDieNumber) {
+      console.log("targetDieNumber : ", targetDieNumber);
+      
+      // (remainder <= 6) condition necessary because if cell distance > 6, isMatchMax & isActiveCombo are useless. 
+      // If cell distance is 8, we can't find odds of say [8, 6] for isActiveCombo or say [8, 4] for maxDieMove
+      if (remainder > 0 && remainder <= 6) { 
+        targetDieNumber = [targetDieNumber, remainder];
+      }
+    } else {
+      if (remainder > 0 && remainder <= 6) {
+        targetDieNumber = remainder;  // Always needed to calculate isMatchMax and isActiveCombo for remainder.
       }
     }
     
-    if (remainder > 0) {
+    if (remainder > 0) {  // works same way as isSumMatch but isSumMatch will be used in latter code for sake of dynamism
       ways += (remainder > 1 && remainder < 7 ? remainder - 1 : 13 - remainder);
     } else {
       ways = 36;
     }
- 
-    if (!targetDieNumber) { 
+    
+    // Only run when calculateDiceOdds is not called this way calculateDiceOdds(28, 6). The reason is if it's called 
+    // that way, there may be some dice intersection when trying to work on the remainder. For instance the first 
+    // parameter 28 will be worked on in the upper code section above 28 / 12 with remainder 4. Then immediately
+    // above we get the number of 'ways' to get 4 which are [3, 1], [2, 2] etc. Now we also have to account for 
+    // getting odds for isActiveCombo and isMatchMax like [4, 6] if inactiveTokens exist and [4, maxDieMove] for maxDieMove
+    // on another token 
+    
+    if (remainder > 6) { // targetDieNumber won't trickle down if targetTotal > 6
       const probRemainder = ways / 36;
-      targetTotalOdds = ((probDoubleSixes * probRemainder) * 100).toFixed(2);
-      strikeOdds = targetTotalOdds;  
+      targetTotalOdds = (probDoubleSixes * probRemainder).toFixed(6);
+      strikeOdds = targetTotalOdds * 100;  
+    }
+    
+    // console.log(strikeOdds);
+    /*if (targetTotal && !targetDieNumber) {  // Return when calculateDiceOdds is called this way: calculateDiceOdds(24)
+      return strikeOdds;
+    }*/
+    if (!targetDieNumber) {
       return strikeOdds;
     }
   } 
@@ -2132,41 +2155,50 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
         totalOutcomes++;
         
         if (Array.isArray(targetDieNumber)) {
+          // console.log("targetDieNumber is array");
           hasMatchNumber = isMatch(targetDieNumber[0], die1, die2);
           hasTargetNumber = ( 
             isMatchMax(targetDieNumber[1], maxDieMove, die1, die2) || 
-            inActiveCombo(targetDieNumber[1], die1, die2)
+            isActiveCombo(targetDieNumber[1], die1, die2)
           );
         } else {  
-          if (targetTotal === null) { 
+          // console.log(targetDieNumber);
+          // console.log("targetDieNumber is not array")
+          if (targetTotal === null || (targetTotal !== null && remainder > 6)) {
             hasMatchNumber = isMatch(targetDieNumber, die1, die2);
-          } else {  
+          } else {
             hasTargetNumber = ( 
               isMatchMax(targetDieNumber, maxDieMove, die1, die2) || 
-              inActiveCombo(targetDieNumber, die1, die2)
-            ); 
+              isActiveCombo(targetDieNumber, die1, die2)
+            );
           }
         }
         // console.log(hasMatchNumber);
-        if (hasMatchNumber) favourableMatchOutcome++;
-        else if (hasTargetNumber) favourableTargetOutcome++;
+        if (hasMatchNumber) {
+          console.log("hasMatchNumber");
+          favourableMatchOutcome++;
+        }
+        if (hasTargetNumber) {
+          console.log("hasTargetNumber")
+          favourableTargetOutcome++;
+        }
       }
     }
     
 
 
     if (targetDieNumber && maxDieMove >= 6) {
+      console.log("dice intersection");
       if (hasTargetNumber) favourableTargetOutcome -= 2;
     }
     
-    // console.log(favourableMatchOutcome, favourableTargetOutcome);
-
+    console.log(favourableMatchOutcome, favourableTargetOutcome);
+    console.log("ways : ", ways);
     
+    const favourableMatchOdds = favourableMatchOutcome && (Number(((favourableMatchOutcome / totalOutcomes)).toFixed(6)));
+    const favourableTargetOdds = favourableTargetOutcome && (Number((((favourableTargetOutcome + ways) / totalOutcomes) * probDoubleSixes).toFixed(6)));
     
-    const favourableMatchOdds = Number(((favourableMatchOutcome / totalOutcomes) * 100).toFixed(2));
-    const favourableTargetOdds = Number((((favourableTargetOutcome + ways) / totalOutcomes) * 100).toFixed(2));
-    
-    // console.log(favourableMatchOdds, favourableTargetOdds);
+    console.log(favourableMatchOdds, favourableTargetOdds);
     
     let dieOrTargetTotalOdds = 0;
     if (favourableMatchOdds && favourableTargetOdds) {
@@ -2176,18 +2208,22 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
       dieOrTargetTotalOdds = favourableMatchOdds || favourableTargetOdds;
       // console.log("b");
     }
+    console.log("dieOrTargetTotalOdds : ", dieOrTargetTotalOdds)
 
-    if (targetTotal) {
+    /*if (targetTotal) {
+      console.log ("targetTotalOdds : ", targetTotalOdds);
       strikeOdds = targetTotalOdds * dieOrTargetTotalOdds;
     } else {
       strikeOdds = dieOrTargetTotalOdds;
-    }
+    }*/
+    
+    strikeOdds = targetTotalOdds * dieOrTargetTotalOdds;
   }
   
-  return strikeOdds;
+  return strikeOdds * 100;
 };
 
-console.log(calculateDiceOdds(null, 6));
+console.log(calculateDiceOdds(26));
 
 	
 	
