@@ -2063,9 +2063,18 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
 
   const isSumMatch = (targetDieNumber, die1, die2) => die1 + die2 === targetDieNumber;
 
-  if (targetDieNumber) {  
-    if (targetDieNumber < 1 || targetDieNumber > 6) {
-      throw new Error("Die number must be between 1 and 6");
+  if (targetTotal !== null || targetDieNumber !== null) {  
+    if (targetTotal !== null) {
+      if (targetTotal < 1) {
+        console.log("Target total must be greater than 0")
+        throw new Error("Target total must be greater than 0");
+      }
+    }
+    if (targetDieNumber !== null) {
+      if (targetDieNumber < 1 || targetDieNumber > 6) {
+        console.log("Die number must be between 1 and 6")
+        throw new Error("Die number must be between 1 and 6");
+      }
     }
   }
 
@@ -2076,7 +2085,6 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
   let probDoubleSixes = 1;
 
   if (targetTotal && !Array.isArray(targetTotal)) {
-
 
     // If getInActiveTokens is defined elsewhere
     // const inactiveCount = getInActiveTokens(player);
@@ -2109,12 +2117,13 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
       }
     }
     
-    if (remainder > 0) {  // works same way as isSumMatch but isSumMatch will be used in latter code for sake of dynamism
-      ways += (remainder > 1 && remainder < 7 ? remainder - 1 : 13 - remainder);
-    } else {
+    if (remainder > 0 && remainder < 13) {  // works same way as isSumMatch but isSumMatch will be used in latter code for sake of dynamism
+      ways += (remainder > 0 && remainder < 7 ? remainder - 1 : 13 - remainder);
+    } 
+    /*else {
       ways = 36;
-    }
-    
+    }*/
+
     // Only run when calculateDiceOdds is not called this way calculateDiceOdds(28, 6). The reason is if it's called 
     // that way, there may be some dice intersection when trying to work on the remainder. For instance the first 
     // parameter 28 will be worked on in the upper code section above 28 / 12 with remainder 4. Then immediately
@@ -2137,18 +2146,12 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
     }
   } 
 
-  if (targetDieNumber || Array.isArray(targetTotal)) {  
+  if (targetDieNumber) {  
     let totalOutcomes = 0;
     let hasTargetNumber = false;
     let hasMatchNumber = false;
     let favourableMatchOutcome = 0;
     let favourableTargetOutcome = 0;
-
-    if (Array.isArray(targetTotal)) {
-      const [{ safeMoves }] = targetTotal;  
-      const maxSafeMove = Math.max(...safeMoves);  
-      const minSafeMove = Math.min(...safeMoves);  
-    }
     
     for (let die1 = 1; die1 <= 6; die1++) {
       for (let die2 = 1; die2 <= 6; die2++) {
@@ -2223,7 +2226,7 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
   return strikeOdds * 100;
 };
 
-console.log(calculateDiceOdds(26));
+console.log(calculateDiceOdds(8, 4, 4));
 
 	
 	
