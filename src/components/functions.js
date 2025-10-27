@@ -1664,7 +1664,7 @@ const filterMoves = (seeds, dice) => {
   }
   
   
- let cellPath = 52;
+let cellPath = 52;
 let portalPath = 5; 
 let travelPath = cellPath + portalPath - 1;
 let squadRisk = [];
@@ -1832,19 +1832,45 @@ const getMaxDieMove = (player=opp, exceptionKey=null, num=1, returnCell=true) =>
   return sorted;
 };
 
-  const calculateAggregateRisk = (risks) => {
-    /*if (!Array.isArray(risks) || risks.length === 0) {
-      throw new Error("Input must be a non-empty array of numbers.");
-    }*/
-    if (Array.isArray(risks) && risks.length > 0) {
-      const n = risks.length;
-      const sumSquares = risks.reduce((sum, r) => sum + r ** 2, 0);
-      const rms = Math.sqrt(sumSquares / n);
-      return (rms / 5) * 100; // percentage
-    } else {
-      return [];
-    }
+const calculateAggregateRisk = (risks) => {
+  /*if (!Array.isArray(risks) || risks.length === 0) {
+    throw new Error("Input must be a non-empty array of numbers.");
+  }*/
+  if (Array.isArray(risks) && risks.length > 0) {
+    const n = risks.length;
+    const sumSquares = risks.reduce((sum, r) => sum + r ** 2, 0);
+    const rms = Math.sqrt(sumSquares / n);
+    return (1 - (rms / 5)) * 100; // percentage
+  } else {
+    return [];
   }
+}
+
+function computeRisk(risks) {
+  const n = risks.length;
+
+  // Step 1. Compute linear declining weights
+  const rawWeights = risks.map((_, i) => (n - i) / n);
+
+  // Step 2. Normalize so all weights sum to 1
+  const total = rawWeights.reduce((a, b) => a + b, 0);
+  const weights = rawWeights.map(w => w / total);
+
+  // Step 3. Accumulate weighted risks progressively
+  let cumulative = risks[0]; // first risk anchors the base
+
+  for (let i = 1; i < n; i++) {
+    cumulative += (100 - cumulative) * weights[i] * (risks[i] / 100);
+  }
+
+  return +cumulative.toFixed(4);
+}
+
+
+// Example:
+// console.log(computeRisk(60, [20, 25, 10]));
+// → { finalExposure: 70.2, totalIncrease: 10.2 }
+
 
 
 const computeBreakoutRisk = ({
@@ -1855,7 +1881,6 @@ const computeBreakoutRisk = ({
   computeRisk
 }) => {
 
-  const portalOddsRisk = [5, 3];
   const comCount = comActive.length;
   const squadRiskCount = squadRisk.length;
   console.log("comCount : ", comCount);
@@ -1864,42 +1889,60 @@ const computeBreakoutRisk = ({
   let breakoutRisk = 0;
 
   if (squadRiskCount - comCount === 2) {
-    const breakoutAttackRisk = computeRisk([...squadRisk[squadRiskCount - 2], ...portalOddsRisk]);
-    const breakoutDefenceRisk = computeRisk([...squadRisk[squadRiskCount - 1], ...portalOddsRisk]);
+    let squadRiskAttackEntry = [...squadRisk[squadRiskCount - 2], ...portalOddsRisk];
+    let squadRiskDefenceEntry = [...squadRisk[squadRiskCount - 1], ...portalOddsRisk];
+    console.log("squadRiskAttackEntry : ", squadRiskAttackEntry)
+    const breakoutAttackRisk = computeRisk(squadRiskAttackEntry[0], squadRiskAttackEntry.slice(1));
+    const breakoutDefenceRisk = computeRisk(squadRiskDefenceEntry[0], squadRiskDefenceEntry.slice(1));
     breakoutRisk = Math.max(breakoutAttackRisk, breakoutDefenceRisk);
     squadRisk.splice(-2);
   } else if (squadRiskCount - comCount === 1) {
-    breakoutRisk = computeRisk(squadRisk[squadRiskCount - 1]);
+    let squadRiskEntry = squadRisk[squadRiskCount - 1];
+    breakoutRisk = computeRisk(squadRiskEntry[0], squadRiskEntry.slice(1));
     squadRisk.splice(-1);
   }
 
   console.log("SQUAD RISK : ", squadRisk);
+  console.log("BREAKOUT RISK: ", breakoutRisk);
 
-  if (portalOddsRisk.length > 0) {
-    for (let i = 0; i < squadRisk.length; i++) {
-      for (let j = 0; j < squadRisk[i].length; j++) {
-        const squadRiskEntry = [...squadRisk[i][j], ...portalOddsRisk];
-        squadRisk[i][j] = computeRisk(squadRiskEntry[0], squadRiskEntry);
-      }
+  let portalOddsRisk = calculateAggregateRisk(portalTokenCells);
+  portalOddsRisk =  Array.isArray(portalOddsRisk) ? portalOddsRisk : [portalOddsRisk]
+
+  for (let i = 0; i < squadRisk.length; i++) {
+    for (let j = 0; j < squadRisk[i].length; j++) {
+      const squadRiskEntry = [...squadRisk[i][j], ...portalOddsRisk];
+      console.log(squadRiskEntry);
+      squadRisk[i][j] = computeRisk(squadRiskEntry);
     }
   }
-
+  
   console.log("SQUAD RISK : ", squadRisk);
-  squadRisk.sort();
-  squadRisk.push(breakoutRisk);
 
-  const risk = computeRisk(squadRisk);
-  return risk;
-}
+  /*SQUAD RISK :  [
+    [ 46.4762, 51.342, 82.2138 ],
+    [ 40.2304, 44.9491, 73.4357 ],
+    [ 81.7478, 85.3982, 33.0036 ],
+    [ 94.5439, 97.5993, 51.4728 ]
+  ] to 
+  SQUAD RISK :  [
+    [ 46.4762, 51.342, 82.2138, 24.4422],
+    [ 40.2304, 44.9491, 73.4357, 24.4422],
+    [ 81.7478, 85.3982, 33.0036, 24.4422],
+    [ 94.5439, 97.5993, 51.4728, 24.4422]
+  ]
+  where 24.222 is assumed breakoutRisk*/
+  
+  squadRisk = squadRisk.map(arr => {
+    arr.push(breakoutRisk);   // add breakout risk to each subarray
+    arr.sort((a, b) => b - a); // then sort from highest to lowest
+    return computeRisk(arr);
+  });
+  
+  // [ 86.352, 78.867, 89.7066, 98.4573 ] to 99.1408
+  squadRisk = computeRisk(squadRisk.sort((a, b) => b - a));
 
-const computeRisk = (base, risks=[]) => {
-  let exposure = base / 100;
-  for (const r of risks) {
-    exposure *= (1 - r / 100);
-  }
-  const final = +(exposure * 100).toFixed(4);
-  const reduction = +(base - final).toFixed(4);
-  return { finalExposure: final, totalReduction: reduction };
+
+
 }
 
 const getInActiveTokens = (com) => Object.fromEntries(
@@ -1910,8 +1953,6 @@ const getInActiveTokens = (com) => Object.fromEntries(
   const activeTokens = getActiveTokens(player);
   return activeTokens.sort((a, b) => a[1].cell - b[1].cell).slice(0, num);
 }
-
-
 
 const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiveTokens=true) => {
   
@@ -2099,10 +2140,10 @@ const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiv
 // console.log(calculateDiceOdds(8, 4, 4));
 
 
-let breakoutCount = 0;
+let breakoutCount = 2;  // Occurrence of inactive token in either opp base 
 let inActiveAttackTokens = [];
 let inActiveDefenceTokens = [];
-let portalTokenCells = [];
+let portalTokenCells = [5, 3];
 
 
 const getRisk = (currCom, currOpp, comKey, oppKey, cellPath, travelPath, comLoopCount, oppLoopCount, breakout=false) => {
@@ -2117,9 +2158,10 @@ const getRisk = (currCom, currOpp, comKey, oppKey, cellPath, travelPath, comLoop
   let risk = 0;
   let riskExposure = [];  
   
-  let progressFrac = comCell / cellPath;
+  let progressFrac = (comCell / cellPath) * 100;
   console.log("comBasePosition & oppBasePosition : ", comBasePosition, oppBasePosition);
   let startGapFrac = oppBasePosition > comBasePosition ? cellPath - oppBasePosition + comBasePosition : oppBasePosition - comBasePosition;
+  startGapFrac = (startGapFrac / cellPath) * 100;
 
   const comExistentRiskPattern = ["comPortal", "comCell", "oppCell"];
   const oppExistentRiskPattern = ["oppPortal", "oppCell", "comCell"];
@@ -2206,13 +2248,13 @@ const getRisk = (currCom, currOpp, comKey, oppKey, cellPath, travelPath, comLoop
     let oppBreakoutAttackSpot = oppAttackStartPosition + 3.5;  
     let oppBreakoutDefenceSpot =  oppDefenceStartPosition + 3.5;
     
-    for (let breakout = 0; breakout < breakoutCount; breakout++) {
-      if (inActiveAttackTokens.length > 0) {
-        getRisk(oppBreakoutAttackSpot, comCell, comBasePosition, oppBasePosition, 6); // where '6' is breakout value 
-      } else if (inActiveDefenceTokens.length > 0) {
-        getRisk(oppBreakoutDefenceSpot, comCell, comBasePosition, oppBasePosition, 6);
-      }
+    // for (let breakout = 0; breakout < breakoutCount; breakout++) {
+    if (inActiveAttackTokens.length > 0) {
+      getRisk(comCell, oppBreakoutAttackSpot, comKey, oppKey, cellPath, travelPath, comLoopCount, oppLoopCount, 6); // where '6' is breakout value 
+    } else if (inActiveDefenceTokens.length > 0) {
+      getRisk(comCell, oppBreakoutDefenceSpot, comKey, oppKey, cellPath, travelPath, comLoopCount, oppLoopCount, 6);
     }
+    // }
     
     let comActive = getcomActive();
     
@@ -2284,483 +2326,10 @@ function calculateRisk ({
       remainderRisk: remainderRisk
     });
 
-    adjustedRisk = getRisk(currCom, currOpp, comKey, oppKey, cellPath, travelPath, comLoopCount, oppLoopCount, breakout, com, opp);
+    adjustedRisk = getRisk(currCom, currOpp, comKey, oppKey, cellPath, travelPath, comLoopCount, oppLoopCount, breakout);
   
     return adjustedRisk;
   }
-  
-
-  const breakoutOdds = 11/36;
-  const defenceBreakoutSpot = 3.5;
-  const attackBreakoutSpot = 17.5;
-  
-  const midBreakoutSpot = (attackBreakoutSpot + defenceBreakoutSpot) / 2;
-  
-  const activeOppTokens = Object.entries(opp).filter(([_, val]) => val.cell > 0 && val.cell < 51);
-	
-	
-	let comLoopCount = 0;
-
-	// Loop across COM 
-	
-  for (const comKey in com) {
-    let oppLoopCount = 0;
-    if (com.hasOwnProperty(comKey)) {
-      let currCom = com[comKey];
-      console.log(comKey)
-
-      if (tokenInPortal(currCom.cell)) {
-        portalTokenCells.push(travelPath - comCell);
-      } else {
-        squadRisk.push([]);
-         // Loop across Opp
-        for (const oppKey in opp) {
-          if (opp.hasOwnProperty(oppKey)) {
-            
-            let currOpp = opp[oppKey];
-  
-            // Calculate aggregate risk for each COM token based mostly on distance (proximity) to opp tokens
-            let risk = calculateRisk ({
-              currCom: currCom,
-              currOpp: currOpp,
-              comKey,
-              oppKey,
-              cellPath,
-              travelPath,
-              comLoopCount,
-              oppLoopCount,
-              comBasePosition: currCom.basePosition,
-              oppBasePosition: currOpp.basePosition
-            });
-            oppLoopCount++;
-          }
-        }
-        comLoopCount++;
-      }
-    }
-  }
-
-onst computeBreakoutRisk = ({
-  portalTokenCells,
-  squadRisk,
-  comActive,
-  calculateAggregateRisk,
-  computeRisk
-}) => {
-
-  const portalOddsRisk = calculateAggregateRisk(portalTokenCells);
-  const comCount = comActive.length;
-  const squadRiskCount = squadRisk.length;
-
-  let breakoutRisk = 0;
-
-  if (squadRiskCount - comCount === 2) {
-    const breakoutAttackRisk = computeRisk([...squadRisk[squadRiskCount - 2], ...portalOddsRisk]);
-    const breakoutDefenceRisk = computeRisk([...squadRisk[squadRiskCount - 1], ...portalOddsRisk]);
-    breakoutRisk = Math.max(breakoutAttackRisk, breakoutDefenceRisk);
-    squadRisk.splice(-2);
-  } else {
-    breakoutRisk = computeRisk(squadRisk[squadRiskCount - 1]);
-    squadRisk.splice(-1);
-  }
-  for (let i = 0; i < squadRisk.length - 1; i++) {
-    squadRisk[i] = computeRisk([...squadRisk[i], ...portalOddsRisk]);
-  }
-  squadRisk.sort();
-  squadRisk.push(breakoutRisk);
-
-  const risk = computeRisk(squadRisk);
-  return risk;
-}
-
-const getInActiveTokens = (com) => Object.fromEntries(
-  Object.entries(com).filter(([_, val]) => val.cell === null)
-);
-
- const getLeastTravelledTokens = (player={opp}, num=1) => {
-  const activeTokens = getActiveTokens(player);
-  return activeTokens.sort((a, b) => a[1].cell - b[1].cell).slice(0, num);
-}
-
-
-
-const calculateDiceOdds = (targetTotal, targetDieNumber, maxDieMove = 0, inActiveTokens=true) => {
-  
-  const isMatch = (targetDieNumber, die1, die2) => targetDieNumber === die1 || targetDieNumber === die2;
-
-  const isMatchMax = (targetDieNumber, maxDieMove, die1, die2) => 
-    (targetDieNumber === die1 && maxDieMove === die2) || 
-    (targetDieNumber === die2 && maxDieMove === die1);
-
-  const isActiveCombo = (remainder, die1, die2) => 
-    inActiveTokens && ((remainder === die1 && 6 === die2) || (remainder === die2 && 6 === die1));
-
-  const isSumMatch = (targetDieNumber, die1, die2) => die1 + die2 === targetDieNumber;
-
-  if (targetTotal !== null || targetDieNumber !== null) {  
-    if (targetTotal !== null) {
-      console.log(targetTotal)
-      if (targetTotal < 1) {
-        console.log("Target total must be greater than 0")
-        throw new Error("Target total must be greater than 0");
-      }
-    }
-    if (targetDieNumber !== null) {
-      console.log("targetDieNumber : ", targetDieNumber)
-      if (targetDieNumber < 1 || targetDieNumber > 6) {
-        console.log("Die number must be between 1 and 6")
-        throw new Error("Die number must be between 1 and 6");
-      }
-    }
-  }
-
-  let strikeOdds;
-  let targetTotalOdds = 1;
-  let ways = 0;
-  let remainder = 1;
-  let probDoubleSixes = 1;
-
-  if (targetTotal && !Array.isArray(targetTotal)) {
-
-
-    // If getInActiveTokens is defined elsewhere
-    // const inactiveCount = getInActiveTokens(player);
-
-    if (targetTotal > 12) { 
-      const doubleSixValue = 12; 
-      const pDoubleSix = 1 / 36; 
-    
-      const times = Math.floor(targetTotal / doubleSixValue);
-      remainder = targetTotal % doubleSixValue;
-    
-      probDoubleSixes = Math.pow(pDoubleSix, times);  
-    } else {
-      remainder = targetTotal; 
-    }
-    
-    console.log("remainder : ", remainder);
-    
-    if (targetDieNumber) {
-      console.log("targetDieNumber : ", targetDieNumber);
-      
-      // (remainder <= 6) condition necessary because if cell distance > 6, isMatchMax & isActiveCombo are useless. 
-      // If cell distance is 8, we can't find odds of say [8, 6] for isActiveCombo or say [8, 4] for maxDieMove
-      if (remainder > 0 && remainder <= 6) { 
-        targetDieNumber = [targetDieNumber, remainder];
-      }
-    } else {
-      if (remainder > 0 && remainder <= 6) {
-        targetDieNumber = remainder;  // Always needed to calculate isMatchMax and isActiveCombo for remainder.
-      }
-    }
-    
-    if (remainder > 0 && remainder < 13) {  // works same way as isSumMatch but isSumMatch will be used in latter code for sake of dynamism
-      ways += (remainder > 0 && remainder < 7 ? remainder - 1 : 13 - remainder);
-    } 
-    /*else {
-      ways = 36;
-    }*/
-
-    // Only run when calculateDiceOdds is not called this way calculateDiceOdds(28, 6). The reason is if it's called 
-    // that way, there may be some dice intersection when trying to work on the remainder. For instance the first 
-    // parameter 28 will be worked on in the upper code section above 28 / 12 with remainder 4. Then immediately
-    // above we get the number of 'ways' to get 4 which are [3, 1], [2, 2] etc. Now we also have to account for 
-    // getting odds for isActiveCombo and isMatchMax like [4, 6] if inactiveTokens exist and [4, maxDieMove] for maxDieMove
-    // on another token 
-    
-    if (remainder > 6) { // targetDieNumber won't trickle down if targetTotal > 6
-      const probRemainder = ways / 36;
-      targetTotalOdds = (probDoubleSixes * probRemainder).toFixed(6);
-      strikeOdds = targetTotalOdds * 100;  
-    }
-    
-    // console.log(strikeOdds);
-    /*if (targetTotal && !targetDieNumber) {  // Return when calculateDiceOdds is called this way: calculateDiceOdds(24)
-      return strikeOdds;
-    }*/
-    if (!targetDieNumber) {
-      return strikeOdds;
-    }
-  } 
-
-  if (targetDieNumber || Array.isArray(targetTotal)) {  
-    let totalOutcomes = 0;
-    let hasTargetNumber = false;
-    let hasMatchNumber = false;
-    let favourableMatchOutcome = 0;
-    let favourableTargetOutcome = 0;
-
-    if (Array.isArray(targetTotal)) {
-      const [{ safeMoves }] = targetTotal;  
-      const maxSafeMove = Math.max(...safeMoves);  
-      const minSafeMove = Math.min(...safeMoves);  
-    }
-    
-    for (let die1 = 1; die1 <= 6; die1++) {
-      for (let die2 = 1; die2 <= 6; die2++) {
-        totalOutcomes++;
-        
-        if (Array.isArray(targetDieNumber)) {
-          // console.log("targetDieNumber is array");
-          hasMatchNumber = isMatch(targetDieNumber[0], die1, die2);
-          hasTargetNumber = ( 
-            isMatchMax(targetDieNumber[1], maxDieMove, die1, die2) || 
-            isActiveCombo(targetDieNumber[1], die1, die2)
-          );
-        } else {  
-          // console.log(targetDieNumber);
-          // console.log("targetDieNumber is not array")
-          if (targetTotal === null || (targetTotal !== null && remainder > 6)) {
-            hasMatchNumber = isMatch(targetDieNumber, die1, die2);
-          } else {
-            hasTargetNumber = ( 
-              isMatchMax(targetDieNumber, maxDieMove, die1, die2) || 
-              isActiveCombo(targetDieNumber, die1, die2)
-            );
-          }
-        }
-        // console.log(hasMatchNumber);
-        if (hasMatchNumber) {
-          console.log("hasMatchNumber");
-          favourableMatchOutcome++;
-        }
-        if (hasTargetNumber) {
-          console.log("hasTargetNumber")
-          favourableTargetOutcome++;
-        }
-      }
-    }
-    
-    if (targetDieNumber && maxDieMove >= 6) {
-      console.log("dice intersection");
-      if (hasTargetNumber) favourableTargetOutcome -= 2;
-    }
-    
-    // console.log(favourableMatchOutcome, favourableTargetOutcome);
-    // console.log("ways : ", ways);
-    
-    const favourableMatchOdds = favourableMatchOutcome && (Number(((favourableMatchOutcome / totalOutcomes)).toFixed(6)));
-    const favourableTargetOdds = favourableTargetOutcome && (Number((((favourableTargetOutcome + ways) / totalOutcomes) * probDoubleSixes).toFixed(6)));
-    
-    // console.log(favourableMatchOdds, favourableTargetOdds);
-    
-    let dieOrTargetTotalOdds = 0;
-    if (favourableMatchOdds && favourableTargetOdds) {
-      dieOrTargetTotalOdds = favourableMatchOdds * favourableTargetOdds;
-      // console.log("a");
-    } else {
-      dieOrTargetTotalOdds = favourableMatchOdds || favourableTargetOdds;
-      // console.log("b");
-    }
-    console.log("dieOrTargetTotalOdds : ", dieOrTargetTotalOdds)
-
-    /*if (targetTotal) {
-      console.log ("targetTotalOdds : ", targetTotalOdds);
-      strikeOdds = targetTotalOdds * dieOrTargetTotalOdds;
-    } else {
-      strikeOdds = dieOrTargetTotalOdds;
-    }*/
-    
-    strikeOdds = targetTotalOdds * dieOrTargetTotalOdds;
-  }
-  
-  return strikeOdds * 100;
-};
-
-// console.log(calculateDiceOdds(8, 4, 4));
-
-
-
-let breakoutCount = 0;
-let inActiveAttackTokens = [];
-let inActiveDefenceTokens = [];
-let portalTokenCells = [];
-
-
-const getRisk = (currCom, currOpp, comKey, oppKey, cellPath, travelPath, comLoopCount, oppLoopCount, breakout=false) => {
-  let comCell = currCom.absCell;
-  let oppCell = currOpp.absCell;
-  let comBasePosition = currCom.basePosition;
-  let oppBasePosition = currOpp.basePosition;
-  // let cyclePath = cellPath - 1; // 50
-  
-  let cellDiff = 0;
-  let strikeRange = 0;
-  let risk = 0;
-  let riskExposure = [];  
-  
-  let progressFrac = comCell / cellPath;
-  console.log("comBasePosition & oppBasePosition : ", comBasePosition, oppBasePosition);
-  let startGapFrac = oppBasePosition > comBasePosition ? cellPath - oppBasePosition + comBasePosition : oppBasePosition - comBasePosition;
-
-  const comExistentRiskPattern = ["comPortal", "comCell", "oppCell"];
-  const oppExistentRiskPattern = ["oppPortal", "oppCell", "comCell"];
-  
-  const comToOppPlay = {
-    "comCell" : comCell,
-    "oppCell" : oppCell,
-    "comPortal" : comBasePosition === 0 ? 50 : comBasePosition - 2  
-  }
-  const oppToComPlay = {
-    "comCell" : comCell,
-    "oppCell" : oppCell,
-    "oppPortal" : oppBasePosition === 0 ? 50 : oppBasePosition - 2
-  }
-  
-  const sortedComToOppKeys = sortRiskPlay(comToOppPlay);
-  const sortedOppToComKeys = sortRiskPlay(oppToComPlay);
-  
-  const rearrangedComRiskPattern = rearrangeCyclic(comExistentRiskPattern, sortedComToOppKeys[0]);
-  const rearrangedOppRiskPattern = rearrangeCyclic(oppExistentRiskPattern, sortedOppToComKeys[0]);
-  
-  const comToOppRisk = arraysEqual(sortedComToOppKeys, rearrangedComRiskPattern);
-  const oppToComRisk = arraysEqual(sortedOppToComKeys, rearrangedOppRiskPattern);
-  
-  console.log("sortedComToOppKeys : ", sortedComToOppKeys);
-  console.log("sortedOppToComKeys : ", sortedOppToComKeys);
-  
-  console.log(comToOppRisk, oppToComRisk);
-  console.log(cellPath);
-  let comToOppDiff = comToOppRisk === false ? comToOppRisk : (oppCell > comCell ? oppCell - comCell : oppCell + cellPath - comCell);
-  let oppToComDiff = oppToComRisk === false ? oppToComRisk : (comCell > oppCell ? comCell - oppCell : comCell + cellPath - oppCell);
-  console.log("comCell & oppCell : ", comCell, oppCell);
-  console.log("comToOppDiff & oppToComDiff : ", comToOppDiff, oppToComDiff);
-  
-  cellDiff = Math.min(comToOppDiff, oppToComDiff);
-  
-  // Get inactiveTokens
-  // Should be inside loop, not outside because maxDieMove is dynamic, as it changes focus to other opp tokens on each loop
-  const maxDieMove = getMaxDieMove(opp, oppKey);
-  // console.log("maxDieMove", maxDieMove);
-  
-  
-  if (opp.length === 1 || opp.length === 0 && breakout) { 
-    if (oppToComDiff) {  
-      oddsRisk = calculateDiceOdds(oppToComDiff, breakout, maxDieMove); 
-    } else {
-      oddsRisk = 0;
-    }
-  } else {  
-    if (com.length === 1) { 
-      oddsRisk = (1 - (cellDiff / cellPath)) * 100;
-      if (withinStrikeRange (cellDiff)) {
-        let remRisk = 100 - oddsRisk;
-        let strikeRisk = calculateDiceOdds(cellDiff, breakout, maxDieMove);
-        oddsRisk += (strikeRisk / 100) * remRisk;
-      }
-    } else {
-      if (oppToComDiff) {
-        oddsRisk = (1 - (oppToComDiff / cellPath)) * 100;
-        if (withinStrikeRange(oppToComDiff)) {
-          let remRisk = 100 - oddsRisk;
-          let strikeRisk = calculateDiceOdds(oppToComDiff, breakout, maxDieMove);
-          oddsRisk += (strikeRisk / 100) * remRisk;
-        }
-      } else {
-        oddsRisk = 0;
-      }
-    }
-
-    console.log("cellDiff : ", cellDiff);
-    riskExposure = [oddsRisk, progressFrac, startGapFrac];
-    squadRisk[comLoopCount].push(riskExposure);
-  }
-  console.log("SQUAD RISK : ", squadRisk);
-  
-  if (comLoopCount === Object.keys(com).length - 1 && oppLoopCount === Object.keys(opp).length - 1) {  // On very last loop
-
-    inActiveAttackTokens = getInActiveAttackTokens(opp);
-    inActiveDefenceTokens = getInActiveDefenceTokens(opp);
-    
-    let oppAttackStartPosition = 26;
-    let oppDefenceStartPosition = 39;
-    
-    let oppBreakoutAttackSpot = oppAttackStartPosition + 3.5;  
-    let oppBreakoutDefenceSpot =  oppDefenceStartPosition + 3.5;
-    
-    for (let breakout = 0; breakout < breakoutCount; breakout++) {
-      if (inActiveAttackTokens) {
-        getRisk(oppBreakoutAttackSpot, comCell, comBasePosition, oppBasePosition, 6); // where '6' is breakout value 
-      } else if (inActiveDefenceTokens) {
-        getRisk(oppBreakoutDefenceSpot, comCell, comBasePosition, oppBasePosition, 6);
-      }
-    }
-    
-    let comActive = getcomActive();
-    
-    let risk = computeBreakoutRisk({
-      portalTokenCells,
-      squadRisk,
-      comActive,
-      calculateAggregateRisk,
-      computeRisk
-    });
-  }
-  
-  if (breakoutCount === ([inActiveAttackTokens, inActiveDefenceTokens].filter(Boolean).length)) {
-
-    let portalOddsRisk = calculateAggregateRisk(portalTokenCells); 
-          
-    //       
-    let comCount = comActive.length;  
-    let squadRiskCount = squadRisk.length;
-    
-    let breakoutRisk = 0;
-    
-    if (squadRiskCount - comCount === 2) {
-      let breakoutAttackRisk = computeRisk([...squadRisk[squadRiskCount - 2], ...portalOddsRisk]);
-      let breakoutDefenceRisk = computeRisk([...squadRisk[squadRiskCount - 1], ...portalOddsRisk]);
-      breakoutRisk = Math.max(breakoutAttackRisk, breakoutDefenceRisk); // Get the maximum breakout risk
-
-      squadRisk.splice(-2); 
-    } else {  
-      breakoutRisk = computeRisk(squadRisk[squadRiskCount - 1]);
-      squadRisk.splice(-1);
-    }
-
-    for (let squad = 0; i < squadRisk.length - 1; squad++) {  
-      squadRisk[squad] = computeRisk([...squad, ...portalOddsRisk]);
-    }
-    squadRisk.sort();
-    squadRisk.push(breakoutRisk);
-    risk = computeRisk(squadRisk); 
-    console.log(risk);
-  }
-}
-
-function calculateRisk ({
-    currCom,
-    currOpp,
-    comKey,
-    oppKey,
-    cellPath,
-    travelPath,
-    comLoopCount,
-    oppLoopCount,
-    comBasePosition,
-    oppBasePosition,
-    remainderRisk = 100,
-    COMRisk = 0,
-    breakout = null,
-    com,
-    opp
-  }) {
-    
-    let adjustedRisk = 0;
-    console.table({
-      currCom: JSON.stringify(currCom),
-      currOpp: JSON.stringify(currOpp),
-      cellPath: cellPath,
-      travelPath: travelPath,
- 
-      remainderRisk: remainderRisk
-    });
-
-    adjustedRisk = getRisk(currCom, currOpp, comKey, oppKey, cellPath, travelPath, comLoopCount, oppLoopCount, breakout, com, opp);
-  
-    return adjustedRisk;
-  }
-  
 
   const breakoutOdds = 11/36;
   const defenceBreakoutSpot = 3.5;
@@ -2813,8 +2382,6 @@ function calculateRisk ({
   }
 
 
-	
-	
 	
 	
 	
