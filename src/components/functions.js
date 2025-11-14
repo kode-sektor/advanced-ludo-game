@@ -1290,6 +1290,75 @@ const moves = [
 	},
 ];
 
+const redistribute = (arr, factor = 0.08) => {
+  const n = arr.length;
+  const avg = arr.reduce((a, b) => a + b, 0) / n;
+
+  const donors = arr.map(v => (v > avg ? v - avg : 0));
+  const receivers = arr.map(v => (v < avg ? avg - v : 0));
+
+  const totalGive = donors.reduce((a, b) => a + b, 0);
+  const totalTake = receivers.reduce((a, b) => a + b, 0);
+
+  return arr.map(v => {
+    if (v > avg) return v - factor * (v - avg) * (totalTake / (totalGive || 1));
+    if (v < avg) return v + factor * (avg - v);
+    return v;
+  });
+}
+
+
+const skewRisks = (risks) => {  // [60, 70, 80]
+  const vals = risks.map(Number);
+  const mn = Math.min(...vals); 
+  const mx = Math.max(...vals);
+
+  // handle degenerate cases
+  if (mx === mn) {
+    const n = vals.length;
+    return { probs: Array(n).fill(1 / n), pick: vals[0] };
+  }
+
+  const spread = mx - mn; // 9
+  console.log("spread : ", spread);
+  const mean = vals.reduce((s, v) => s + v, 0) / vals.length; // 64.66666666666667
+  console.log("mean : ", mean);
+  // automatic exponent: larger spread -> larger k -> stronger skew
+  // single internal constant  (C = 4.0) chosen as a strong-but-reasonable amplifier
+  const C = 4.0;
+  const k = 1 + C * (spread / (mean + 1e-9)); // 1.5567010309192262
+  console.log("k : ", k);
+
+  // normalized distances 0..1
+  let zs = vals.map(v => (v - mn) / spread);  // [0, 0.5555555555555556, 1]
+  console.log("vals : ", vals);
+  console.log("mn : ", mn);
+  console.log("zs : ", zs);
+
+  zs = redistribute(zs);  // [0.04148148148148148, 0.552592592592, 0.9614814814814815]
+  console.log("zs : ", zs);
+
+  // weights = (1 - z)^k  (min => 1^k = 1; far => small)
+  const raw = zs.map(z => Math.pow(1 - z, k));
+  console.log("raw : ", raw); // [0.9361759748025192, 0.2859231138240, 0.006285073625991439]
+
+  const total = raw.reduce((s, x) => s + x, 0);
+  const probs = raw.map(x => x / total);
+  console.log("probs : ", probs); // [0.7621198673595774, 0.2327635951441, 0.005116537496271671]
+
+  // weighted pick
+  let r = Math.random();
+  for (let i = 0; i < probs.length; i++) {
+    r -= probs[i];
+    if (r <= 0) return { probs, pick: vals[i] };
+  }
+  return { probs, pick: vals[vals.length - 1] };
+}
+
+// console.log(skewRisks([60, 65, 69]));
+// → probs ~ [0.87, 0.11, 0.02]
+
+
 const getStartPosition = (mode, player="com") => {
   const baseIndex = getBaseIndex(player); // [2, 3]
   const modeBaseIndex = mode === "attack" ? getAttackBaseIndex(player) : getDefenceBaseIndex(player); // 
@@ -1436,7 +1505,7 @@ const updateLeastRisky = (risk, leastRisky) => {
   // console.log(leastRisky); // [8.45, 12.90, 24.57]
 }
 
-const skewedRandomPick = (risks, alpha = 10) => {
+/*const skewedRandomPick = (risks, alpha = 10) => {
   const min = Math.min(...risks);
   const max = Math.max(...risks);
   const mean = risks.reduce((a, b) => a + b, 0) / risks.length;
@@ -1457,7 +1526,7 @@ const skewedRandomPick = (risks, alpha = 10) => {
   }
 
   return risks[risks.length - 1]; // fallback
-}
+}*/
 
 
 const computeBreakoutRisk = ({
@@ -2109,8 +2178,8 @@ const updateTempMoves = (com, moves) => {
     squadRisk = [];
     getTempRisk(com, squadRisk);
   }
-  let computedRisk = skewedRandomPick(leastRiskyMoves);
-  console.log("computedRisk : ", computedRisk);
+  let computedRisk = skewRisks(leastRiskyMoves);
+  console.log("computedRisk : ", computedRisk.pick);
 }
 
 const breakoutOdds = 11/36;
@@ -2122,6 +2191,10 @@ const midBreakoutSpot = (attackBreakoutSpot + defenceBreakoutSpot) / 2;
 const activeOppTokens = Object.entries(opp).filter(([_, val]) => val.cell > 0 && val.cell < 51);
 
 updateTempMoves(com, moves);
+
+
+
+
 
 
 
